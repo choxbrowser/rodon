@@ -1,104 +1,94 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rodon — Explore the darkness</title>
-  <style>
-    :root { --ink:#0b1116; --panel:#172025eF; --gold:#e2b96d; --mist:#9eb3a6; --red:#c54d54; --line:#53605a; }
-    * { box-sizing:border-box; } body { margin:0; overflow:hidden; background:#090d10; color:#e8e2d2; font:14px/1.35 "Courier New",monospace; }
-    button { font:inherit; color:inherit; cursor:pointer; }
-    #game { width:100vw; height:100vh; image-rendering:pixelated; background:#111; display:block; }
-    #hud { position:fixed; inset:0; pointer-events:none; text-shadow:2px 2px #080b0c; }
-    .card { background:linear-gradient(135deg,#202a2dEE,#11191cEE); border:1px solid #777461; box-shadow:inset 0 0 0 2px #111, 0 4px 12px #0009; }
-    #vitals { position:absolute; top:20px; left:24px; width:270px; padding:12px; }
-    .caption { color:#b9ad8a; font-size:10px; letter-spacing:2px; text-transform:uppercase; }
-    #health { height:12px; border:1px solid #0c0b0b; background:#3b2525; margin:5px 0 8px; } #health i { display:block; height:100%; width:100%; background:linear-gradient(90deg,#8b2833,#e15b57); transition:width .2s; }
-    #gold { position:absolute; right:28px; top:25px; color:var(--gold); font-weight:bold; font-size:17px; }
-    #location { position:absolute; top:90px; width:100%; text-align:center; font-size:15px; letter-spacing:3px; color:#e0d4b4; }
-    #quest { position:absolute; right:24px; top:60px; width:230px; padding:12px; color:#d8d4c5; }
-    #quest strong { color:#e6c47a; display:block; margin:3px 0; }
-    #controls { position:absolute; bottom:21px; left:24px; color:#b8c0b8; font-size:12px; }
-    kbd { display:inline-block; min-width:21px; padding:2px 5px; text-align:center; border:1px solid #7e806e; background:#222b2d; color:#eddfba; margin:0 2px; }
-    #actions { position:absolute; right:22px; bottom:22px; pointer-events:auto; display:flex; gap:7px; }
-    .ui-btn { min-width:84px; border:1px solid #776e58; padding:9px 12px; background:#1b2427eF; color:#e4d6b5; text-transform:uppercase; font-size:11px; letter-spacing:1px; } .ui-btn:hover { border-color:var(--gold); background:#30342d; }
-    #prompt { position:absolute; bottom:80px; width:100%; text-align:center; color:#f5daa1; font-weight:bold; opacity:0; transition:opacity .15s; }
-    #toast { position:absolute; top:128px; width:100%; text-align:center; color:#f5d881; font-size:17px; opacity:0; transition:opacity .3s; }
-    #modal { pointer-events:auto; position:fixed; inset:0; z-index:8; display:none; align-items:center; justify-content:center; background:#06090bc9; } #modal.open { display:flex; }
-    .window { width:min(760px,94vw); max-height:86vh; overflow:auto; padding:24px; border:2px solid #8b7b57; background:linear-gradient(135deg,#263035,#11191d); box-shadow:0 0 60px #000; }
-    .window h2 { font-size:27px; margin:0 0 16px; color:#e4c37d; letter-spacing:2px; } .close { float:right; background:transparent; border:0; color:#d7c28d; font-size:22px; }
-    #dialogue { position:absolute; left:50%; bottom:76px; transform:translateX(-50%); width:min(540px,80vw); padding:11px 17px; color:#f0e9d6; font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none; } #dialogue b { color:#efc66e; }
-    .columns { display:grid; grid-template-columns:1fr 1.1fr; gap:20px; } .stat { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #ffffff12; }
-    .equipment { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; } .slot, .item { border:1px solid #5f665c; padding:9px; background:#101719; min-height:45px; } .slot small { color:#9aa299; display:block; } .item { cursor:pointer; } .item:hover { border-color:var(--gold); } .rare { color:#5fa8e8; } .epic { color:#c77ae7; } .legendary { color:#edbf55; }
-    #menu { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:5; background:radial-gradient(ellipse at center,#25363888,#080b0f 70%); } #menu.hidden { display:none; }
-    .titlebox { text-align:center; width:390px; padding:35px; background:#101719dd; border:1px solid #766747; box-shadow:0 0 80px #000; } .titlebox h1 { margin:0; font-size:65px; letter-spacing:12px; color:#d8bf7b; text-shadow:4px 4px #221c15; } .titlebox p { color:#a6b0a3; font-style:italic; margin:0 0 26px; }
-    .menu-btn { display:block; width:100%; margin:8px 0; padding:12px; background:#263133; border:1px solid #766b54; color:#eadbb7; letter-spacing:2px; text-transform:uppercase; } .menu-btn:hover { background:#3d463f; border-color:#d5b86f; }
-    #death { position:fixed; inset:0; z-index:6; display:none; align-items:center; justify-content:center; background:#160708d9; text-align:center; } #death.show { display:flex; } #death h1 { color:#d74747; font-size:50px; letter-spacing:7px; }
-    @media(max-width:650px){ #quest{display:none}.columns{grid-template-columns:1fr}#actions{bottom:8px;right:8px}.ui-btn{min-width:auto;padding:8px}.titlebox{width:90vw} }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rodon</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;overflow:hidden;background:#090d10;color:#f1e5c7;font-family:monospace}
+  canvas{width:100vw;height:100vh;display:block;image-rendering:pixelated}
+  #hud{position:fixed;inset:0;pointer-events:none;text-shadow:2px 2px #000}
+  .panel{background:#111a1de8;border:2px solid #746444;box-shadow:0 0 0 3px #080b0c;padding:10px}
+  #stats{position:absolute;top:20px;left:20px;width:260px} #hp{height:12px;background:#3c1e24;border:1px solid #000;margin:6px 0}#hp i{display:block;height:100%;background:#ca4750;width:100%}
+  #gold{position:absolute;right:25px;top:25px;color:#f0c765;font-size:17px}#place{position:absolute;top:30px;width:100%;text-align:center;letter-spacing:3px}
+  #help{position:absolute;bottom:18px;left:20px;color:#c1c9bf;font-size:12px}#note{position:absolute;bottom:78px;width:100%;text-align:center;color:#f3d38b}
+  #menu,#dead{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:#05080bd9;z-index:2}#dead{display:none;background:#24080ad9}
+  .box{width:min(400px,90vw);padding:32px;text-align:center;background:#121a1c;border:2px solid #8d7546;box-shadow:0 0 60px #000}
+  h1{font-size:60px;letter-spacing:10px;margin:0;color:#d9bd75}button{display:block;width:100%;padding:12px;margin-top:10px;background:#283334;color:#f1e1bb;border:1px solid #93805b;font:inherit;cursor:pointer;letter-spacing:2px}button:hover{background:#3f4b42}
+</style>
 </head>
 <body>
 <canvas id="game"></canvas>
 <div id="hud">
-  <div id="vitals" class="card"><div class="caption">Warden of Rodon · Level <b id="level">1</b></div><div id="health"><i></i></div><span id="hpText">HP 100 / 100</span> <span style="float:right">XP <b id="xp">0</b>/100</span><div class="caption" style="margin-top:7px">ATK <b id="attackStat">10</b> · DEF <b id="defStat">5</b> · CRIT <b id="critStat">5%</b></div></div>
-  <div id="gold">✦ <span>45</span> GOLD</div><div id="location">THE WHISPERING WARD</div>
-  <div id="quest" class="card"><span class="caption">Quest</span><strong>Goblin Problem</strong><span id="questProgress">Defeat goblins: 0 / 5</span></div>
-  <div id="toast"></div><div id="prompt"></div><div id="dialogue" class="card"></div>
-  <div id="controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move &nbsp; <kbd>LMB</kbd> Strike / search &nbsp; <kbd>E</kbd> Interact &nbsp; <kbd>RMB</kbd> Dodge</div>
-  <div id="actions"><button class="ui-btn" data-open="character">Character</button><button class="ui-btn" data-open="inventory">Inventory</button><button class="ui-btn" data-open="map">Map</button><button class="ui-btn" data-open="help">Guide</button></div>
+  <div id="stats" class="panel">WARDEN OF RODON · LV <b id="lv">1</b><div id="hp"><i></i></div><span id="hptext">HP 100 / 100</span><span style="float:right">XP <b id="xp">0</b>/100</span></div>
+  <div id="place">THE WHISPERING WARD</div><div id="gold">✦ <span id="coins">45</span> GOLD</div>
+  <div id="note">WASD move · Click to attack · E near a chest</div>
+  <div id="help">Defeat the creatures. Search the darkness.</div>
 </div>
-<div id="modal"><div class="window"><button class="close">×</button><div id="modalContent"></div></div></div>
-<div id="menu"><div class="titlebox"><h1>RODON</h1><p>Explore the darkness. Find powerful gear.</p><button class="menu-btn" id="newGame">New Game</button><button class="menu-btn" id="continue">Continue</button><button class="menu-btn" data-open="help">How to Play</button></div></div>
-<div id="death"><div><h1>YOU DIED</h1><p>The old stones remember every fallen warden.</p><button class="menu-btn" id="respawn">Return to Checkpoint</button><button class="menu-btn" id="deathMenu">Main Menu</button></div></div>
+<div id="menu"><div class="box"><h1>RODON</h1><p>Explore the darkness. Find powerful gear.</p><button id="start">NEW GAME</button></div></div>
+<div id="dead"><div class="box"><h1 style="color:#d64c4c;font-size:38px">YOU DIED</h1><button id="again">RETURN TO CHECKPOINT</button></div></div>
+
 <script>
-(() => {
-  const c=document.querySelector('#game'),x=c.getContext('2d'); let W,H,scale=1;
-  const $=s=>document.querySelector(s), state={room:0, player:{x:440,y:350,hp:100,max:100,dir:0,atk:0,dodge:0,dead:false}, gold:45,xp:0,level:1,kills:0, inventory:[], equipment:{head:null,chest:null,legs:null,boots:null,gloves:null,main:null,off:null,accessory1:null,accessory2:null}, bodies:[], chest:false, playing:false,shake:0};
-  const rooms=[{name:'The Whispering Ward',theme:'forest',exits:{right:1},enemies:[['Goblin',650,260,35,9],['Wolf',270,430,28,7],['Goblin',720,470,35,9]],chest:[190,180]}, {name:'The Ruined Village',theme:'village',exits:{left:0,right:2},enemies:[['Bandit',390,230,48,13],['Goblin',680,410,35,9],['Skeleton',550,540,43,12]],chest:[760,175]}, {name:'The Cave of Echoes',theme:'cave',exits:{left:1},enemies:[['Cave Guardian',560,350,220,20,true]],chest:null}];
-  let enemies=[]; const keys={};
-  const items={
-    rustySword:{name:'Rusty Sword',slot:'main',rarity:'common',attack:5,desc:'A scarred blade from a forgotten militia.'}, sword:{name:'Iron Sword',slot:'main',rarity:'rare',attack:11,desc:'A balanced blade of tempered iron.'}, katana:{name:'Shadow Katana',slot:'main',rarity:'epic',attack:20,crit:12,desc:'Shadow Strike: chance to deal bonus damage.'}, royalSword:{name:'Royal Sword',slot:'main',rarity:'legendary',attack:29,crit:8,desc:'A relic of the last king.'},
-    chest:{name:'Iron Chestplate',slot:'chest',rarity:'rare',def:10,hp:18,desc:'Heavy plates made for a front-line warrior.'}, leatherChest:{name:'Leather Cuirass',slot:'chest',rarity:'uncommon',def:5,hp:8,desc:'Cured hide bound with brass fittings.'}, head:{name:'Knight Helm',slot:'head',rarity:'epic',def:7,hp:8,desc:'A battered helm bearing an old crest.'}, legs:{name:'Iron Legguards',slot:'legs',rarity:'rare',def:6,hp:10,desc:'Articulated plates for a relentless march.'}, boots:{name:'Leather Boots',slot:'boots',rarity:'uncommon',speed:.35,def:2,desc:'Quiet steps on rain-soaked stone.'}, gloves:{name:'Knight Gauntlets',slot:'gloves',rarity:'rare',def:3,attack:2,desc:'Steel fingers built to keep hold of a blade.'}, shield:{name:'Tower Shield',slot:'off',rarity:'rare',def:8,hp:12,desc:'A broad shield marked with an extinguished sun.'}, ravenSeal:{name:'Raven Seal',slot:'accessory1',rarity:'epic',crit:8,hp:15,desc:'A cold talisman that sharpens the hunter’s eye.'}, potion:{name:'Health Potion',slot:'consumable',rarity:'common',heal:35,desc:'Restores 35 health.'}
-  };
-  function resize(){W=innerWidth;H=innerHeight;c.width=W*devicePixelRatio;c.height=H*devicePixelRatio;x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);scale=Math.min(W/960,H/600);}
-  addEventListener('resize',resize);resize();
-  function stat(k){let v={attack:10,def:5,hp:100+(state.level-1)*12,speed:2.8,crit:5}[k]||0; Object.values(state.equipment).filter(Boolean).forEach(i=>v+=items[i][k]||0);return v;}
-  function loadRoom(i,enter){state.room=i; state.bodies=[]; state.chest=false; enemies=rooms[i].enemies.map((e,n)=>({name:e[0],x:e[1],y:e[2],hp:e[3],max:e[3],damage:e[4],boss:e[5],dead:false,hit:0,phase:n})); state.player.x=enter==='left'?70:enter==='right'?W/scale-70:440;state.player.y=350;$('#location').textContent=rooms[i].name.toUpperCase();toast(rooms[i].name);say(i===2?'The cave exhales. Something ancient is watching.':i===1?'Only the lanterns remember this village.':'The road ahead is silent. Keep your blade ready.');save();}
-  function toast(s){const el=$('#toast');el.textContent=s;el.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.opacity=0,1800)}
-  function say(s){const el=$('#dialogue');el.innerHTML='<b>RODON</b>  '+s;el.style.opacity=1;clearTimeout(say.t);say.t=setTimeout(()=>el.style.opacity=0,3600)}
-  function save(){localStorage.rodon=JSON.stringify({gold:state.gold,xp:state.xp,level:state.level,inventory:state.inventory,equipment:state.equipment,room:state.room,kills:state.kills});}
-  function restore(){try{let s=JSON.parse(localStorage.rodon);Object.assign(state,s);loadRoom(state.room)}catch{loadRoom(0)}}
-  function drawBg(){let r=rooms[state.room],t=performance.now()/1000;x.fillStyle=r.theme==='cave'?'#0c1120':r.theme==='village'?'#28231e':'#10211e';x.fillRect(0,0,W,H);x.save();x.scale(scale,scale);let w=W/scale,h=H/scale;
-    for(let gx=0;gx<w;gx+=32)for(let gy=0;gy<h;gy+=32){x.fillStyle=r.theme==='cave'?'#202943':'#26342a';x.fillRect(gx+1,gy+1,30,30);x.fillStyle='#0b101238';x.fillRect(gx,gy,31,2);x.fillRect(gx,gy,2,31)}
-    if(r.theme==='forest'){x.fillStyle='#5b5140';x.fillRect(0,285,w,62);x.fillStyle='#74674e';for(let i=0;i<18;i++)x.fillRect(i*60+(i%3)*8,306,38,5);for(let i=0;i<20;i++){let px=(i*79+25)%w,py=(i*139+20)%h;x.fillStyle='#101916';x.fillRect(px-8,py,16,57);x.fillStyle='#352b24';x.fillRect(px-4,py,8,54);x.fillStyle='#18281d';x.fillRect(px-28,py-33,56,42);x.fillStyle='#29422e';x.fillRect(px-21,py-47,42,29);x.fillStyle='#3d5633';x.fillRect(px-13,py-56,26,16)}}
-    if(r.theme==='village'){x.fillStyle='#574a39';x.fillRect(0,272,w,72);for(let i=0;i<5;i++){let px=40+i*190,py=i%2?80:414;x.fillStyle='#191715';x.fillRect(px,py,130,82);x.fillStyle='#634834';x.fillRect(px+8,py+8,114,74);x.fillStyle='#2d2724';x.beginPath();x.moveTo(px-13,py+9);x.lineTo(px+65,py-47);x.lineTo(px+143,py+9);x.fill();x.fillStyle='#17110e';x.fillRect(px+53,py+42,23,40);x.fillStyle='#db9c45';x.fillRect(px+17,py+32,11,12);x.fillRect(px+102,py+32,11,12)}}
-    if(r.theme==='cave'){for(let i=0;i<18;i++){let px=(i*109)%w,py=(i*163)%h;x.fillStyle='#151b2e';x.beginPath();x.moveTo(px,py);x.lineTo(px+42,py-32);x.lineTo(px+77,py+67);x.fill();x.fillStyle='#465379';x.fillRect(px+20,py+9,6,34)}for(let i=0;i<7;i++){let px=80+i*138,py=i%2?104:482;x.fillStyle='#1c5268';x.beginPath();x.moveTo(px,py+27);x.lineTo(px+12,py-17);x.lineTo(px+24,py+27);x.fill();x.fillStyle='#68d0cf';x.fillRect(px+10,py,4,22)}}
-    for(let i=0;i<4;i++){let px=120+i*230,py=i%2?100:510;x.fillStyle='#2f1b15';x.fillRect(px-3,py,6,25);x.fillStyle='#e87535';x.fillRect(px-6,py-11,12,13);x.fillStyle='#fff0b0';x.fillRect(px-2,py-7,4,6);x.globalAlpha=.12+Math.sin(t*9+i)*.03;x.fillStyle='#e7853e';x.beginPath();x.arc(px,py-4,52,0,Math.PI*2);x.fill();x.globalAlpha=1}
-    x.globalAlpha=.16;x.fillStyle='#c7d9d1';for(let i=0;i<6;i++)x.fillRect((i*197+t*9)%w,55+i*86,155,18);x.restore();let g=x.createRadialGradient(W/2,H/2,Math.min(W,H)*.22,W/2,H/2,Math.max(W,H)*.72);g.addColorStop(0,'#0000');g.addColorStop(1,'#020407cc');x.fillStyle=g;x.fillRect(0,0,W,H);}
-  function sprite(p){let a=armorColor(),s=p.boss?1.7:1,bob=Math.floor(performance.now()/180)%2;x.save();x.translate(p.x,p.y+bob);x.scale(s,s);x.fillStyle='#05070aaa';x.beginPath();x.ellipse(0,35,20,6,0,0,Math.PI*2);x.fill();if(p.hit>0)x.fillStyle='#fff';else x.fillStyle=p.dead?'#392529':p.boss?'#4d3a62':p.name==='Goblin'?'#647f48':p.name==='Wolf'?'#7f7161':'#b4aa99';
-    if(p.boss){x.fillRect(-30,-23,60,55);x.fillStyle='#272032';x.fillRect(-38,-8,76,35);x.fillStyle='#8d7890';x.fillRect(-22,-35,44,18);x.fillStyle='#f05c63';x.fillRect(-18,-14,8,6);x.fillRect(10,-14,8,6);x.fillStyle='#aaa09b';x.fillRect(27,-25,8,49)}
-    else if(p===state.player){x.fillStyle='#34221b';x.fillRect(-13,-31,26,9);x.fillStyle='#c98f6c';x.fillRect(-9,-26,18,16);x.fillStyle='#2b2022';x.fillRect(-14,-10,28,7);x.fillStyle=a.chest;x.fillRect(-18,-5,36,26);x.fillStyle='#d8ad81';x.fillRect(-24,-4,7,20);x.fillRect(17,-4,7,20);x.fillStyle='#5c2630';x.fillRect(-22,8,6,22);x.fillStyle='#27201e';x.fillRect(-18,15,36,5);x.fillStyle=a.legs;x.fillRect(-14,21,12,17);x.fillRect(2,21,12,17);if(a.head!=='none'){x.fillStyle=a.head;x.fillRect(-12,-31,24,12);x.fillStyle='#e1e4d5';x.fillRect(-5,-25,10,3)}if(a.main!=='none'){x.strokeStyle=a.main;x.lineWidth=6;x.beginPath();x.moveTo(20,6);x.lineTo(38,-18);x.stroke()}if(a.boots!=='none'){x.fillStyle=a.boots;x.fillRect(-16,36,14,5);x.fillRect(2,36,14,5)}}
-    else if(p.name==='Wolf'){x.fillStyle='#756554';x.fillRect(-19,-5,38,19);x.fillRect(-25,7,9,14);x.fillRect(14,7,9,14);x.fillStyle='#c8b083';x.fillRect(12,-14,17,15);x.fillStyle='#161615';x.fillRect(22,-8,4,3)}
-    else if(p.name==='Goblin'){x.fillStyle='#63804c';x.fillRect(-13,-16,26,32);x.fillStyle='#8cac66';x.fillRect(-20,-13,40,10);x.fillStyle='#d9c678';x.fillRect(-7,-21,14,9);x.fillStyle='#efb55c';x.fillRect(-5,-17,3,3);x.fillRect(3,-17,3,3);x.fillStyle='#3b3026';x.fillRect(-17,15,34,7)}
-    else {x.fillRect(-14,-16,28,32);x.fillStyle='#2a2928';x.fillRect(-18,14,36,8);x.fillStyle='#e4d39c';x.fillRect(-8,-23,16,10);x.fillStyle='#5a4a3a';x.fillRect(-19,-2,5,20)}x.restore();}
-  function armorColor(){let q=k=>state.equipment[k]?items[state.equipment[k]].rarity==='epic'?'#3c294d':items[state.equipment[k]].rarity==='rare'?'#899aa2':'#6c4d35':'none';return {head:q('head'),chest:q('chest')==='none'?'#5c4234':q('chest'),legs:q('legs')==='none'?'#5c4234':q('legs'),boots:q('boots'),main:state.equipment.main?(items[state.equipment.main].name.includes('Katana')?'#9b629a':'#c6c9b8'):'none'}}
-  function draw(){drawBg();x.save();let kick=state.shake?Math.sin(performance.now()*.12)*state.shake:0;state.shake=Math.max(0,state.shake-.35);x.translate(kick,kick);x.scale(scale,scale);let r=rooms[state.room];if(r.chest&&!state.chest){x.fillStyle='#342416';x.fillRect(r.chest[0]-16,r.chest[1]-12,32,24);x.fillStyle='#93652e';x.fillRect(r.chest[0]-14,r.chest[1]-10,28,20);x.fillStyle='#e7bd60';x.fillRect(r.chest[0]-14,r.chest[1]-2,28,4);x.fillStyle='#f8da82';x.fillRect(r.chest[0]-3,r.chest[1]+2,6,7)}state.bodies.forEach(b=>sprite(b));enemies.filter(e=>!e.dead).forEach(sprite);sprite(state.player);if(enemies.some(e=>e.boss&&!e.dead)){let e=enemies.find(e=>e.boss);x.fillStyle='#130f16';x.fillRect(280,19,400,20);x.fillStyle='#7e3149';x.fillRect(284,23,392*e.hp/e.max,12);x.fillStyle='#f7e6c4';x.font='bold 12px Courier New';x.textAlign='center';x.fillText('◆ CAVE GUARDIAN ◆',480,16)}x.restore();requestAnimationFrame(draw)}
-  function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-  function update(){if(state.playing&&!state.player.dead){let p=state.player,dx=(keys.d?1:0)-(keys.a?1:0),dy=(keys.s?1:0)-(keys.w?1:0),speed=stat('speed')*(p.dodge>0?2.4:1);if(dx||dy){let l=Math.hypot(dx,dy);p.x+=dx/l*speed;p.y+=dy/l*speed;p.dir=Math.atan2(dy,dx)} p.x=Math.max(30,Math.min(W/scale-30,p.x));p.y=Math.max(55,Math.min(H/scale-35,p.y));p.atk=Math.max(0,p.atk-1);p.dodge=Math.max(0,p.dodge-1); enemies.forEach(e=>{if(e.dead)return;let d=dist(p,e);if(d<175){e.x+=(p.x-e.x)/d*.45;e.y+=(p.y-e.y)/d*.45} if(d<35&&p.dodge===0&&Math.random()<.025)damage(e.damage);e.hit=Math.max(0,e.hit-1)}); if(p.x>W/scale-25&&rooms[state.room].exits.right!==undefined)loadRoom(rooms[state.room].exits.right,'left');if(p.x<25&&rooms[state.room].exits.left!==undefined)loadRoom(rooms[state.room].exits.left,'right'); prompt()}requestAnimationFrame(update)}
-  function attack(){let p=state.player;if(!state.playing||p.atk||p.dead)return;p.atk=18;let hit=false;enemies.forEach(e=>{if(!e.dead&&dist(p,e)<72){let dmg=stat('attack')*(Math.random()*100<stat('crit')?1.8:1);e.hp-=dmg;e.hit=7;state.shake=5;hit=true;if(e.hp<=0)kill(e)}});if(hit)toast('Steel finds its mark.');}
-  function kill(e){e.dead=true;state.bodies.push({...e,dead:true});state.gold+=e.boss?250:Math.floor(4+Math.random()*9);gain(e.boss?220:25);if(e.name==='Goblin'){state.kills++;$('#questProgress').textContent=`Defeat goblins: ${Math.min(5,state.kills)} / 5`;if(state.kills===5){state.gold+=100;gain(100);toast('Quest complete: Goblin Problem +100 gold')}}save();}
-  function gain(n){state.xp+=n;while(state.xp>=100){state.xp-=100;state.level++;state.player.hp=stat('hp');toast('LEVEL UP! Level '+state.level)}$('#level').textContent=state.level;$('#xp').textContent=state.xp;}
-  function damage(n){let p=state.player;state.shake=7;p.hp-=Math.max(1,n-stat('def')*.25);if(p.hp<=0){p.hp=0;p.dead=true;$('#death').classList.add('show')}renderHud()}
-  function nearest(){let p=state.player,b=state.bodies.find(b=>dist(p,b)<55);if(b)return ['body',b];let ch=rooms[state.room].chest;if(ch&&!state.chest&&Math.hypot(p.x-ch[0],p.y-ch[1])<55)return ['chest',ch];return null}
-  function interact(){let n=nearest();if(n?.[0]==='body'){state.bodies=state.bodies.filter(b=>b!==n[1]);let drops=['potion','leatherChest','legs','gloves','shield','ravenSeal','sword'];let drop=n[1].boss?'katana':drops[Math.floor(Math.random()*drops.length)];state.inventory.push(drop);toast('Found: '+items[drop].name);save()}else if(n?.[0]==='chest'){state.chest=true;state.gold+=45;state.inventory.push(state.room===0?'sword':state.room===1?'boots':'royalSword');toast('Chest opened: gold and gear');save()}else attack();}
-  function prompt(){let n=nearest(),el=$('#prompt');el.textContent=n?(n[0]==='body'?'[LMB] Search Body':'[E] Open Chest'):'';el.style.opacity=n?1:0;renderHud()}
-  function renderHud(){$('#hpText').textContent=`HP ${Math.ceil(state.player.hp)} / ${Math.ceil(stat('hp'))}`;$('#health i').style.width=(state.player.hp/stat('hp')*100)+'%';$('#gold span').textContent=state.gold;$('#attackStat').textContent=stat('attack');$('#defStat').textContent=stat('def');$('#critStat').textContent=stat('crit')+'%';}
-  function itemHtml(id){let i=items[id],bonus=[i.attack&&'ATK +'+i.attack,i.def&&'DEF +'+i.def,i.hp&&'HP +'+i.hp,i.speed&&'SPD +'+i.speed,i.crit&&'CRIT +'+i.crit+'%',i.heal&&'RESTORE '+i.heal].filter(Boolean).join(' · ');return `<div class="item ${i.rarity}" data-item="${id}" title="${i.desc}"><b>${i.name}</b><br><small>${i.rarity.toUpperCase()} · ${bonus}</small><br><small>${i.desc}</small></div>`}
-  function modal(type){let h='';if(type==='character'){const display={Attack:'attack',Defense:'def',Speed:'speed'};h=`<h2>Character — Warden</h2><div class="columns"><div>${['Health','Attack','Defense','Speed','Critical Chance','Gold'].map(k=>`<div class="stat"><span>${k}</span><b>${k==='Health'?Math.ceil(state.player.hp)+' / '+stat('hp'):k==='Critical Chance'?stat('crit')+'%':k==='Gold'?state.gold:stat(display[k])}</b></div>`).join('')}</div><div><div class="caption">Equipped gear</div><div class="equipment">${[['head','Head'],['chest','Chest'],['legs','Legs'],['boots','Boots'],['gloves','Gloves'],['main','Main Hand'],['off','Off Hand'],['accessory1','Accessory I'],['accessory2','Accessory II']].map(([s,n])=>`<div class="slot"><small>${n}</small>${state.equipment[s]?items[state.equipment[s]].name:'— Empty —'}</div>`).join('')}</div></div></div>`}else if(type==='inventory'){h=`<h2>Inventory</h2><p class="caption">Click equipment to equip it. Potions are consumed immediately. Hover items for their lore.</p><div class="equipment">${state.inventory.length?state.inventory.map(itemHtml).join(''):'<p>Your pack is empty. Search fallen enemies and chests.</p>'}</div>`}else if(type==='map'){h=`<h2>World Map</h2><div style="display:flex;gap:14px;align-items:center;justify-content:center;padding:30px">${rooms.map((r,i)=>`<div class="slot" style="width:150px;text-align:center;${i===state.room?'border-color:#e2b96d':''}">${i<=state.room?'◆ '+r.name:'? Uncharted'}</div>`).join('<span style="color:#e2b96d">→</span>')}</div><p style="text-align:center;color:#9da69d">Travel through paths at the edge of each room to uncover Rodon.</p>`}else h=`<h2>How to Survive</h2><p><b>WASD</b> moves your muscular warden. <b>Left click</b> attacks or searches a body. <b>E</b> opens a chest. Right click dodges.</p><p>Fallen enemies remain to be searched. Equip found armor and weapons in the Inventory: every piece changes your displayed warrior and improves real combat stats.</p><p>Defeat the Cave Guardian in the east to claim the Shadow Katana.</p>`;$('#modalContent').innerHTML=h;$('#modal').classList.add('open')}
-  document.addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key==='Escape')$('#modal').classList.remove('open');if(e.key.toLowerCase()==='e')interact()});document.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);c.addEventListener('mousedown',e=>{if(e.button===0)interact();if(e.button===2){state.player.dodge=18;e.preventDefault()}});c.addEventListener('contextmenu',e=>e.preventDefault());
-  document.addEventListener('click',e=>{let o=e.target.closest('[data-open]');if(o)modal(o.dataset.open);if(e.target.matches('.close')||e.target===$('#modal'))$('#modal').classList.remove('open');let it=e.target.closest('[data-item]');if(it){let id=it.dataset.item,i=items[id];if(i.heal){state.player.hp=Math.min(stat('hp'),state.player.hp+i.heal);state.inventory=state.inventory.filter(q=>q!==id);toast('Potion consumed')}else{let old=state.equipment[i.slot];state.equipment[i.slot]=id;state.inventory=state.inventory.filter(q=>q!==id);if(old)state.inventory.push(old);toast(i.name+' equipped')}save();modal('inventory')}});
-  $('#newGame').onclick=()=>{localStorage.removeItem('rodon');Object.assign(state,{gold:45,xp:0,level:1,kills:0,inventory:['rustySword','potion'],equipment:{head:null,chest:null,legs:null,boots:null,gloves:null,main:null,off:null,accessory1:null,accessory2:null}});state.player={x:440,y:350,hp:100,max:100,dir:0,atk:0,dodge:0,dead:false};loadRoom(0);start()};$('#continue').onclick=()=>{restore();start()};function start(){$('#menu').classList.add('hidden');state.playing=true;renderHud()}$('#respawn').onclick=()=>{state.player.dead=false;state.player.hp=stat('hp');$('#death').classList.remove('show');loadRoom(state.room)};$('#deathMenu').onclick=()=>{state.playing=false;$('#death').classList.remove('show');$('#menu').classList.remove('hidden')};
-  loadRoom(0);draw();update();
-})();
-</script></body></html>
+const c=document.querySelector("#game"),g=c.getContext("2d"),$=q=>document.querySelector(q);
+let W,H,S=1,keys={},play=false,coins=45,xp=0,level=1;
+let hero={x:470,y:340,hp:100,max:100,attack:0}, enemies=[],chest={x:175,y:185,open:false};
+
+function resize(){W=innerWidth;H=innerHeight;c.width=W*devicePixelRatio;c.height=H*devicePixelRatio;g.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);S=Math.min(W/960,H/600)}
+addEventListener("resize",resize);resize();
+
+function spawn(){
+  hero={x:470,y:340,hp:100,max:100,attack:0};
+  enemies=[
+    {name:"Goblin",x:680,y:220,hp:38,max:38,damage:9,color:"#668b4c"},
+    {name:"Wolf",x:290,y:450,hp:30,max:30,damage:7,color:"#7d7060"},
+    {name:"Goblin",x:740,y:475,hp:38,max:38,damage:9,color:"#668b4c"}
+  ];
+  chest.open=false;
+}
+function rect(x,y,w,h,col){g.fillStyle=col;g.fillRect(x,y,w,h)}
+function background(){
+  rect(0,0,W,H,"#10201c");g.save();g.scale(S,S);let w=W/S,h=H/S;
+  for(let x=0;x<w;x+=32)for(let y=0;y<h;y++){rect(x,y,31,31,"#25382a");rect(x,y,31,2,"#111913")}
+  rect(0,285,w,65,"#655845");rect(0,306,w,5,"#887759");
+  for(let i=0;i<19;i++){let x=(i*79+25)%w,y=(i*139+24)%h;rect(x-5,y,10,58,"#402d23");rect(x-29,y-34,58,40,"#18281d");rect(x-22,y-49,44,30,"#29442f");rect(x-14,y-58,28,16,"#425c36")}
+  for(let i=0;i<4;i++){let x=120+i*230,y=i%2?100:510;rect(x-3,y,6,24,"#351e17");rect(x-6,y-11,12,13,"#e47b37");rect(x-2,y-7,4,6,"#fff0ae")}
+  g.globalAlpha=.15;for(let i=0;i<6;i++)rect((i*180+performance.now()/110)%w,60+i*86,150,18,"#cfdbd3");g.restore();
+  let v=g.createRadialGradient(W/2,H/2,100,W/2,H/2,Math.max(W,H)*.7);v.addColorStop(0,"#0000");v.addColorStop(1,"#000b");g.fillStyle=v;g.fillRect(0,0,W,H);
+}
+function actor(o,isHero=false){
+  g.save();g.scale(S,S);g.translate(o.x,o.y);
+  g.fillStyle="#05060999";g.beginPath();g.ellipse(0,35,19,6,0,0,7);g.fill();
+  if(isHero){
+    rect(-13,-31,26,9,"#38241c");rect(-9,-26,18,16,"#cb9270");rect(-18,-5,36,26,"#768891");
+    rect(-24,-4,7,20,"#d7ab80");rect(17,-4,7,20,"#d7ab80");rect(-18,15,36,5,"#29201e");
+    rect(-14,21,12,17,"#596871");rect(2,21,12,17,"#596871");g.strokeStyle="#d4d7c9";g.lineWidth=6;g.beginPath();g.moveTo(20,6);g.lineTo(38,-18);g.stroke();
+  }else if(o.name==="Wolf"){rect(-19,-5,38,19,"#766654");rect(-25,7,9,14,"#766654");rect(14,7,9,14,"#766654");rect(12,-14,17,15,"#c7af80")}
+  else{rect(-13,-16,26,32,o.color);rect(-20,-13,40,10,"#8baa67");rect(-7,-21,14,9,"#d8c474");rect(-17,15,34,7,"#413327")}
+  g.restore();
+}
+function draw(){
+  background();g.save();g.scale(S,S);
+  if(!chest.open){rect(chest.x-16,chest.y-12,32,24,"#3a2616");rect(chest.x-14,chest.y-10,28,20,"#9a672e");rect(chest.x-3,chest.y+2,6,7,"#f6d27a")}
+  enemies.filter(e=>e.hp>0).forEach(e=>actor(e));actor(hero,true);g.restore();requestAnimationFrame(draw);
+}
+function update(){
+  if(play){
+    let dx=(keys.d?1:0)-(keys.a?1:0),dy=(keys.s?1:0)-(keys.w?1:0),l=Math.hypot(dx,dy)||1;
+    hero.x=Math.max(35,Math.min(W/S-35,hero.x+dx/l*3));hero.y=Math.max(45,Math.min(H/S-40,hero.y+dy/l*3));hero.attack=Math.max(0,hero.attack-1);
+    enemies.forEach(e=>{if(e.hp<=0)return;let d=Math.hypot(hero.x-e.x,hero.y-e.y);if(d<180){e.x+=(hero.x-e.x)/d*.45;e.y+=(hero.y-e.y)/d*.45}if(d<35&&Math.random()<.018)hurt(e.damage)});
+    render();
+  }requestAnimationFrame(update);
+}
+function strike(){
+  if(!play||hero.attack)return;hero.attack=18;
+  enemies.forEach(e=>{if(e.hp>0&&Math.hypot(hero.x-e.x,hero.y-e.y)<75){e.hp-=15;if(e.hp<=0){coins+=8;xp+=25;if(xp>=100){xp=0;level++;hero.max+=15;hero.hp=hero.max}}}});
+}
+function hurt(n){hero.hp-=n;if(hero.hp<=0){hero.hp=0;play=false;$("#dead").style.display="flex"}}
+function interact(){if(!chest.open&&Math.hypot(hero.x-chest.x,hero.y-chest.y)<60){chest.open=true;coins+=45}}
+function render(){$("#hptext").textContent=`HP ${Math.ceil(hero.hp)} / ${hero.max}`;$("#hp i").style.width=(hero.hp/hero.max*100)+"%";$("#coins").textContent=coins;$("#xp").textContent=xp;$("#lv").textContent=level}
+addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=1;if(e.key.toLowerCase()==="e")interact()});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=0);c.onclick=strike;
+$("#start").onclick=()=>{spawn();play=true;$("#menu").style.display="none"};$("#again").onclick=()=>{spawn();play=true;$("#dead").style.display="none"};
+spawn();draw();update();
+</script>
+</body>
 </html>
