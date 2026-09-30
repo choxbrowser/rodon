@@ -1,94 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Rodon</title>
 <style>
-  *{box-sizing:border-box} body{margin:0;overflow:hidden;background:#090d10;color:#f1e5c7;font-family:monospace}
-  canvas{width:100vw;height:100vh;display:block;image-rendering:pixelated}
-  #hud{position:fixed;inset:0;pointer-events:none;text-shadow:2px 2px #000}
-  .panel{background:#111a1de8;border:2px solid #746444;box-shadow:0 0 0 3px #080b0c;padding:10px}
-  #stats{position:absolute;top:20px;left:20px;width:260px} #hp{height:12px;background:#3c1e24;border:1px solid #000;margin:6px 0}#hp i{display:block;height:100%;background:#ca4750;width:100%}
-  #gold{position:absolute;right:25px;top:25px;color:#f0c765;font-size:17px}#place{position:absolute;top:30px;width:100%;text-align:center;letter-spacing:3px}
-  #help{position:absolute;bottom:18px;left:20px;color:#c1c9bf;font-size:12px}#note{position:absolute;bottom:78px;width:100%;text-align:center;color:#f3d38b}
-  #menu,#dead{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:#05080bd9;z-index:2}#dead{display:none;background:#24080ad9}
-  .box{width:min(400px,90vw);padding:32px;text-align:center;background:#121a1c;border:2px solid #8d7546;box-shadow:0 0 60px #000}
-  h1{font-size:60px;letter-spacing:10px;margin:0;color:#d9bd75}button{display:block;width:100%;padding:12px;margin-top:10px;background:#283334;color:#f1e1bb;border:1px solid #93805b;font:inherit;cursor:pointer;letter-spacing:2px}button:hover{background:#3f4b42}
+*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#080d0c;color:#f1dfb4;font-family:monospace}canvas{display:block;width:100vw;height:100vh;image-rendering:pixelated}#ui{position:fixed;inset:0;pointer-events:none}#hp{position:absolute;top:20px;left:20px;width:250px;padding:10px;background:#101a18e8;border:2px solid #8b7043}#bar{height:12px;background:#401b20;margin-top:6px}#fill{height:100%;width:100%;background:#d04c50}#title{position:absolute;top:24px;width:100%;text-align:center;letter-spacing:4px}#tip{position:absolute;bottom:20px;width:100%;text-align:center}#menu{position:fixed;inset:0;display:grid;place-items:center;background:#050807d9}.box{padding:35px;text-align:center;border:2px solid #a78a52;background:#111b19;box-shadow:0 0 60px #000}h1{font-size:56px;letter-spacing:10px;margin:0;color:#e0bd70}button{padding:12px 50px;background:#293936;color:#f5e5bd;border:1px solid #a78a52;font:inherit;cursor:pointer}
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
-<div id="hud">
-  <div id="stats" class="panel">WARDEN OF RODON · LV <b id="lv">1</b><div id="hp"><i></i></div><span id="hptext">HP 100 / 100</span><span style="float:right">XP <b id="xp">0</b>/100</span></div>
-  <div id="place">THE WHISPERING WARD</div><div id="gold">✦ <span id="coins">45</span> GOLD</div>
-  <div id="note">WASD move · Click to attack · E near a chest</div>
-  <div id="help">Defeat the creatures. Search the darkness.</div>
-</div>
-<div id="menu"><div class="box"><h1>RODON</h1><p>Explore the darkness. Find powerful gear.</p><button id="start">NEW GAME</button></div></div>
-<div id="dead"><div class="box"><h1 style="color:#d64c4c;font-size:38px">YOU DIED</h1><button id="again">RETURN TO CHECKPOINT</button></div></div>
-
+<div id="ui"><div id="hp">WARDEN OF RODON<br><div id="bar"><div id="fill"></div></div><span id="text">HP 100 / 100</span></div><div id="title">THE WHISPERING WARD</div><div id="tip">WASD: move · Click: attack · Defeat the goblins</div></div>
+<div id="menu"><div class="box"><h1>RODON</h1><p>Explore the darkness.</p><button id="start">NEW GAME</button></div></div>
 <script>
-const c=document.querySelector("#game"),g=c.getContext("2d"),$=q=>document.querySelector(q);
-let W,H,S=1,keys={},play=false,coins=45,xp=0,level=1;
-let hero={x:470,y:340,hp:100,max:100,attack:0}, enemies=[],chest={x:175,y:185,open:false};
-
-function resize(){W=innerWidth;H=innerHeight;c.width=W*devicePixelRatio;c.height=H*devicePixelRatio;g.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);S=Math.min(W/960,H/600)}
-addEventListener("resize",resize);resize();
-
-function spawn(){
-  hero={x:470,y:340,hp:100,max:100,attack:0};
-  enemies=[
-    {name:"Goblin",x:680,y:220,hp:38,max:38,damage:9,color:"#668b4c"},
-    {name:"Wolf",x:290,y:450,hp:30,max:30,damage:7,color:"#7d7060"},
-    {name:"Goblin",x:740,y:475,hp:38,max:38,damage:9,color:"#668b4c"}
-  ];
-  chest.open=false;
+const c=document.querySelector("#game"),x=c.getContext("2d"),keys={},hero={x:480,y:330,hp:100},enemies=[{x:700,y:250,hp:40},{x:270,y:440,hp:40},{x:720,y:470,hp:40}];let W,H,on=false;
+function size(){W=c.width=innerWidth;H=c.height=innerHeight}addEventListener("resize",size);size();
+function r(a,b,w,h,z){x.fillStyle=z;x.fillRect(a,b,w,h)}
+function world(){
+ r(0,0,W,H,"#10251e");for(let a=0;a<W;a+=32)for(let b=0;b<H;b+=32){r(a,b,31,31,"#263d2c");r(a,b,31,2,"#152218")}
+ r(0,H/2-30,W,64,"#75654b");for(let i=0;i<18;i++){let a=(i*91)%W,b=(i*143)%H;r(a-5,b,10,55,"#422d22");r(a-28,b-34,56,42,"#193022");r(a-18,b-52,36,25,"#345736")}
 }
-function rect(x,y,w,h,col){g.fillStyle=col;g.fillRect(x,y,w,h)}
-function background(){
-  rect(0,0,W,H,"#10201c");g.save();g.scale(S,S);let w=W/S,h=H/S;
-  for(let x=0;x<w;x+=32)for(let y=0;y<h;y++){rect(x,y,31,31,"#25382a");rect(x,y,31,2,"#111913")}
-  rect(0,285,w,65,"#655845");rect(0,306,w,5,"#887759");
-  for(let i=0;i<19;i++){let x=(i*79+25)%w,y=(i*139+24)%h;rect(x-5,y,10,58,"#402d23");rect(x-29,y-34,58,40,"#18281d");rect(x-22,y-49,44,30,"#29442f");rect(x-14,y-58,28,16,"#425c36")}
-  for(let i=0;i<4;i++){let x=120+i*230,y=i%2?100:510;rect(x-3,y,6,24,"#351e17");rect(x-6,y-11,12,13,"#e47b37");rect(x-2,y-7,4,6,"#fff0ae")}
-  g.globalAlpha=.15;for(let i=0;i<6;i++)rect((i*180+performance.now()/110)%w,60+i*86,150,18,"#cfdbd3");g.restore();
-  let v=g.createRadialGradient(W/2,H/2,100,W/2,H/2,Math.max(W,H)*.7);v.addColorStop(0,"#0000");v.addColorStop(1,"#000b");g.fillStyle=v;g.fillRect(0,0,W,H);
-}
-function actor(o,isHero=false){
-  g.save();g.scale(S,S);g.translate(o.x,o.y);
-  g.fillStyle="#05060999";g.beginPath();g.ellipse(0,35,19,6,0,0,7);g.fill();
-  if(isHero){
-    rect(-13,-31,26,9,"#38241c");rect(-9,-26,18,16,"#cb9270");rect(-18,-5,36,26,"#768891");
-    rect(-24,-4,7,20,"#d7ab80");rect(17,-4,7,20,"#d7ab80");rect(-18,15,36,5,"#29201e");
-    rect(-14,21,12,17,"#596871");rect(2,21,12,17,"#596871");g.strokeStyle="#d4d7c9";g.lineWidth=6;g.beginPath();g.moveTo(20,6);g.lineTo(38,-18);g.stroke();
-  }else if(o.name==="Wolf"){rect(-19,-5,38,19,"#766654");rect(-25,7,9,14,"#766654");rect(14,7,9,14,"#766654");rect(12,-14,17,15,"#c7af80")}
-  else{rect(-13,-16,26,32,o.color);rect(-20,-13,40,10,"#8baa67");rect(-7,-21,14,9,"#d8c474");rect(-17,15,34,7,"#413327")}
-  g.restore();
-}
-function draw(){
-  background();g.save();g.scale(S,S);
-  if(!chest.open){rect(chest.x-16,chest.y-12,32,24,"#3a2616");rect(chest.x-14,chest.y-10,28,20,"#9a672e");rect(chest.x-3,chest.y+2,6,7,"#f6d27a")}
-  enemies.filter(e=>e.hp>0).forEach(e=>actor(e));actor(hero,true);g.restore();requestAnimationFrame(draw);
-}
-function update(){
-  if(play){
-    let dx=(keys.d?1:0)-(keys.a?1:0),dy=(keys.s?1:0)-(keys.w?1:0),l=Math.hypot(dx,dy)||1;
-    hero.x=Math.max(35,Math.min(W/S-35,hero.x+dx/l*3));hero.y=Math.max(45,Math.min(H/S-40,hero.y+dy/l*3));hero.attack=Math.max(0,hero.attack-1);
-    enemies.forEach(e=>{if(e.hp<=0)return;let d=Math.hypot(hero.x-e.x,hero.y-e.y);if(d<180){e.x+=(hero.x-e.x)/d*.45;e.y+=(hero.y-e.y)/d*.45}if(d<35&&Math.random()<.018)hurt(e.damage)});
-    render();
-  }requestAnimationFrame(update);
-}
-function strike(){
-  if(!play||hero.attack)return;hero.attack=18;
-  enemies.forEach(e=>{if(e.hp>0&&Math.hypot(hero.x-e.x,hero.y-e.y)<75){e.hp-=15;if(e.hp<=0){coins+=8;xp+=25;if(xp>=100){xp=0;level++;hero.max+=15;hero.hp=hero.max}}}});
-}
-function hurt(n){hero.hp-=n;if(hero.hp<=0){hero.hp=0;play=false;$("#dead").style.display="flex"}}
-function interact(){if(!chest.open&&Math.hypot(hero.x-chest.x,hero.y-chest.y)<60){chest.open=true;coins+=45}}
-function render(){$("#hptext").textContent=`HP ${Math.ceil(hero.hp)} / ${hero.max}`;$("#hp i").style.width=(hero.hp/hero.max*100)+"%";$("#coins").textContent=coins;$("#xp").textContent=xp;$("#lv").textContent=level}
-addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=1;if(e.key.toLowerCase()==="e")interact()});addEventListener("keyup",e=>keys[e.key.toLowerCase()]=0);c.onclick=strike;
-$("#start").onclick=()=>{spawn();play=true;$("#menu").style.display="none"};$("#again").onclick=()=>{spawn();play=true;$("#dead").style.display="none"};
-spawn();draw();update();
+function sprite(o,hero=false){
+ r(o.x-15,o.y+29,30,6,"#060807");if(hero){r(o.x-8,o.y-25,16,15,"#cb9270");r(o.x-13,o.y-31,26,8,"#3c271d");r(o.x-18,o.y-5,36,26,"#70848a");r(o.x-14,o.y+21,12,17,"#596b73");r(o.x+2,o.y+21,12,17,"#596b73");r(o.x+18,o.y-10,5,32,"#d9d9c9")}else{r(o.x-13,o.y-16,26,32,"#668d4e");r(o.x-20,o.y-13,40,10,"#89aa65");r(o.x-7,o.y-22,14,10,"#d8c575");r(o.x-5,o.y-18,3,3,"#f1bc59");r(o.x+3,o.y-18,3,3,"#f1bc59")}}
+function draw(){world();enemies.filter(e=>e.hp>0).forEach(e=>sprite(e));sprite(hero,true);requestAnimationFrame(draw)}
+function loop(){if(on){let a=(keys.d?1:0)-(keys.a?1:0),b=(keys.s?1:0)-(keys.w?1:0);hero.x+=a*3;hero.y+=b*3;hero.x=Math.max(25,Math.min(W-25,hero.x));hero.y=Math.max(40,Math.min(H-40,hero.y));enemies.forEach(e=>{if(e.hp>0&&Math.hypot(hero.x-e.x,hero.y-e.y)<35&&Math.random()<.02)hero.hp-=6});document.querySelector("#fill").style.width=Math.max(0,hero.hp)+"%";document.querySelector("#text").textContent="HP "+Math.max(0,hero.hp)+" / 100"}requestAnimationFrame(loop)}
+addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+c.onclick=()=>enemies.forEach(e=>{if(e.hp>0&&Math.hypot(hero.x-e.x,hero.y-e.y)<80)e.hp-=20});
+document.querySelector("#start").onclick=()=>{on=true;document.querySelector("#menu").style.display="none"};draw();loop();
 </script>
 </body>
 </html>
