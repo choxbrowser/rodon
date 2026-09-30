@@ -6,77 +6,384 @@
 <title>RODON — 2D Adventure RPG</title>
 <style>
 :root{--bg:#050509;--panel:#090a10;--panel2:#11121a;--line:#e7e7e7;--text:#f6f6f6;--muted:#a7a7b0;--accent:#ffffff;--good:#b7ffb1;--danger:#ff7777;}
-*{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07090d;color:var(--text);font-family:'Courier New',Courier,monospace}
-button{font:inherit;color:inherit;border:2px solid var(--line);background:#090a10;padding:9px 12px;border-radius:2px;cursor:pointer}button:hover{filter:brightness(1.12)}button:active{transform:translateY(1px)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07090d;color:var(--text);font-family:'Courier New',Courier,monospace}
+button{font:inherit;color:inherit;border:2px solid var(--line);background:#090a10;padding:9px 12px;border-radius:2px;cursor:pointer}
+button:hover{filter:brightness(1.12)}
+button:active{transform:translateY(1px)}
 button:disabled{cursor:not-allowed;opacity:.55}
 #wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#050509}
 canvas{image-rendering:pixelated;image-rendering:crisp-edges;max-width:100vw;max-height:100vh;box-shadow:0 25px 70px rgba(0,0,0,.75);border:3px solid #17171f}
-.overlay{position:absolute;inset:0;pointer-events:none}.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(4,6,10,.75);backdrop-filter:none;pointer-events:auto}.screen.show{display:flex}
+.overlay{position:absolute;inset:0;pointer-events:none}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(4,6,10,.75);backdrop-filter:none;pointer-events:auto}
+.screen.show{display:flex}
 .card{width:min(930px,92vw);max-height:92vh;overflow:auto;background:#07080d;border:2px solid #f0f0f0;border-radius:2px;box-shadow:0 20px 80px rgba(0,0,0,.6);padding:24px}
-.title{font-size:54px;letter-spacing:.18em;font-weight:900;text-align:center;margin:12px 0 3px;color:#fff}.subtitle{text-align:center;color:#a9b5c8;margin:0 0 24px}
-.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:420px;margin:0 auto}.menu-grid button{padding:13px;font-weight:700}
-.small{font-size:12px;color:var(--muted)}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.section{background:#101620;border:1px solid #2a3445;border-radius:12px;padding:14px}.section h3{margin:0 0 10px;font-size:15px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}.stat{display:flex;justify-content:space-between;padding:7px 8px;background:#171e2a;border-radius:7px;color:#dbe4f1}.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.slot{min-height:66px;background:#141b27;border:1px dashed #3a465b;border-radius:8px;padding:7px}.slot .name{font-weight:700;font-size:12px}.rarity-common{color:#d8dee9}.rarity-uncommon{color:#67d487}.rarity-rare{color:#56a4ff}.rarity-epic{color:#bb73ff}.rarity-legendary{color:#ffbd55}.rarity-mythic{color:#ff5d91}.items{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.item{background:#151d29;border:1px solid #2d394d;border-radius:8px;padding:7px;min-height:74px;cursor:pointer}.item:hover{border-color:#7e8da8}.item .nm{font-size:11px;font-weight:800;line-height:1.2}.item .meta{font-size:10px;color:#9facbd;margin-top:4px}.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button.active{background:#263247;border-color:#667793}.close{position:sticky;top:0;float:right}.hint{margin-top:16px;padding:10px 12px;border-radius:8px;background:#161d29;border:1px solid #2a3547;color:#cbd5e4;font-size:13px}
+.title{font-size:54px;letter-spacing:.18em;font-weight:900;text-align:center;margin:12px 0 3px;color:#fff}
+.subtitle{text-align:center;color:#a9b5c8;margin:0 0 24px}
+.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:420px;margin:0 auto}
+.menu-grid button{padding:13px;font-weight:700}
+.small{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.section{background:#101620;border:1px solid #2a3445;border-radius:12px;padding:14px}
+.section h3{margin:0 0 10px;font-size:15px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.stat{display:flex;justify-content:space-between;padding:7px 8px;background:#171e2a;border-radius:7px;color:#dbe4f1}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{min-height:66px;background:#141b27;border:1px dashed #3a465b;border-radius:8px;padding:7px}
+.slot .name{font-weight:700;font-size:12px}
+.rarity-common{color:#d8dee9}
+.rarity-uncommon{color:#67d487}
+.rarity-rare{color:#56a4ff}
+.rarity-epic{color:#bb73ff}
+.rarity-legendary{color:#ffbd55}
+.rarity-mythic{color:#ff5d91}
+.items{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.item{background:#151d29;border:1px solid #2d394d;border-radius:8px;padding:7px;min-height:74px;cursor:pointer}
+.item:hover{border-color:#7e8da8}
+.item .nm{font-size:11px;font-weight:800;line-height:1.2}
+.item .meta{font-size:10px;color:#9facbd;margin-top:4px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button.active{background:#263247;border-color:#667793}
+.close{position:sticky;top:0;float:right}
+.hint{margin-top:16px;padding:10px 12px;border-radius:8px;background:#161d29;border:1px solid #2a3547;color:#cbd5e4;font-size:13px}
 #toast{position:absolute;left:50%;top:22px;transform:translateX(-50%);padding:10px 14px;background:rgba(15,20,28,.94);border:1px solid #3d4a60;border-radius:999px;color:#f7f0db;opacity:0;transition:opacity .2s;pointer-events:none;font-weight:700;z-index:5}
 #help{position:absolute;right:14px;bottom:14px;padding:8px 10px;background:rgba(10,13,18,.72);border:1px solid #263144;border-radius:8px;color:#b6c1d1;font-size:11px;pointer-events:none}
 #wrap:after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.018) 0,rgba(255,255,255,.018) 1px,transparent 1px,transparent 4px);mix-blend-mode:screen;opacity:.32}
-.update-list{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto;padding-right:4px}.update-entry{background:#121824;border:1px solid #2b374b;border-left:4px solid #e8e8ee;border-radius:8px;padding:12px}.update-entry.latest{border-left-color:#f4d083}.update-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.update-version{font-weight:900;letter-spacing:.06em}.update-date{font-size:11px;color:#909aaa}.update-title{margin-top:4px;font-weight:800}.update-body{margin-top:6px;color:#c0c8d5;font-size:12px;line-height:1.5}.update-badge{font-size:9px;padding:3px 6px;border:1px solid #59677f;border-radius:999px;color:#dfe7f4}
+.update-list{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto;padding-right:4px}
+.update-entry{background:#121824;border:1px solid #2b374b;border-left:4px solid #e8e8ee;border-radius:8px;padding:12px}
+.update-entry.latest{border-left-color:#f4d083}
+.update-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.update-version{font-weight:900;letter-spacing:.06em}
+.update-date{font-size:11px;color:#909aaa}
+.update-title{margin-top:4px;font-weight:800}
+.update-body{margin-top:6px;color:#c0c8d5;font-size:12px;line-height:1.5}
+.update-badge{font-size:9px;padding:3px 6px;border:1px solid #59677f;border-radius:999px;color:#dfe7f4}
 #updatesBtn{position:relative}
 .update-dot{position:absolute;top:-6px;right:-6px;width:12px;height:12px;border-radius:50%;background:#7ddcff;border:2px solid #090a10;box-shadow:0 0 9px rgba(125,220,255,.65);display:none;pointer-events:none}
 .loot-note{margin-top:10px;padding:9px 10px;background:#151c27;border:1px solid #2c3748;border-radius:8px;color:#b9c3d1;font-size:11px}
-.item.rarity-card-common{border-color:#8a93a3;box-shadow:0 0 0 1px rgba(216,222,233,.08) inset}.item.rarity-card-uncommon{border-color:#4eaf69;box-shadow:0 0 10px rgba(103,212,135,.10)}.item.rarity-card-rare{border-color:#3c82d9;box-shadow:0 0 10px rgba(86,164,255,.12)}.item.rarity-card-epic{border-color:#934fd4;box-shadow:0 0 12px rgba(187,115,255,.14)}.item.rarity-card-legendary{border-color:#d79227;box-shadow:0 0 14px rgba(255,189,85,.16)}.item.rarity-card-mythic{border-color:#d13e73;box-shadow:0 0 16px rgba(255,93,145,.16)}
-.rarity-pill{display:inline-block;margin-top:5px;padding:2px 6px;border-radius:2px;border:1px solid currentColor;font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}.chest-reward-intro{text-align:center;color:#c5cedc;margin:-6px 0 14px}.chest-reward-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.chest-reward-card{background:#101722;border:2px solid #2f3949;padding:14px;min-height:106px}.chest-reward-card .reward-name{font-weight:900;font-size:15px}.chest-reward-card .reward-rarity{margin-top:7px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.chest-reward-card .reward-desc{margin-top:8px;color:#aeb8c7;font-size:11px;line-height:1.4}.chest-reward-card.rarity-common{border-color:#8a93a3;box-shadow:0 0 14px rgba(216,222,233,.08)}.chest-reward-card.rarity-uncommon{border-color:#4eaf69;box-shadow:0 0 14px rgba(103,212,135,.11)}.chest-reward-card.rarity-rare{border-color:#3c82d9;box-shadow:0 0 14px rgba(86,164,255,.12)}.chest-reward-card.rarity-epic{border-color:#934fd4;box-shadow:0 0 16px rgba(187,115,255,.14)}.chest-reward-card.rarity-legendary{border-color:#d79227;box-shadow:0 0 18px rgba(255,189,85,.16)}.chest-reward-card.rarity-mythic{border-color:#d13e73;box-shadow:0 0 18px rgba(255,93,145,.16)}
-.rarity-guide-note{margin:0 0 12px;padding:10px 12px;background:#151c27;border:1px solid #2c3748;border-radius:8px;color:#b9c3d1;font-size:11px;line-height:1.45}.rarity-guide-list{display:flex;flex-direction:column;gap:12px;max-height:62vh;overflow:auto;padding-right:4px}.rarity-group{background:#101722;border:1px solid #293548;border-radius:8px;padding:12px}.rarity-group-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;font-weight:900}.rarity-group-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rarity-entry{background:#151d29;border:1px solid #2d394d;padding:9px;border-radius:6px}.rarity-entry .name{font-weight:800;font-size:11px;line-height:1.3}.rarity-entry .meta{margin-top:4px;font-size:10px;color:#9facbd}.rarity-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;border:1px solid currentColor}
-@media(max-width:720px){.grid{grid-template-columns:1fr}.items{grid-template-columns:repeat(4,1fr)}.slots{grid-template-columns:repeat(2,1fr)}}
+.item.rarity-card-common{border-color:#8a93a3;box-shadow:0 0 0 1px rgba(216,222,233,.08) inset}
+.item.rarity-card-uncommon{border-color:#4eaf69;box-shadow:0 0 10px rgba(103,212,135,.10)}
+.item.rarity-card-rare{border-color:#3c82d9;box-shadow:0 0 10px rgba(86,164,255,.12)}
+.item.rarity-card-epic{border-color:#934fd4;box-shadow:0 0 12px rgba(187,115,255,.14)}
+.item.rarity-card-legendary{border-color:#d79227;box-shadow:0 0 14px rgba(255,189,85,.16)}
+.item.rarity-card-mythic{border-color:#d13e73;box-shadow:0 0 16px rgba(255,93,145,.16)}
+.rarity-pill{display:inline-block;margin-top:5px;padding:2px 6px;border-radius:2px;border:1px solid currentColor;font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.chest-reward-intro{text-align:center;color:#c5cedc;margin:-6px 0 14px}
+.chest-reward-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.chest-reward-card{background:#101722;border:2px solid #2f3949;padding:14px;min-height:106px}
+.chest-reward-card .reward-name{font-weight:900;font-size:15px}
+.chest-reward-card .reward-rarity{margin-top:7px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.chest-reward-card .reward-desc{margin-top:8px;color:#aeb8c7;font-size:11px;line-height:1.4}
+.chest-reward-card.rarity-common{border-color:#8a93a3;box-shadow:0 0 14px rgba(216,222,233,.08)}
+.chest-reward-card.rarity-uncommon{border-color:#4eaf69;box-shadow:0 0 14px rgba(103,212,135,.11)}
+.chest-reward-card.rarity-rare{border-color:#3c82d9;box-shadow:0 0 14px rgba(86,164,255,.12)}
+.chest-reward-card.rarity-epic{border-color:#934fd4;box-shadow:0 0 16px rgba(187,115,255,.14)}
+.chest-reward-card.rarity-legendary{border-color:#d79227;box-shadow:0 0 18px rgba(255,189,85,.16)}
+.chest-reward-card.rarity-mythic{border-color:#d13e73;box-shadow:0 0 18px rgba(255,93,145,.16)}
+.rarity-guide-note{margin:0 0 12px;padding:10px 12px;background:#151c27;border:1px solid #2c3748;border-radius:8px;color:#b9c3d1;font-size:11px;line-height:1.45}
+.rarity-guide-list{display:flex;flex-direction:column;gap:12px;max-height:62vh;overflow:auto;padding-right:4px}
+.rarity-group{background:#101722;border:1px solid #293548;border-radius:8px;padding:12px}
+.rarity-group-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;font-weight:900}
+.rarity-group-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rarity-entry{background:#151d29;border:1px solid #2d394d;padding:9px;border-radius:6px}
+.rarity-entry .name{font-weight:800;font-size:11px;line-height:1.3}
+.rarity-entry .meta{margin-top:4px;font-size:10px;color:#9facbd}
+.rarity-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;border:1px solid currentColor}
+@media(max-width:720px){
+ .grid{grid-template-columns:1fr}
+ .items{grid-template-columns:repeat(4,1fr)}
+ .slots{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
+
 <body>
 <div id="wrap">
+
 <canvas id="game" width="1280" height="720" tabindex="0" aria-label="RODON game canvas"></canvas>
+
 <div id="toast"></div>
-<div id="help">WASD move • LMB attack/loot • RMB ability • E interact • F pickup • Esc pause • M map • I inventory • C character</div>
 
-<div id="start" class="screen show"><div class="card"><div class="title">RODON</div><p class="subtitle">Dark Medieval Adventure RPG • Story Mode + Infinite Mode</p><div class="menu-grid"><button id="newBtn" data-rodon-action="new">New Game</button><button id="contBtn" data-rodon-action="continue">Continue</button><button id="updatesBtn" data-rodon-action="updates">Updates <span id="updatesNewBadge" class="update-dot"></span></button><button id="rarityBtn" data-rodon-action="rarity">Rarity Guide</button><button id="settingsBtn" data-rodon-action="settings">Settings</button><button id="creditsBtn" data-rodon-action="credits">Credits</button></div><div class="hint">Explore connected rooms, defeat creatures and bosses, collect loot from fallen enemies, equip stronger gear, and reach the King of Rodon.</div></div></div>
+<div id="help">
+WASD move • LMB attack/loot • RMB ability • E interact • F pickup • Esc pause • M map • I inventory • C character
+</div>
 
-<div id="modeSelect" class="screen"><div class="card" style="max-width:720px"><button class="close" data-close="modeSelect">Back</button><div class="title" style="font-size:38px">GAME MODES</div><p class="subtitle">Finish the Story Mode to unlock the endless challenge.</p><div class="menu-grid"><button id="storyBtn" data-rodon-action="story">Story Mode</button><button id="infiniteBtn" data-rodon-action="infinite">Infinite Mode</button></div><div id="modeStatus" class="hint">Infinite Mode is locked until you defeat the King of Rodon in Story Mode.</div></div></div>
+<div id="start" class="screen show">
+<div class="card">
+<div class="title">RODON</div>
+<p class="subtitle">Dark Medieval Adventure RPG • Story Mode + Infinite Mode</p>
 
-<div id="pause" class="screen"><div class="card"><div class="row"><h2>Paused</h2><button class="close" data-close="pause">Close</button></div><div class="menu-grid"><button id="resumeBtn" data-rodon-action="resume">Resume</button><button id="saveBtn" data-rodon-action="save">Save Game</button><button id="pauseMapBtn" data-rodon-action="pauseMap">Map</button><button id="mainBtn" data-rodon-action="mainMenu">Main Menu</button></div><div class="hint">Autosave also triggers at room transitions and boss victories.</div></div></div>
+<div class="menu-grid">
+<button id="newBtn" data-rodon-action="new">New Game</button>
+<button id="contBtn" data-rodon-action="continue">Continue</button>
+<button id="updatesBtn" data-rodon-action="updates">Updates <span id="updatesNewBadge" class="update-dot"></span></button>
+<button id="rarityBtn" data-rodon-action="rarity">Rarity Guide</button>
+<button id="settingsBtn" data-rodon-action="settings">Settings</button>
+<button id="creditsBtn" data-rodon-action="credits">Credits</button>
+</div>
 
-<div id="character" class="screen"><div class="card"><button class="close" data-close="character">Close</button><h2>Character</h2><div class="grid"><div class="section"><h3>Stats</h3><div id="statList" class="stats"></div></div><div class="section"><h3>Equipment</h3><div id="equipSlots" class="slots"></div></div></div><div class="hint">Click an item in the inventory to equip or unequip it. Your derived stats update instantly.</div></div></div>
+<div class="hint">
+Explore connected rooms, defeat creatures and bosses, collect loot from fallen enemies, equip stronger gear, and reach the King of Rodon.
+</div>
+</div>
+</div>
 
-<div id="inventory" class="screen"><div class="card"><button class="close" data-close="inventory">Close</button><h2>Inventory</h2><div class="tabs"><button class="active" data-tab="all">All</button><button data-tab="weapon">Weapons</button><button data-tab="armor">Armor</button><button data-tab="consumable">Consumables</button><button data-tab="material">Materials</button></div><div id="invItems" class="items"></div><div id="itemInfo" class="hint">Select an item to inspect it.</div></div></div>
+<div id="modeSelect" class="screen">
+<div class="card" style="max-width:720px">
+<button class="close" data-close="modeSelect">Back</button>
+<div class="title" style="font-size:38px">GAME MODES</div>
+<p class="subtitle">Finish the Story Mode to unlock the endless challenge.</p>
 
-<div id="loot" class="screen"><div class="card" style="max-width:700px"><button class="close" id="lootClose" data-rodon-action="lootClose">Close</button><h2 id="lootTitle">Loot</h2><div id="lootItems" class="items" style="grid-template-columns:repeat(4,1fr)"></div><div style="display:flex;justify-content:flex-end;margin-top:14px"><button id="takeAll" data-rodon-action="takeAll">Take All</button></div></div></div>
+<div class="menu-grid">
+<button id="storyBtn" data-rodon-action="story">Story Mode</button>
+<button id="infiniteBtn" data-rodon-action="infinite">Infinite Mode</button>
+</div>
 
-<div id="chestReward" class="screen"><div class="card" style="max-width:700px"><button class="close" id="chestRewardClose" data-rodon-action="chestClose">Close</button><h2 style="text-align:center;margin-bottom:6px">CHEST OPENED</h2><p id="chestRewardIntro" class="chest-reward-intro">You found:</p><div id="chestRewardItems" class="chest-reward-items"></div><div style="display:flex;justify-content:center;margin-top:16px"><button id="chestRewardDone" data-rodon-action="chestDone">Continue</button></div></div></div>
+<div id="modeStatus" class="hint">
+Infinite Mode is locked until you defeat the King of Rodon in Story Mode.
+</div>
+</div>
+</div>
 
-<div id="map" class="screen"><div class="card" style="max-width:820px"><button class="close" data-close="map">Close</button><h2>World Map</h2><canvas id="mapCanvas" width="740" height="500" style="width:100%;height:auto;background:#0a0f17;border-radius:10px;border:1px solid #2d394d"></canvas><div class="hint">Only rooms you have visited are revealed. Boss rooms are marked once discovered.</div></div></div>
+<div id="pause" class="screen">
+<div class="card">
+<div class="row">
+<h2>Paused</h2>
+<button class="close" data-close="pause">Close</button>
+</div>
 
-<div id="updates" class="screen"><div class="card" style="max-width:760px"><button class="close" data-close="updates">Close</button><div class="row"><div><h2 style="margin-bottom:4px">RODON UPDATES</h2><div class="small">The game reads this board from the current build changelog.</div></div><span id="updateVersionBadge" class="update-badge">v1.0.6</span></div><div class="loot-note">New game changes are added here automatically in each RODON build. The newest update appears first.</div><div id="updateList" class="update-list" style="margin-top:12px"></div></div></div>
+<div class="menu-grid">
+<button id="resumeBtn" data-rodon-action="resume">Resume</button>
+<button id="saveBtn" data-rodon-action="save">Save Game</button>
+<button id="pauseMapBtn" data-rodon-action="pauseMap">Map</button>
+<button id="mainBtn" data-rodon-action="mainMenu">Main Menu</button>
+</div>
 
-<div id="rarityGuide" class="screen"><div class="card" style="max-width:820px"><button class="close" id="rarityGuideClose" data-rodon-action="rarityClose">Close</button><div class="row"><div><h2 style="margin-bottom:4px">RARITY GUIDE</h2><div class="small">See the rarity of every weapon and armor piece.</div></div></div><div class="tabs"><button id="rarityWeaponsTab" data-rodon-action="rarityWeapon" class="active">Weapons</button><button id="rarityArmorTab" data-rodon-action="rarityArmor">Armor</button></div><div id="rarityGuideNote" class="rarity-guide-note">Weapons are grouped by their normal/base rarity. Random loot can roll different rarities when a drop is generated.</div><div id="rarityGuideList" class="rarity-guide-list"></div></div></div>
+<div class="hint">
+Autosave also triggers at room transitions and boss victories.
+</div>
+</div>
+</div>
 
-<div id="settings" class="screen"><div class="card"><button class="close" data-close="settings">Close</button><h2>Settings</h2><div class="section"><div class="row"><span>Master Volume</span><input id="masterVol" type="range" min="0" max="1" step="0.05" value="0.4"></div><div class="row" style="margin-top:14px"><span>Screen Shake</span><input id="shakeToggle" type="checkbox" checked></div><div class="row" style="margin-top:14px"><span>Damage Numbers</span><input id="damageToggle" type="checkbox" checked></div></div><div class="hint">Rodon is built with plain HTML5 Canvas and Web Audio, so it can run without an engine install.</div></div></div>
+<div id="character" class="screen">
+<div class="card">
+<button class="close" data-close="character">Close</button>
+<h2>Character</h2>
 
-<div id="credits" class="screen"><div class="card" style="max-width:650px;text-align:center"><button class="close" data-close="credits">Close</button><h2>Credits</h2><p>RODON — a lightweight top-down RPG prototype built as a self-contained web game.</p><p class="small">All art is generated from simple canvas shapes at runtime.</p></div></div>
+<div class="grid">
 
-<div id="victory" class="screen"><div class="card" style="max-width:620px;text-align:center"><h1 style="color:#f4d083">RODON IS SAVED</h1><p>You defeated the King of Rodon and completed the Story Mode.</p><p><b>INFINITE MODE UNLOCKED</b></p><div class="menu-grid"><button id="victoryInfiniteBtn" data-rodon-action="victoryInfinite">Enter Infinite Mode</button><button id="victoryMenuBtn" data-rodon-action="victoryMenu">Main Menu</button></div></div></div>
+<div class="section">
+<h3>Stats</h3>
+<div id="statList" class="stats"></div>
+</div>
 
-<div id="death" class="screen"><div class="card" style="max-width:520px;text-align:center"><h1 style="color:#f07a7a">YOU DIED</h1><p id="deathText"></p><div class="menu-grid"><button id="respawnBtn" data-rodon-action="respawn">Respawn</button><button id="deathMenuBtn" data-rodon-action="deathMenu">Main Menu</button></div></div></div>
+<div class="section">
+<h3>Equipment</h3>
+<div id="equipSlots" class="slots"></div>
+</div>
+
+</div>
+
+<div class="hint">
+Click an item in the inventory to equip it. Armor that is already equipped is removed from your inventory and replaced armor returns to your inventory.
+</div>
+</div>
+</div>
+
+<div id="inventory" class="screen">
+<div class="card">
+<button class="close" data-close="inventory">Close</button>
+<h2>Inventory</h2>
+
+<div class="tabs">
+<button class="active" data-tab="all">All</button>
+<button data-tab="weapon">Weapons</button>
+<button data-tab="armor">Armor</button>
+<button data-tab="consumable">Consumables</button>
+<button data-tab="material">Materials</button>
+</div>
+
+<div id="invItems" class="items"></div>
+
+<div id="itemInfo" class="hint">
+Click a weapon or armor to equip it. Click a Health Potion to drink it.
+</div>
+
+</div>
+</div>
+
+<div id="loot" class="screen">
+<div class="card" style="max-width:700px">
+<button class="close" id="lootClose" data-rodon-action="lootClose">Close</button>
+<h2 id="lootTitle">Loot</h2>
+
+<div id="lootItems" class="items" style="grid-template-columns:repeat(4,1fr)"></div>
+
+<div style="display:flex;justify-content:flex-end;margin-top:14px">
+<button id="takeAll" data-rodon-action="takeAll">Take All</button>
+</div>
+
+</div>
+</div>
+
+<div id="chestReward" class="screen">
+<div class="card" style="max-width:700px">
+<button class="close" id="chestRewardClose" data-rodon-action="chestClose">Close</button>
+
+<h2 style="text-align:center;margin-bottom:6px">CHEST OPENED</h2>
+
+<p id="chestRewardIntro" class="chest-reward-intro">You found:</p>
+
+<div id="chestRewardItems" class="chest-reward-items"></div>
+
+<div style="display:flex;justify-content:center;margin-top:16px">
+<button id="chestRewardDone" data-rodon-action="chestDone">Continue</button>
+</div>
+
+</div>
+</div>
+
+<div id="map" class="screen">
+<div class="card" style="max-width:820px">
+<button class="close" data-close="map">Close</button>
+<h2>World Map</h2>
+
+<canvas id="mapCanvas" width="740" height="500" style="width:100%;height:auto;background:#0a0f17;border-radius:10px;border:1px solid #2d394d"></canvas>
+
+<div class="hint">
+Only rooms you have visited are revealed. Boss rooms are marked once discovered.
+</div>
+
+</div>
+</div>
+
+<div id="updates" class="screen">
+<div class="card" style="max-width:760px">
+<button class="close" data-close="updates">Close</button>
+
+<div class="row">
+<div>
+<h2 style="margin-bottom:4px">RODON UPDATES</h2>
+<div class="small">The game reads this board from the current build changelog.</div>
+</div>
+
+<span id="updateVersionBadge" class="update-badge">v1.0.7</span>
+</div>
+
+<div class="loot-note">
+New game changes are added here automatically in each RODON build. The newest update appears first.
+</div>
+
+<div id="updateList" class="update-list" style="margin-top:12px"></div>
+</div>
+</div>
+
+<div id="rarityGuide" class="screen">
+<div class="card" style="max-width:820px">
+<button class="close" id="rarityGuideClose" data-rodon-action="rarityClose">Close</button>
+
+<div class="row">
+<div>
+<h2 style="margin-bottom:4px">RARITY GUIDE</h2>
+<div class="small">See the rarity of every weapon and armor piece.</div>
+</div>
+</div>
+
+<div class="tabs">
+<button id="rarityWeaponsTab" data-rodon-action="rarityWeapon" class="active">Weapons</button>
+<button id="rarityArmorTab" data-rodon-action="rarityArmor">Armor</button>
+</div>
+
+<div id="rarityGuideNote" class="rarity-guide-note">
+Weapons are grouped by their normal/base rarity. Random loot can roll different rarities when a drop is generated.
+</div>
+
+<div id="rarityGuideList" class="rarity-guide-list"></div>
+</div>
+</div>
+
+<div id="settings" class="screen">
+<div class="card">
+<button class="close" data-close="settings">Close</button>
+<h2>Settings</h2>
+
+<div class="section">
+
+<div class="row">
+<span>Master Volume</span>
+<input id="masterVol" type="range" min="0" max="1" step="0.05" value="0.4">
+</div>
+
+<div class="row" style="margin-top:14px">
+<span>Screen Shake</span>
+<input id="shakeToggle" type="checkbox" checked>
+</div>
+
+<div class="row" style="margin-top:14px">
+<span>Damage Numbers</span>
+<input id="damageToggle" type="checkbox" checked>
+</div>
+
+</div>
+
+<div class="hint">
+Rodon is built with plain HTML5 Canvas and Web Audio, so it can run without an engine install.
+</div>
+</div>
+</div>
+
+<div id="credits" class="screen">
+<div class="card" style="max-width:650px;text-align:center">
+<button class="close" data-close="credits">Close</button>
+<h2>Credits</h2>
+<p>RODON — a lightweight top-down RPG prototype built as a self-contained web game.</p>
+<p class="small">All art is generated from simple canvas shapes at runtime.</p>
+</div>
+</div>
+
+<div id="victory" class="screen">
+<div class="card" style="max-width:620px;text-align:center">
+<h1 style="color:#f4d083">RODON IS SAVED</h1>
+<p>You defeated the King of Rodon and completed the Story Mode.</p>
+<p><b>INFINITE MODE UNLOCKED</b></p>
+
+<div class="menu-grid">
+<button id="victoryInfiniteBtn" data-rodon-action="victoryInfinite">Enter Infinite Mode</button>
+<button id="victoryMenuBtn" data-rodon-action="victoryMenu">Main Menu</button>
+</div>
+
+</div>
+</div>
+
+<div id="death" class="screen">
+<div class="card" style="max-width:520px;text-align:center">
+<h1 style="color:#f07a7a">YOU DIED</h1>
+<p id="deathText"></p>
+
+<div class="menu-grid">
+<button id="respawnBtn" data-rodon-action="respawn">Respawn</button>
+<button id="deathMenuBtn" data-rodon-action="deathMenu">Main Menu</button>
+</div>
+
+</div>
+</div>
+
 </div>
 
 <script>
 'use strict';
 
-const canvas=document.getElementById('game'),
-ctx=canvas.getContext('2d');
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
 
-const W=canvas.width,
-H=canvas.height,
-TILE=48,
-ROOM_W=24,
-ROOM_H=13,
-worldW=ROOM_W*TILE,
-worldH=ROOM_H*TILE;
+const W=canvas.width;
+const H=canvas.height;
+const TILE=48;
+const ROOM_W=24;
+const ROOM_H=13;
+const worldW=ROOM_W*TILE;
+const worldH=ROOM_H*TILE;
 
 const keys=new Set();
 
@@ -88,8 +395,14 @@ let mouse={
 };
 
 const MOVE_CODES=new Set([
- 'KeyW','KeyA','KeyS','KeyD',
- 'ArrowUp','ArrowLeft','ArrowDown','ArrowRight'
+ 'KeyW',
+ 'KeyA',
+ 'KeyS',
+ 'KeyD',
+ 'ArrowUp',
+ 'ArrowLeft',
+ 'ArrowDown',
+ 'ArrowRight'
 ]);
 
 let last=performance.now();
@@ -112,6 +425,7 @@ function clearMovement(){
 }
 
 window.addEventListener('keydown',function(e){
+
  if(MOVE_CODES.has(e.code)){
    e.preventDefault();
    keys.add(e.code);
@@ -197,10 +511,12 @@ window.addEventListener('keydown',function(e){
 },{passive:false});
 
 window.addEventListener('keyup',function(e){
+
  if(MOVE_CODES.has(e.code)){
    e.preventDefault();
    keys.delete(e.code);
  }
+
 },{passive:false});
 
 window.addEventListener('blur',clearMovement);
@@ -208,48 +524,72 @@ window.addEventListener('blur',clearMovement);
 document.addEventListener(
  'visibilitychange',
  ()=>{
-   if(document.hidden)clearMovement();
+   if(document.hidden)
+     clearMovement();
  }
 );
 
-canvas.addEventListener('pointerdown',function(e){
- focusGame();
- initAudio();
+canvas.addEventListener(
+ 'pointerdown',
+ function(e){
 
- const rect=canvas.getBoundingClientRect();
+   focusGame();
+   initAudio();
 
- const scaleX=W/rect.width;
- const scaleY=H/rect.height;
+   const rect=
+     canvas.getBoundingClientRect();
 
- mouse.x=
-   (e.clientX-rect.left)*scaleX;
+   const scaleX=
+     W/rect.width;
 
- mouse.y=
-   (e.clientY-rect.top)*scaleY;
+   const scaleY=
+     H/rect.height;
 
- if(e.button===0){
-   mouse.down=true;
-   attack();
- }else if(e.button===2){
-   mouse.right=true;
-   ability();
+   mouse.x=
+     (e.clientX-rect.left)*scaleX;
+
+   mouse.y=
+     (e.clientY-rect.top)*scaleY;
+
+   if(e.button===0){
+     mouse.down=true;
+     attack();
+   }else if(e.button===2){
+     mouse.right=true;
+     ability();
+   }
+
  }
-});
+);
 
-canvas.addEventListener('pointerup',function(e){
- if(e.button===0)mouse.down=false;
- if(e.button===2)mouse.right=false;
-});
+canvas.addEventListener(
+ 'pointerup',
+ function(e){
+   if(e.button===0)
+     mouse.down=false;
 
-canvas.addEventListener('pointermove',function(e){
- const rect=canvas.getBoundingClientRect();
+   if(e.button===2)
+     mouse.right=false;
+ }
+);
 
- mouse.x=
-   (e.clientX-rect.left)*(W/rect.width);
+canvas.addEventListener(
+ 'pointermove',
+ function(e){
 
- mouse.y=
-   (e.clientY-rect.top)*(H/rect.height);
-});
+   const rect=
+     canvas.getBoundingClientRect();
+
+   mouse.x=
+     (e.clientX-rect.left)*
+     (W/rect.width);
+
+   mouse.y=
+     (e.clientY-rect.top)*
+     (H/rect.height);
+
+ }
+);
 
 canvas.addEventListener(
  'contextmenu',
@@ -262,6 +602,7 @@ function sound(
  type='sine',
  gain=.035
 ){
+
  if(!audioCtx)return;
 
  const o=
@@ -272,6 +613,7 @@ function sound(
 
  o.type=type;
  o.frequency.value=freq;
+
  g.gain.value=gain;
 
  o.connect(g);
@@ -290,19 +632,25 @@ function sound(
 }
 
 function initAudio(){
+
  if(audioCtx)return;
 
  try{
+
    const AudioCtor=
      window.AudioContext||
      window.webkitAudioContext;
 
    if(!AudioCtor)return;
 
-   audioCtx=new AudioCtor();
+   audioCtx=
+     new AudioCtor();
 
-   if(audioCtx.state==='suspended')
+   if(
+     audioCtx.state==='suspended'
+   ){
      audioCtx.resume().catch(()=>{});
+   }
 
  }catch(e){
    audioCtx=null;
@@ -310,7 +658,8 @@ function initAudio(){
 }
 
 function rnd(a,b){
- return Math.random()*(b-a)+a;
+ return Math.random()*
+   (b-a)+a;
 }
 
 function rint(a,b){
@@ -341,105 +690,129 @@ function uid(){
    .toString(36);
 }
 
-const GAME_VERSION='1.0.6';
+const GAME_VERSION='1.0.7';
 
 const RODON_UPDATES=[
+
+ {
+   version:'1.0.7',
+   date:'September 30, 2026',
+   title:'Potion Use + Armor Inventory Fix',
+   body:'Equipped armor is now removed from the inventory, replacing armor is returned to the inventory, and Health Potions can be consumed directly from the inventory. Health Potions cannot be consumed while your health is already full.'
+ },
+
  {
    version:'1.0.6',
    date:'September 30, 2026',
    title:'Persistent Rooms',
    body:'Rooms no longer refresh when you leave and come back. Defeated enemies, opened chests, fallen enemy bodies, and remaining loot are preserved when you revisit a room.'
  },
+
  {
    version:'1.0.5',
    date:'September 30, 2026',
    title:'Button Repair + Update Notification',
    body:'Fixed menu and interface buttons that could trigger multiple click handlers at once. The Updates button now shows a light-blue notification dot whenever a newer RODON build has not been viewed yet.'
  },
+
  {
    version:'1.0.4',
    date:'September 30, 2026',
    title:'Progressive Difficulty + Rarity Loot',
    body:'Creatures now start easier and become progressively harder as the adventure continues. Chests now contain exactly one weapon, higher weapon rarities are much harder to obtain, and armor rarity is also weighted so rarer armor is harder to find. The first chest still guarantees one weapon, with Epic, Legendary, and Mythic rolls being extremely rare.'
  },
+
  {
    version:'1.0.3',
    date:'September 30, 2026',
    title:'Movement Fix',
    body:'Fixed WASD and arrow-key movement by adding reliable keyboard input handling, clearing stuck keys when the browser loses focus, and restoring the game loop and room-loading functions required for movement to run correctly.'
  },
+
  {
    version:'1.0.2',
    date:'September 30, 2026',
    title:'GitHub Pages UI Repair',
    body:'Added a GitHub-safe UI boot sequence, guarded menu bindings, and a click delegation fallback so the menu, mode selection, settings, updates, rarity guide, inventory, and gameplay controls remain clickable when hosted on GitHub Pages.'
  },
+
  {
    version:'1.0.1',
    date:'September 30, 2026',
    title:'GitHub Button Fix',
    body:'Reworked the interface event wiring so menu buttons use resilient event listeners and a delegated click fallback. Added safer Web Audio startup so the game does not lose its UI when browser audio is unavailable.'
  },
+
  {
    version:'1.0.0',
    date:'September 30, 2026',
    title:'Guaranteed Starter Weapon + Rarity Guide',
    body:'The first Story Mode chest now always gives exactly one weapon. Its rarity is randomized, with Legendary and Mythic weapons extremely rare. Added a separate Rarity Guide with Weapons and Armor tabs.'
  },
+
  {
    version:'0.9.0',
    date:'September 30, 2026',
    title:'Updates Button Returns to Main Menu',
    body:'Closing the Updates board now returns directly to the RODON main menu.'
  },
+
  {
    version:'0.8.0',
    date:'September 30, 2026',
    title:'Loot Limits + Chest Reward Reveal',
    body:'Normal enemy bodies now drop only 1–2 loot entries. Loot and chest rewards show a highlighted rarity color, and opening a chest displays exactly what you received before you continue.'
  },
+
  {
    version:'0.7.0',
    date:'September 30, 2026',
    title:'Fresh Start + First Chest',
    body:'New Story Mode runs now begin with an empty inventory and no equipment. The first Story Mode chest guarantees exactly one Common or Uncommon starter item.'
  },
+
  {
    version:'0.6.0',
    date:'September 30, 2026',
    title:'One-Second Screen Shake',
    body:'All screen-shake effects now use a fixed 1-second duration, including critical hits, abilities, and taking damage.'
  },
+
  {
    version:'0.5.0',
    date:'September 30, 2026',
    title:'Random Loot + Live Updates Board',
    body:'Enemy drops now roll independently for weapon, armor, consumables, materials, and bonus gold. Loot stats and rarity can vary from drop to drop. Added an in-game Updates board that lists the newest RODON changes in reverse chronological order.'
  },
+
  {
    version:'0.4.0',
    date:'September 30, 2026',
    title:'Story Mode + Infinite Mode',
    body:'Added Story Mode progression and locked Infinite Mode. Defeating the King of Rodon permanently unlocks Infinite Mode.'
  },
+
  {
    version:'0.3.0',
    date:'September 30, 2026',
    title:'Retro Pixel Art Pass',
    body:'Updated Rodon toward a chunky dark retro pixel-RPG presentation with hard edges, limited colors, and stronger silhouettes.'
  },
+
  {
    version:'0.2.0',
    date:'September 29, 2026',
    title:'Movement Fix',
    body:'Improved WASD and arrow-key movement handling and added stronger keyboard focus/input recovery.'
  },
+
  {
    version:'0.1.0',
    date:'September 29, 2026',
    title:'Rodon Prototype',
    body:'Initial playable browser RPG with rooms, combat, enemies, bosses, equipment, inventory, loot, leveling, map, saving, and dark medieval presentation.'
  }
+
 ];
 
 const rarities=[
@@ -511,6 +884,7 @@ const armorNames={
 };
 
 function makeArmor(set,slot){
+
  const base={
    Leather:5,
    Iron:9,
@@ -534,12 +908,14 @@ function makeArmor(set,slot){
    kind:'armor',
    slot,
    name:set+' '+slotLabel(slot),
+
    rarity:
      set==='Dragon'?'Legendary':
      set==='Shadow'?'Epic':
      set==='Knight'?'Rare':
      set==='Steel'?'Uncommon':
      'Common',
+
    defense:Math.round(
      base*
      rarityMult[
@@ -550,32 +926,52 @@ function makeArmor(set,slot){
        'Common'
      ]
    ),
+
    bonus:{...bonus}
  };
 }
 
 function slotLabel(s){
- return s==='Head'?'Helmet':
-        s==='Chest'?'Chestplate':
-        s==='Legs'?'Leg Armor':
-        s;
+ return s==='Head'
+   ?'Helmet'
+   :s==='Chest'
+   ?'Chestplate'
+   :s==='Legs'
+   ?'Leg Armor'
+   :s;
 }
 
-function rarityForLoot(level=1,boss=false){
- const max=Math.min(
-   rarities.length-1,
-   Math.floor((level-1)/5)+(boss?2:0)
- );
+function rarityForLoot(
+ level=1,
+ boss=false
+){
 
- const roll=Math.random();
+ const max=
+   Math.min(
+     rarities.length-1,
+     Math.floor((level-1)/5)+
+       (boss?2:0)
+   );
+
+ const roll=
+   Math.random();
 
  let idx=0;
 
- if(max>=1&&roll<.34)idx=1;
- if(max>=2&&roll<.16)idx=2;
- if(max>=3&&roll<.07)idx=3;
- if(max>=4&&roll<.025)idx=4;
- if(max>=5&&roll<.008)idx=5;
+ if(max>=1&&roll<.34)
+   idx=1;
+
+ if(max>=2&&roll<.16)
+   idx=2;
+
+ if(max>=3&&roll<.07)
+   idx=3;
+
+ if(max>=4&&roll<.025)
+   idx=4;
+
+ if(max>=5&&roll<.008)
+   idx=5;
 
  return rarities[
    Math.min(max,idx)
@@ -588,6 +984,7 @@ function makeWeapon(
  forcedRarity=null,
  level=1
 ){
+
  const pool=
    t
    ?weapons.filter(
@@ -597,8 +994,18 @@ function makeWeapon(
 
  const w=
    pool.length
-   ?pool[rint(0,pool.length-1)]
-   :weapons[rint(0,weapons.length-1)];
+   ?pool[
+      rint(
+        0,
+        pool.length-1
+      )
+    ]
+   :weapons[
+      rint(
+        0,
+        weapons.length-1
+      )
+    ];
 
  const rarity=
    forcedRarity||w[5];
@@ -608,7 +1015,10 @@ function makeWeapon(
 
  const scale=
    1+
-   Math.max(0,level-1)*.045;
+   Math.max(
+     0,
+     level-1
+   )*.045;
 
  const prefix={
    Common:'',
@@ -619,19 +1029,25 @@ function makeWeapon(
    Mythic:'Ancient '
  }[rarity]||'';
 
- const special=w[6]||'';
+ const special=
+   w[6]||'';
 
  return {
    id:uid(),
    kind:'weapon',
    name:prefix+w[0],
    weaponType:w[1],
+
    damage:Math.max(
      1,
      Math.round(
-       w[2]*mult*scale+extra
+       w[2]*
+       mult*
+       scale+
+       extra
      )
    ),
+
    speed:Math.max(
      .35,
      w[3]*
@@ -639,10 +1055,14 @@ function makeWeapon(
        1+
        Math.max(
          0,
-         Math.min(6,rarityMult[rarity]-1)
+         Math.min(
+           6,
+           rarityMult[rarity]-1
+         )
        )*.03
      )
    ),
+
    crit:Math.min(
      .35,
      w[4]+
@@ -651,21 +1071,28 @@ function makeWeapon(
        (mult-1)*.018
      )
    ),
+
    rarity,
    special
  };
 }
 
-function makePotion(type='health'){
+function makePotion(
+ type='health'
+){
+
  return {
    id:uid(),
    kind:'consumable',
+
    name:
      type==='health'
      ?'Health Potion'
      :'Mana Potion',
+
    consumable:type,
    rarity:'Common',
+
    amount:
      type==='health'
      ?35
@@ -677,6 +1104,7 @@ function makeLootArmor(
  level=1,
  boss=false
 ){
+
  const rarity=
    rarityForLoot(
      level,
@@ -706,18 +1134,23 @@ function makeLootArmor(
      slot
    );
 
- item.rarity=rarity;
+ item.rarity=
+   rarity;
 
  const mult=
    rarityMult[rarity];
 
  const originalMult=
    rarityMult[
-     desired==='Dragon'?'Legendary':
-     desired==='Shadow'?'Epic':
-     desired==='Knight'?'Rare':
-     desired==='Steel'?'Uncommon':
-     'Common'
+     desired==='Dragon'
+     ?'Legendary':
+     desired==='Shadow'
+     ?'Epic':
+     desired==='Knight'
+     ?'Rare':
+     desired==='Steel'
+     ?'Uncommon'
+     :'Common'
    ];
 
  item.defense=
@@ -738,11 +1171,16 @@ function makeLootArmor(
 
  item.name=
    (
-     rarity==='Common'?' ':
-     rarity==='Uncommon'?'Fine ':
-     rarity==='Rare'?'Runed ':
-     rarity==='Epic'?'Shadowforged ':
-     rarity==='Legendary'?'Royal ':
+     rarity==='Common'
+     ?' ':
+     rarity==='Uncommon'
+     ?'Fine ':
+     rarity==='Rare'
+     ?'Runed ':
+     rarity==='Epic'
+     ?'Shadowforged ':
+     rarity==='Legendary'
+     ?'Royal ':
      'Ancient '
    ).trim();
 
@@ -760,6 +1198,7 @@ function makeLootArmor(
 }
 
 function makeRandomLoot(e){
+
  const loot=[];
 
  const level=
@@ -768,17 +1207,25 @@ function makeRandomLoot(e){
      e.level||1
    );
 
- const boss=!!e.elite;
+ const boss=
+   !!e.elite;
 
  const maxDrops=
    boss
    ?rint(3,5)
    :rint(1,2);
 
- for(let i=0;i<maxDrops;i++){
-   const r=Math.random();
+ for(
+   let i=0;
+   i<maxDrops;
+   i++
+ ){
+
+   const r=
+     Math.random();
 
    if(r<.30){
+
      loot.push(
        makeWeapon(
          null,
@@ -790,14 +1237,18 @@ function makeRandomLoot(e){
          level
        )
      );
+
    }else if(r<.55){
+
      loot.push(
        makeLootArmor(
          level,
          boss
        )
      );
+
    }else if(r<.78){
+
      loot.push(
        makePotion(
          Math.random()<.8
@@ -805,11 +1256,15 @@ function makeRandomLoot(e){
          :'mana'
        )
      );
+
    }else if(r<.92){
+
      loot.push(
        makeMaterial()
      );
+
    }else{
+
      loot.push({
        id:uid(),
        kind:'gold',
@@ -828,6 +1283,7 @@ function makeRandomLoot(e){
  }
 
  if(boss){
+
    loot.push({
      id:uid(),
      kind:'gold',
@@ -835,8 +1291,11 @@ function makeRandomLoot(e){
      rarity:'Common',
      amount:
        rint(100,500)+
-       Math.floor(level*2)
+       Math.floor(
+         level*2
+       )
    });
+
  }
 
  return loot.slice(
@@ -846,6 +1305,7 @@ function makeRandomLoot(e){
 }
 
 function makeMaterial(){
+
  const names=[
    'Wolf Pelt',
    'Iron Ore',
@@ -860,7 +1320,10 @@ function makeMaterial(){
    kind:'material',
    name:
      names[
-       rint(0,names.length-1)
+       rint(
+         0,
+         names.length-1
+       )
      ],
    rarity:'Common',
    amount:1
@@ -868,6 +1331,7 @@ function makeMaterial(){
 }
 
 function itemSummary(i){
+
  if(i.kind==='weapon')
    return `${i.damage} dmg • ${i.speed.toFixed(1)} atk • ${(i.crit*100).toFixed(0)}% crit`;
 
@@ -881,6 +1345,7 @@ function itemSummary(i){
 }
 
 function starterSword(){
+
  return {
    id:uid(),
    kind:'weapon',
@@ -895,6 +1360,7 @@ function starterSword(){
 }
 
 const roomDefs=[
+
  {
    id:'village',
    name:'Rodon Village',
@@ -905,6 +1371,7 @@ const roomDefs=[
    enemies:0,
    chests:1
  },
+
  {
    id:'forest',
    name:'Whispering Forest',
@@ -919,6 +1386,7 @@ const roomDefs=[
    enemies:5,
    chests:1
  },
+
  {
    id:'forest2',
    name:'Deep Forest',
@@ -932,6 +1400,7 @@ const roomDefs=[
    enemies:6,
    chests:1
  },
+
  {
    id:'shadow',
    name:'Shadow Grove',
@@ -946,6 +1415,7 @@ const roomDefs=[
    chests:1,
    boss:'Shadow Beast'
  },
+
  {
    id:'cave',
    name:'Ancient Cave',
@@ -961,6 +1431,7 @@ const roomDefs=[
    chests:2,
    boss:'Cave Guardian'
  },
+
  {
    id:'cave2',
    name:'Crystal Cavern',
@@ -974,6 +1445,7 @@ const roomDefs=[
    enemies:8,
    chests:1
  },
+
  {
    id:'ruins',
    name:'Forgotten Ruins',
@@ -988,6 +1460,7 @@ const roomDefs=[
    enemies:8,
    chests:1
  },
+
  {
    id:'castle',
    name:'Ruined Castle',
@@ -1002,6 +1475,7 @@ const roomDefs=[
    chests:1,
    boss:'Dark Knight'
  },
+
  {
    id:'arena',
    name:'King\'s Arena',
@@ -1016,6 +1490,7 @@ const roomDefs=[
    chests:0,
    boss:'Arena Champion'
  },
+
  {
    id:'throne',
    name:'Throne of Rodon',
@@ -1029,6 +1504,7 @@ const roomDefs=[
    chests:1,
    boss:'King of Rodon'
  }
+
 ];
 
 roomDefs.push({
@@ -1057,8 +1533,10 @@ const state={
  bodies:[],
  particles:[],
  damageTexts:[],
- visited:new Set(['village']),
- defeatedBosses:new Set(),
+ visited:
+   new Set(['village']),
+ defeatedBosses:
+   new Set(),
  roomStates:{},
  camera:{
    x:0,
@@ -1079,6 +1557,7 @@ const state={
 };
 
 function cloneData(value){
+
  try{
    return JSON.parse(
      JSON.stringify(value)
@@ -1086,9 +1565,13 @@ function cloneData(value){
  }catch(e){
    return value;
  }
+
 }
 
-function saveRoomState(id=state.room){
+function saveRoomState(
+ id=state.room
+){
+
  if(
    !id||
    !state.gameStarted
@@ -1096,21 +1579,28 @@ function saveRoomState(id=state.room){
    return;
 
  state.roomStates[id]={
-   enemies:cloneData(
-     state.enemies
-   ),
-   chests:cloneData(
-     state.chests
-   ),
-   bodies:cloneData(
-     state.bodies
-   ),
+   enemies:
+     cloneData(
+       state.enemies
+     ),
+
+   chests:
+     cloneData(
+       state.chests
+     ),
+
+   bodies:
+     cloneData(
+       state.bodies
+     ),
+
    roomCleared:
      !!state.roomCleared
  };
 }
 
 function restoreRoomState(id){
+
  const saved=
    state.roomStates[id];
 
@@ -1142,6 +1632,7 @@ function restoreRoomState(id){
 }
 
 function defaultPlayer(){
+
  return {
    x:160,
    y:360,
@@ -1160,6 +1651,7 @@ function defaultPlayer(){
    baseCritDamage:1.5,
    gold:0,
    inventory:[],
+
    equipped:{
      Head:null,
      Chest:null,
@@ -1171,38 +1663,71 @@ function defaultPlayer(){
      'Accessory 1':null,
      'Accessory 2':null
    },
+
    attackCd:0,
    abilityCd:0,
    invuln:0,
    flash:0
  };
+
 }
 
 function derived(){
- const p=state.player;
 
- let defense=p.baseDefense;
- let speed=p.baseSpeed;
- let maxHp=p.maxHp;
- let crit=p.baseCrit;
- let attack=p.baseAttack;
- let critDmg=p.baseCritDamage;
+ const p=
+   state.player;
+
+ let defense=
+   p.baseDefense;
+
+ let speed=
+   p.baseSpeed;
+
+ let maxHp=
+   p.maxHp;
+
+ let crit=
+   p.baseCrit;
+
+ let attack=
+   p.baseAttack;
+
+ let critDmg=
+   p.baseCritDamage;
 
  for(
    const v of Object.values(
      p.equipped
    )
  ){
+
    if(!v)continue;
 
-   if(v.kind==='weapon')
-     attack+=v.damage;
-   else if(v.kind==='armor'){
-     defense+=v.defense;
-     speed+=v.bonus?.speed||0;
-     maxHp+=v.bonus?.maxHp||0;
-     crit+=v.bonus?.crit||0;
+   if(
+     v.kind==='weapon'
+   ){
+
+     attack+=
+       v.damage;
+
+   }else if(
+     v.kind==='armor'
+   ){
+
+     defense+=
+       v.defense;
+
+     speed+=
+       v.bonus?.speed||0;
+
+     maxHp+=
+       v.bonus?.maxHp||0;
+
+     crit+=
+       v.bonus?.crit||0;
+
    }
+
  }
 
  return {
@@ -1213,46 +1738,74 @@ function derived(){
    crit,
    critDmg
  };
+
 }
 
 function storyComplete(){
+
  return localStorage.getItem(
    'rodonStoryComplete'
  )==='1';
+
 }
 
 function infiniteBest(){
+
  return Number(
    localStorage.getItem(
      'rodonInfiniteBest'
    )||0
  );
+
 }
 
-function resetForNew(mode='story'){
- state.player=defaultPlayer();
- state.mode=mode;
+function resetForNew(
+ mode='story'
+){
+
+ state.player=
+   defaultPlayer();
+
+ state.mode=
+   mode;
+
  state.wave=0;
+
  state.kills=0;
+
  state.infiniteBest=
    infiniteBest();
- state.firstChestClaimed=false;
+
+ state.firstChestClaimed=
+   false;
+
  state.room=
    mode==='infinite'
    ?'infinite'
    :'village';
+
  state.visited=
-   new Set([state.room]);
+   new Set([
+     state.room
+   ]);
+
  state.defeatedBosses=
    new Set();
+
  state.roomStates={};
+
  state.enemies=[];
  state.chests=[];
  state.bodies=[];
  state.particles=[];
  state.damageTexts=[];
- state.roomCleared=false;
- state.gameStarted=true;
+
+ state.roomCleared=
+   false;
+
+ state.gameStarted=
+   true;
+
  state.roomTransitionCooldown=0;
 
  loadRoom(
@@ -1261,7 +1814,9 @@ function resetForNew(mode='story'){
  );
 
  showScreen(null);
+
  focusGame();
+
  saveGame();
 
  toast(
@@ -1269,27 +1824,46 @@ function resetForNew(mode='story'){
    ?'Infinite Mode started'
    :'Welcome to Rodon! Find your first chest.'
  );
+
 }
 
 function saveGame(){
- if(!state.player)return;
 
- saveRoomState(state.room);
+ if(!state.player)
+   return;
+
+ saveRoomState(
+   state.room
+ );
 
  const data={
-   mode:state.mode,
-   wave:state.wave,
-   kills:state.kills,
-   room:state.room,
-   player:state.player,
-   visited:[...state.visited],
-   defeatedBosses:[
-     ...state.defeatedBosses
-   ],
+   mode:
+     state.mode,
+
+   wave:
+     state.wave,
+
+   kills:
+     state.kills,
+
+   room:
+     state.room,
+
+   player:
+     state.player,
+
+   visited:
+     [...state.visited],
+
+   defeatedBosses:
+     [...state.defeatedBosses],
+
    firstChestClaimed:
      state.firstChestClaimed,
+
    roomStates:
      state.roomStates,
+
    chestStates:
      JSON.parse(
        localStorage.getItem(
@@ -1300,24 +1874,35 @@ function saveGame(){
 
  localStorage.setItem(
    'rodonSave',
-   JSON.stringify(data)
+   JSON.stringify(
+     data
+   )
  );
+
 }
 
 function loadGame(){
+
  const raw=
    localStorage.getItem(
      'rodonSave'
    );
 
  if(!raw){
-   toast('No save found');
+
+   toast(
+     'No save found'
+   );
+
    return;
  }
 
  try{
+
    const d=
-     JSON.parse(raw);
+     JSON.parse(
+       raw
+     );
 
    state.mode=
      d.mode||'story';
@@ -1326,19 +1911,27 @@ function loadGame(){
      state.mode==='infinite'&&
      !storyComplete()
    ){
+
      state.mode='story';
+
      state.wave=0;
 
      toast(
        'Infinite Mode is locked. Complete Story Mode first.'
      );
+
    }else{
-     state.wave=d.wave||0;
-     state.kills=d.kills||0;
+
+     state.wave=
+       d.wave||0;
+
+     state.kills=
+       d.kills||0;
    }
 
    state.player=
-     d.player||defaultPlayer();
+     d.player||
+     defaultPlayer();
 
    state.firstChestClaimed=
      !!d.firstChestClaimed;
@@ -1366,8 +1959,11 @@ function loadGame(){
        []
      );
 
-   state.gameStarted=true;
-   state.roomTransitionCooldown=0;
+   state.gameStarted=
+     true;
+
+   state.roomTransitionCooldown=
+     0;
 
    loadRoom(
      state.room,
@@ -1375,6 +1971,7 @@ function loadGame(){
    );
 
    showScreen(null);
+
    focusGame();
 
    toast(
@@ -1384,13 +1981,17 @@ function loadGame(){
    );
 
  }catch(e){
+
    toast(
      'Save data could not be loaded'
    );
+
  }
+
 }
 
 function clearSave(){
+
  localStorage.removeItem(
    'rodonSave'
  );
@@ -1398,39 +1999,54 @@ function clearSave(){
  localStorage.removeItem(
    'rodonChestStates'
  );
+
 }
 
 function roomSeed(id){
+
  let s=0;
 
- for(const c of id)
+ for(
+   const c of id
+ ){
+
    s=
      (
        s*31+
        c.charCodeAt(0)
      )>>>0;
 
+ }
+
  return s||1;
 }
 
 function randFrom(seed){
+
  return ()=>{
+
    seed=
      (
        seed*1664525+
        1013904223
      )>>>0;
 
-   return seed/4294967296;
+   return seed/
+     4294967296;
  };
+
 }
 
 function enemyDifficulty(
  level,
  boss=false
 ){
+
  const safeLevel=
-   Math.max(1,level);
+   Math.max(
+     1,
+     level
+   );
 
  const hpScale=
    .72+
@@ -1467,18 +2083,86 @@ function makeEnemy(
  y,
  boss=false
 ){
+
  const specs={
-   Slime:[40,8,78,'slime'],
-   Goblin:[55,10,85,'goblin'],
-   Wolf:[70,13,135,'wolf'],
-   Skeleton:[75,15,90,'skeleton'],
-   Zombie:[90,17,65,'zombie'],
-   Bandit:[100,20,110,'bandit'],
-   Orc:[135,25,70,'orc'],
-   Spider:[48,11,120,'spider'],
-   DarkKnight:[260,25,95,'dk'],
-   Mage:[95,24,75,'mage'],
-   Giant:[220,28,55,'giant']
+
+   Slime:[
+     40,
+     8,
+     78,
+     'slime'
+   ],
+
+   Goblin:[
+     55,
+     10,
+     85,
+     'goblin'
+   ],
+
+   Wolf:[
+     70,
+     13,
+     135,
+     'wolf'
+   ],
+
+   Skeleton:[
+     75,
+     15,
+     90,
+     'skeleton'
+   ],
+
+   Zombie:[
+     90,
+     17,
+     65,
+     'zombie'
+   ],
+
+   Bandit:[
+     100,
+     20,
+     110,
+     'bandit'
+   ],
+
+   Orc:[
+     135,
+     25,
+     70,
+     'orc'
+   ],
+
+   Spider:[
+     48,
+     11,
+     120,
+     'spider'
+   ],
+
+   DarkKnight:[
+     260,
+     25,
+     95,
+     'dk'
+   ],
+
+   Mage:[
+     95,
+     24,
+     75,
+     'mage'
+   ],
+
+   Giant:[
+     220,
+     28,
+     55,
+     'giant'
+   ]
+
  };
 
  let s=
@@ -1491,56 +2175,81 @@ function makeEnemy(
      boss
    );
 
- const hp=Math.max(
-   1,
-   Math.round(
-     s[0]*
-     difficulty.hp*
-     (boss?3.2:1)
-   )
- );
+ const hp=
+   Math.max(
+     1,
+     Math.round(
+       s[0]*
+       difficulty.hp*
+       (boss?3.2:1)
+     )
+   );
 
- const damage=Math.max(
-   1,
-   Math.round(
-     s[1]*
-     difficulty.damage*
-     (boss?2.0:1)
-   )
- );
+ const damage=
+   Math.max(
+     1,
+     Math.round(
+       s[1]*
+       difficulty.damage*
+       (boss?2.0:1)
+     )
+   );
 
  return {
+
    id:uid(),
    x,
    y,
-   r:boss?30:16,
+
+   r:
+     boss
+     ?30
+     :16,
+
    hp,
    maxHp:hp,
    damage,
+
    speed:
-     s[2]*difficulty.speed,
+     s[2]*
+     difficulty.speed,
+
    kind:s[3],
    type,
    level,
    elite:boss,
-   attackCd:rnd(.3,1.2),
+
+   attackCd:
+     rnd(.3,1.2),
+
    hit:0,
    phase:1,
+
    bossName:
-     boss?type:'',
+     boss
+     ?type
+     :'',
+
    wander:
-     rnd(0,Math.PI*2)
+     rnd(
+       0,
+       Math.PI*2
+     )
+
  };
+
 }
 
 function spawnInfiniteWave(){
+
  const wave=
    Math.max(
      1,
      state.wave||1
    );
 
- state.wave=wave;
+ state.wave=
+   wave;
 
  const count=
    Math.min(
@@ -1563,18 +2272,32 @@ function spawnInfiniteWave(){
 
  state.enemies=[];
 
- for(let i=0;i<count;i++){
+ for(
+   let i=0;
+   i<count;
+   i++
+ ){
+
    const type=
      pool[
-       rint(0,pool.length-1)
+       rint(
+         0,
+         pool.length-1
+       )
      ];
 
    const x=
-     rint(2,ROOM_W-3)*
+     rint(
+       2,
+       ROOM_W-3
+     )*
      TILE+24;
 
    const y=
-     rint(2,ROOM_H-3)*
+     rint(
+       2,
+       ROOM_H-3
+     )*
      TILE+24;
 
    const level=
@@ -1596,7 +2319,10 @@ function spawnInfiniteWave(){
    );
  }
 
- if(wave%5===0){
+ if(
+   wave%5===0
+ ){
+
    const bossType=
      wave%10===0
      ?'King of Rodon'
@@ -1636,25 +2362,34 @@ function spawnInfiniteWave(){
 
  state.chests.push({
    id:uid(),
+
    x:
      worldW/2+220,
+
    y:
      worldH/2,
+
    open:false,
+
    loot:
-     genChestLoot('infinite')
+     genChestLoot(
+       'infinite'
+     )
  });
 
  toast(
    `Wave ${wave}`
  );
+
 }
 
 function spawnRoom(id){
+
  const r=
    roomById[id];
 
- if(!r)return;
+ if(!r)
+   return;
 
  const rng=
    randFrom(
@@ -1663,39 +2398,84 @@ function spawnRoom(id){
 
  const arr=[];
 
- if(id==='infinite'){
+ if(
+   id==='infinite'
+ ){
    spawnInfiniteWave();
    return;
  }
 
  if(r.enemies){
+
    const pool=
      r.id==='forest'||
      r.id==='forest2'
-     ?['Goblin','Wolf','Slime']:
-     r.id.includes('cave')
-     ?['Spider','Skeleton','Orc','Mage']:
-     r.id==='ruins'
-     ?['Skeleton','Zombie','Bandit','Mage']:
-     r.id==='castle'||
-     r.id==='arena'
-     ?['Bandit','DarkKnight','Mage','Orc']:
-     ['Slime','Goblin'];
 
-   for(let i=0;i<r.enemies;i++){
+     ?[
+       'Goblin',
+       'Wolf',
+       'Slime'
+     ]
+
+     :r.id.includes('cave')
+
+     ?[
+       'Spider',
+       'Skeleton',
+       'Orc',
+       'Mage'
+     ]
+
+     :r.id==='ruins'
+
+     ?[
+       'Skeleton',
+       'Zombie',
+       'Bandit',
+       'Mage'
+     ]
+
+     :r.id==='castle'||
+      r.id==='arena'
+
+     ?[
+       'Bandit',
+       'DarkKnight',
+       'Mage',
+       'Orc'
+     ]
+
+     :[
+       'Slime',
+       'Goblin'
+     ];
+
+   for(
+     let i=0;
+     i<r.enemies;
+     i++
+   ){
+
      const x=
-       rint(2,ROOM_W-3)*
+       rint(
+         2,
+         ROOM_W-3
+       )*
        TILE+24;
 
      const y=
-       rint(2,ROOM_H-3)*
+       rint(
+         2,
+         ROOM_H-3
+       )*
        TILE+24;
 
      arr.push(
        makeEnemy(
          pool[
            Math.floor(
-             rng()*pool.length
+             rng()*
+             pool.length
            )
          ],
          r.x+r.y+1,
@@ -1704,7 +2484,9 @@ function spawnRoom(id){
          false
        )
      );
+
    }
+
  }
 
  if(
@@ -1713,6 +2495,7 @@ function spawnRoom(id){
      r.boss
    )
  ){
+
    const bx=
      worldW/2;
 
@@ -1721,12 +2504,15 @@ function spawnRoom(id){
 
    const type=
      r.boss==='Cave Guardian'
-     ?'Giant':
-     r.boss==='Dark Knight'
-     ?'DarkKnight':
-     r.boss==='King of Rodon'
-     ?'Mage':
-     'Orc';
+     ?'Giant'
+
+     :r.boss==='Dark Knight'
+     ?'DarkKnight'
+
+     :r.boss==='King of Rodon'
+     ?'Mage'
+
+     :'Orc';
 
    arr.push(
      makeEnemy(
@@ -1737,12 +2523,20 @@ function spawnRoom(id){
        true
      )
    );
+
  }
 
- state.enemies=arr;
+ state.enemies=
+   arr;
+
  state.chests=[];
 
- for(let i=0;i<r.chests;i++){
+ for(
+   let i=0;
+   i<r.chests;
+   i++
+ ){
+
    const firstStoryChest=
      state.mode==='story'&&
      id==='village'&&
@@ -1750,83 +2544,136 @@ function spawnRoom(id){
      !state.firstChestClaimed;
 
    state.chests.push({
+
      id:uid(),
+
      x:
-       rint(2,ROOM_W-3)*
+       rint(
+         2,
+         ROOM_W-3
+       )*
        TILE+24,
+
      y:
-       rint(2,ROOM_H-3)*
+       rint(
+         2,
+         ROOM_H-3
+       )*
        TILE+24,
+
      open:false,
+
      firstStoryChest,
+
      loot:
        genChestLoot(
          r.id,
          firstStoryChest
        )
+
    });
+
  }
 
  state.bodies=[];
  state.particles=[];
  state.damageTexts=[];
  state.roomCleared=false;
+
 }
 
 function loadRoom(
  id,
  entryFrom=null
 ){
- if(!roomById[id])return;
 
- /*
-  * Save the room we are leaving before switching.
-  * Re-entering the room restores this exact snapshot.
-  */
  if(
-   state.gameStarted &&
-   state.room &&
+   !roomById[id]
+ )
+   return;
+
+ if(
+   state.gameStarted&&
+   state.room&&
    state.room!==id
  ){
+
    saveRoomState(
      state.room
    );
+
  }
 
- state.room=id;
- state.visited.add(id);
- state.roomTransitionCooldown=.35;
+ state.room=
+   id;
 
- /*
-  * Restore an already-visited room instead of generating it again.
-  */
+ state.visited.add(
+   id
+ );
+
+ state.roomTransitionCooldown=
+   .35;
+
  const restored=
-   restoreRoomState(id);
+   restoreRoomState(
+     id
+   );
 
- if(!restored)
-   spawnRoom(id);
+ if(!restored){
 
- if(state.player){
-   if(typeof entryFrom==='string'){
-     if(entryFrom==='left'){
+   spawnRoom(
+     id
+   );
+
+ }
+
+ if(
+   state.player
+ ){
+
+   if(
+     typeof entryFrom==='string'
+   ){
+
+     if(
+       entryFrom==='left'
+     ){
+
        state.player.x=
          worldW-55;
+
        state.player.y=
          worldH/2;
-     }else if(entryFrom==='right'){
+
+     }else if(
+       entryFrom==='right'
+     ){
+
        state.player.x=55;
        state.player.y=
          worldH/2;
-     }else if(entryFrom==='up'){
+
+     }else if(
+       entryFrom==='up'
+     ){
+
        state.player.x=
          worldW/2;
+
        state.player.y=
          worldH-55;
-     }else if(entryFrom==='down'){
+
+     }else if(
+       entryFrom==='down'
+     ){
+
        state.player.x=
          worldW/2;
+
        state.player.y=55;
+
      }
+
    }
 
    state.player.vx=0;
@@ -1845,35 +2692,52 @@ function loadRoom(
        20,
        worldH-20
      );
+
  }
 
  updateCamera();
  saveTransient();
 
- if(typeof entryFrom==='string'){
+ if(
+   typeof entryFrom==='string'
+ ){
+
    toast(
      roomById[id].name
    );
+
  }
+
 }
 
 function randomStarterWeaponRarity(){
+
  const roll=
    Math.random();
 
- if(roll<.001)
+ if(
+   roll<.001
+ )
    return 'Mythic';
 
- if(roll<.01)
+ if(
+   roll<.01
+ )
    return 'Legendary';
 
- if(roll<.07)
+ if(
+   roll<.07
+ )
    return 'Epic';
 
- if(roll<.27)
+ if(
+   roll<.27
+ )
    return 'Rare';
 
- if(roll<.62)
+ if(
+   roll<.62
+ )
    return 'Uncommon';
 
  return 'Common';
@@ -1883,7 +2747,9 @@ function genChestLoot(
  id,
  firstStoryChest=false
 ){
+
  if(firstStoryChest){
+
    const rarity=
      randomStarterWeaponRarity();
 
@@ -1895,6 +2761,7 @@ function genChestLoot(
        1
      )
    ];
+
  }
 
  const loot=[];
@@ -1919,19 +2786,30 @@ function genChestLoot(
    kind:'gold',
    name:'Gold',
    rarity:'Common',
-   amount:rint(20,60)
+   amount:
+     rint(
+       20,
+       60
+     )
  });
 
- if(Math.random()<.68){
+ if(
+   Math.random()<.68
+ ){
+
    loot.push(
      makeLootArmor(
        chestLootLevel(id),
        false
      )
    );
+
  }
 
- if(Math.random()<.55){
+ if(
+   Math.random()<.55
+ ){
+
    loot.push(
      makePotion(
        Math.random()<.8
@@ -1939,24 +2817,33 @@ function genChestLoot(
        :'mana'
      )
    );
+
  }
 
  return loot;
 }
 
 function chestLootLevel(id){
+
  const r=
    roomById[id];
 
- if(!r)return 1;
+ if(!r)
+   return 1;
 
- if(id==='infinite'){
+ if(
+   id==='infinite'
+ ){
+
    return Math.max(
      2,
      Math.floor(
-       2+(state.wave||1)*.85
+       2+
+       (state.wave||1)*
+       .85
      )
    );
+
  }
 
  return Math.max(
@@ -1966,30 +2853,52 @@ function chestLootLevel(id){
 }
 
 function saveTransient(){
+
  const s=
    localStorage.getItem(
      'rodonSave'
    );
 
- if(!s||!state.player)return;
+ if(
+   !s||
+   !state.player
+ )
+   return;
 
  try{
+
    saveRoomState(
      state.room
    );
 
    const d=
-     JSON.parse(s);
+     JSON.parse(
+       s
+     );
 
-   d.mode=state.mode;
-   d.wave=state.wave;
-   d.kills=state.kills;
-   d.room=state.room;
-   d.player=state.player;
-   d.visited=[...state.visited];
+   d.mode=
+     state.mode;
+
+   d.wave=
+     state.wave;
+
+   d.kills=
+     state.kills;
+
+   d.room=
+     state.room;
+
+   d.player=
+     state.player;
+
+   d.visited=[
+     ...state.visited
+   ];
+
    d.defeatedBosses=[
      ...state.defeatedBosses
    ];
+
    d.firstChestClaimed=
      state.firstChestClaimed;
 
@@ -2000,16 +2909,21 @@ function saveTransient(){
      'rodonSave',
      JSON.stringify(d)
    );
+
  }catch{}
+
 }
 
 function roomTheme(){
+
  return roomById[
    state.room
  ].theme;
+
 }
 
 function drawBackground(){
+
  const t=
    roomTheme();
 
@@ -2018,26 +2932,32 @@ function drawBackground(){
      '#0b1110',
      '#14211b'
    ],
+
    village:[
      '#101216',
      '#1b2029'
    ],
+
    cave:[
      '#0b0c12',
      '#171923'
    ],
+
    ruins:[
      '#141214',
      '#222027'
    ],
+
    castle:[
      '#101117',
      '#1b1c25'
    ],
+
    shadow:[
      '#090b0d',
      '#12171a'
    ],
+
    throne:[
      '#120d15',
      '#241725'
@@ -2052,6 +2972,7 @@ function drawBackground(){
    palettes.forest;
 
  ctx.fillStyle=base;
+
  ctx.fillRect(
    0,
    0,
@@ -2064,11 +2985,13 @@ function drawBackground(){
    y<ROOM_H;
    y++
  ){
+
    for(
      let x=0;
      x<ROOM_W;
      x++
    ){
+
      ctx.fillStyle=
        ((x+y)&1)
        ?grid
@@ -2090,10 +3013,17 @@ function drawBackground(){
        TILE-1,
        TILE-1
      );
+
    }
+
  }
 
- for(let i=0;i<28;i++){
+ for(
+   let i=0;
+   i<28;
+   i++
+ ){
+
    const x=
      rint(
        18,
@@ -2110,7 +3040,9 @@ function drawBackground(){
      t==='forest'||
      t==='village'
    ){
-     ctx.fillStyle='#151f1a';
+
+     ctx.fillStyle=
+       '#151f1a';
 
      ctx.fillRect(
        x,
@@ -2139,8 +3071,13 @@ function drawBackground(){
        10,
        7
      );
-   }else if(t==='cave'){
-     ctx.fillStyle='#252a38';
+
+   }else if(
+     t==='cave'
+   ){
+
+     ctx.fillStyle=
+       '#252a38';
 
      ctx.fillRect(
        x,
@@ -2155,8 +3092,11 @@ function drawBackground(){
        8,
        8
      );
+
    }else{
-     ctx.fillStyle='#2c2c34';
+
+     ctx.fillStyle=
+       '#2c2c34';
 
      ctx.fillRect(
        x,
@@ -2178,16 +3118,24 @@ function drawBackground(){
        6,
        11
      );
+
    }
+
  }
 
- for(let i=0;i<8;i++){
+ for(
+   let i=0;
+   i<8;
+   i++
+ ){
+
    const x=
      72+i*170;
 
    const y=46;
 
-   ctx.fillStyle='#56565e';
+   ctx.fillStyle=
+     '#56565e';
 
    ctx.fillRect(
      x,
@@ -2196,7 +3144,8 @@ function drawBackground(){
      22
    );
 
-   ctx.fillStyle='#fff1a8';
+   ctx.fillStyle=
+     '#fff1a8';
 
    ctx.fillRect(
      x-3,
@@ -2214,6 +3163,7 @@ function drawBackground(){
      24,
      34
    );
+
  }
 
  const r=
@@ -2221,7 +3171,9 @@ function drawBackground(){
      state.room
    ];
 
- ctx.strokeStyle='#ececf0';
+ ctx.strokeStyle=
+   '#ececf0';
+
  ctx.lineWidth=4;
 
  ctx.strokeRect(
@@ -2236,9 +3188,13 @@ function drawBackground(){
  for(
    const [dir] of r.doors
  ){
-   ctx.fillStyle='#ececf0';
 
-   if(dir==='left')
+   ctx.fillStyle=
+     '#ececf0';
+
+   if(
+     dir==='left'
+   )
      ctx.fillRect(
        0,
        worldH/2-30,
@@ -2246,7 +3202,9 @@ function drawBackground(){
        60
      );
 
-   if(dir==='right')
+   if(
+     dir==='right'
+   )
      ctx.fillRect(
        worldW-10,
        worldH/2-30,
@@ -2254,7 +3212,9 @@ function drawBackground(){
        60
      );
 
-   if(dir==='up')
+   if(
+     dir==='up'
+   )
      ctx.fillRect(
        worldW/2-30,
        0,
@@ -2262,14 +3222,18 @@ function drawBackground(){
        10
      );
 
-   if(dir==='down')
+   if(
+     dir==='down'
+   )
      ctx.fillRect(
        worldW/2-30,
        worldH-10,
        60,
        10
      );
+
  }
+
 }
 
 function drawPixelShadow(
@@ -2277,27 +3241,38 @@ function drawPixelShadow(
  y,
  w
 ){
+
  ctx.fillStyle=
    'rgba(0,0,0,.5)';
 
  ctx.fillRect(
-   Math.round(x-w/2),
+   Math.round(
+     x-w/2
+   ),
    Math.round(y),
    Math.round(w),
    4
  );
+
 }
 
 function drawPlayer(){
+
  const p=
    state.player;
 
  const ang=
    Math.atan2(
      mouse.y-
-       (p.y-state.camera.y),
+       (
+         p.y-
+         state.camera.y
+       ),
      mouse.x-
-       (p.x-state.camera.x)
+       (
+         p.x-
+         state.camera.x
+       )
    );
 
  const eq=
@@ -2328,7 +3303,8 @@ function drawPlayer(){
    Math.round(p.y)
  );
 
- ctx.imageSmoothingEnabled=false;
+ ctx.imageSmoothingEnabled=
+   false;
 
  drawPixelShadow(
    0,
@@ -2336,11 +3312,18 @@ function drawPlayer(){
    34
  );
 
- ctx.rotate(ang);
+ ctx.rotate(
+   ang
+ );
 
- const skin='#c98f6d';
- const skin2='#9f624e';
- const hair='#24242b';
+ const skin=
+   '#c98f6d';
+
+ const skin2=
+   '#9f624e';
+
+ const hair=
+   '#24242b';
 
  ctx.fillStyle=skin;
 
@@ -2402,10 +3385,13 @@ function drawPlayer(){
  ctx.fillStyle=
    chest
    ?(
-      dragon?'#7d4134':
-      dark?'#242833':
-      metal?'#687386':
-      '#5b392a'
+      dragon
+      ?'#7d4134'
+      :dark
+      ?'#242833'
+      :metal
+      ?'#687386'
+      :'#5b392a'
     )
    :'#3c2b24';
 
@@ -2431,11 +3417,15 @@ function drawPlayer(){
  );
 
  if(chest){
+
    ctx.fillStyle=
-     dragon?'#d18b5d':
-     dark?'#4b5262':
-     metal?'#a7afba':
-     '#82553c';
+     dragon
+     ?'#d18b5d'
+     :dark
+     ?'#4b5262'
+     :metal
+     ?'#a7afba'
+     :'#82553c';
 
    ctx.fillRect(
      -12,
@@ -2455,14 +3445,15 @@ function drawPlayer(){
      20,
      4
    );
+
  }
 
  ctx.fillStyle=
    dark
-   ?'#171a20':
-   metal
-   ?'#363d49':
-   '#28242a';
+   ?'#171a20'
+   :metal
+   ?'#363d49'
+   :'#28242a';
 
  ctx.fillRect(
    -9,
@@ -2498,11 +3489,15 @@ function drawPlayer(){
  );
 
  if(eq.Head){
+
    ctx.fillStyle=
-     dragon?'#a85e43':
-     dark?'#171a21':
-     metal?'#8c95a3':
-     '#4f3a2d';
+     dragon
+     ?'#a85e43'
+     :dark
+     ?'#171a21'
+     :metal
+     ?'#8c95a3'
+     :'#4f3a2d';
 
    ctx.fillRect(
      -12,
@@ -2518,7 +3513,8 @@ function drawPlayer(){
      7
    );
 
-   ctx.fillStyle='#dce3ea';
+   ctx.fillStyle=
+     '#dce3ea';
 
    ctx.fillRect(
      5,
@@ -2526,13 +3522,17 @@ function drawPlayer(){
      7,
      2
    );
+
  }
 
  if(eq.Gloves){
+
    ctx.fillStyle=
-     dark?'#20242e':
-     metal?'#838d9d':
-     '#624533';
+     dark
+     ?'#20242e'
+     :metal
+     ?'#838d9d'
+     :'#624533';
 
    ctx.fillRect(
      -19,
@@ -2547,9 +3547,11 @@ function drawPlayer(){
      7,
      7
    );
+
  }
 
  if(eq.Boots){
+
    ctx.fillStyle=
      dark
      ?'#20242b'
@@ -2570,12 +3572,14 @@ function drawPlayer(){
      8,
      8
    );
+
  }
 
  const w=
    eq.MainHand;
 
- ctx.fillStyle='#8f6544';
+ ctx.fillStyle=
+   '#8f6544';
 
  ctx.fillRect(
    13,
@@ -2584,8 +3588,12 @@ function drawPlayer(){
    4
  );
 
- if(w?.weaponType==='mace'){
-   ctx.fillStyle='#b9b8b1';
+ if(
+   w?.weaponType==='mace'
+ ){
+
+   ctx.fillStyle=
+     '#b9b8b1';
 
    ctx.fillRect(
      17,
@@ -2600,8 +3608,13 @@ function drawPlayer(){
      5,
      4
    );
- }else if(w?.weaponType==='axe'){
-   ctx.fillStyle='#c7c8cb';
+
+ }else if(
+   w?.weaponType==='axe'
+ ){
+
+   ctx.fillStyle=
+     '#c7c8cb';
 
    ctx.fillRect(
      18,
@@ -2616,8 +3629,13 @@ function drawPlayer(){
      8,
      7
    );
- }else if(w?.weaponType==='dagger'){
-   ctx.fillStyle='#e3e5ea';
+
+ }else if(
+   w?.weaponType==='dagger'
+ ){
+
+   ctx.fillStyle=
+     '#e3e5ea';
 
    ctx.fillRect(
      18,
@@ -2625,8 +3643,11 @@ function drawPlayer(){
      10,
      5
    );
+
  }else{
-   ctx.fillStyle='#d9dce3';
+
+   ctx.fillStyle=
+     '#d9dce3';
 
    ctx.fillRect(
      18,
@@ -2635,7 +3656,8 @@ function drawPlayer(){
      4
    );
 
-   ctx.fillStyle='#7a5236';
+   ctx.fillStyle=
+     '#7a5236';
 
    ctx.fillRect(
      14,
@@ -2643,15 +3665,17 @@ function drawPlayer(){
      6,
      4
    );
+
  }
 
  if(eq.OffHand){
+
    ctx.fillStyle=
      metal
-     ?'#8f98a6':
-     dark
-     ?'#383d49':
-     '#6e4d3a';
+     ?'#8f98a6'
+     :dark
+     ?'#383d49'
+     :'#6e4d3a';
 
    ctx.fillRect(
      -22,
@@ -2660,7 +3684,8 @@ function drawPlayer(){
      18
    );
 
-   ctx.fillStyle='#b7bcc6';
+   ctx.fillStyle=
+     '#b7bcc6';
 
    ctx.fillRect(
      -21,
@@ -2668,9 +3693,11 @@ function drawPlayer(){
      6,
      3
    );
+
  }
 
- ctx.fillStyle='#fff';
+ ctx.fillStyle=
+   '#fff';
 
  ctx.fillRect(
    8,
@@ -2681,8 +3708,13 @@ function drawPlayer(){
 
  ctx.restore();
 
- if(p.flash>0){
-   ctx.strokeStyle='#fff';
+ if(
+   p.flash>0
+ ){
+
+   ctx.strokeStyle=
+     '#fff';
+
    ctx.lineWidth=2;
 
    ctx.strokeRect(
@@ -2691,10 +3723,13 @@ function drawPlayer(){
      44,
      44
    );
+
  }
+
 }
 
 function drawEnemy(e){
+
  ctx.save();
 
  ctx.translate(
@@ -2703,9 +3738,12 @@ function drawEnemy(e){
  );
 
  ctx.globalAlpha=
-   e.hp<=0?.62:1;
+   e.hp<=0
+   ?.62
+   :1;
 
- ctx.imageSmoothingEnabled=false;
+ ctx.imageSmoothingEnabled=
+   false;
 
  drawPixelShadow(
    0,
@@ -2733,9 +3771,14 @@ function drawEnemy(e){
  ctx.fillStyle=c;
 
  const r=
-   Math.round(e.r);
+   Math.round(
+     e.r
+   );
 
- if(e.kind==='slime'){
+ if(
+   e.kind==='slime'
+ ){
+
    ctx.fillRect(
      -r,
      -r/2,
@@ -2749,7 +3792,11 @@ function drawEnemy(e){
      r*2-10,
      5
    );
- }else if(e.kind==='spider'){
+
+ }else if(
+   e.kind==='spider'
+ ){
+
    ctx.fillRect(
      -7,
      -9,
@@ -2759,9 +3806,13 @@ function drawEnemy(e){
 
    for(
      const sx of [
-       -12,-8,8,12
+       -12,
+       -8,
+       8,
+       12
      ]
    ){
+
      ctx.fillRect(
        sx,
        -10,
@@ -2775,8 +3826,11 @@ function drawEnemy(e){
        3,
        6
      );
+
    }
+
  }else{
+
    ctx.fillRect(
      -r+4,
      -r,
@@ -2793,9 +3847,11 @@ function drawEnemy(e){
        r/2
      )
    );
+
  }
 
- ctx.fillStyle='#15151a';
+ ctx.fillStyle=
+   '#15151a';
 
  ctx.fillRect(
    -7,
@@ -2811,7 +3867,10 @@ function drawEnemy(e){
    4
  );
 
- if(e.kind==='skeleton'){
+ if(
+   e.kind==='skeleton'
+ ){
+
    ctx.fillRect(
      -8,
      5,
@@ -2819,7 +3878,8 @@ function drawEnemy(e){
      3
    );
 
-   ctx.fillStyle='#f3eee0';
+   ctx.fillStyle=
+     '#f3eee0';
 
    ctx.fillRect(
      -5,
@@ -2834,13 +3894,16 @@ function drawEnemy(e){
      2,
      3
    );
+
  }
 
  if(
    e.kind==='dk'||
    e.elite
  ){
-   ctx.fillStyle='#1a1b21';
+
+   ctx.fillStyle=
+     '#1a1b21';
 
    ctx.fillRect(
      -r+5,
@@ -2860,10 +3923,15 @@ function drawEnemy(e){
      7,
      3
    );
+
  }
 
- if(e.kind==='mage'){
-   ctx.fillStyle='#2a2042';
+ if(
+   e.kind==='mage'
+ ){
+
+   ctx.fillStyle=
+     '#2a2042';
 
    ctx.fillRect(
      -r-2,
@@ -2871,10 +3939,14 @@ function drawEnemy(e){
      r*2+4,
      6
    );
+
  }
 
  if(e.elite){
-   ctx.strokeStyle='#f2d36a';
+
+   ctx.strokeStyle=
+     '#f2d36a';
+
    ctx.lineWidth=3;
 
    ctx.strokeRect(
@@ -2883,6 +3955,7 @@ function drawEnemy(e){
      r*2+10,
      r*2+10
    );
+
  }
 
  ctx.restore();
@@ -2891,12 +3964,14 @@ function drawEnemy(e){
    e.hp<e.maxHp||
    e.elite
  ){
+
    const w=
      e.elite
      ?96
      :44;
 
-   ctx.fillStyle='#0b0b10';
+   ctx.fillStyle=
+     '#0b0b10';
 
    ctx.fillRect(
      e.x-w/2,
@@ -2923,20 +3998,30 @@ function drawEnemy(e){
    );
 
    if(e.elite){
-     ctx.fillStyle='#fff';
-     ctx.font='bold 12px "Courier New"';
-     ctx.textAlign='center';
+
+     ctx.fillStyle=
+       '#fff';
+
+     ctx.font=
+       'bold 12px "Courier New"';
+
+     ctx.textAlign=
+       'center';
 
      ctx.fillText(
        e.bossName,
        e.x,
        e.y-e.r-21
      );
+
    }
+
  }
+
 }
 
 function drawChest(c){
+
  ctx.save();
 
  ctx.translate(
@@ -2944,7 +4029,8 @@ function drawChest(c){
    Math.round(c.y)
  );
 
- ctx.imageSmoothingEnabled=false;
+ ctx.imageSmoothingEnabled=
+   false;
 
  ctx.fillStyle=
    c.open
@@ -2958,7 +4044,8 @@ function drawChest(c){
    20
  );
 
- ctx.fillStyle='#d8d1c2';
+ ctx.fillStyle=
+   '#d8d1c2';
 
  ctx.fillRect(
    -17,
@@ -2979,7 +4066,8 @@ function drawChest(c){
    6
  );
 
- ctx.fillStyle='#1a1518';
+ ctx.fillStyle=
+   '#1a1518';
 
  ctx.fillRect(
    -17,
@@ -2992,16 +4080,21 @@ function drawChest(c){
 
  if(
    !c.open&&
-   dist(c,state.player)<60
+   dist(
+     c,
+     state.player
+   )<60
  )
    drawInteract(
      c.x,
      c.y-28,
      '[E] OPEN CHEST'
    );
+
 }
 
 function drawBody(b){
+
  ctx.save();
 
  ctx.translate(
@@ -3023,7 +4116,8 @@ function drawBody(b){
    14
  );
 
- ctx.fillStyle='#a7a1a5';
+ ctx.fillStyle=
+   '#a7a1a5';
 
  ctx.fillRect(
    -12,
@@ -3035,13 +4129,17 @@ function drawBody(b){
  ctx.restore();
 
  if(
-   dist(b,state.player)<70
+   dist(
+     b,
+     state.player
+   )<70
  )
    drawInteract(
      b.x,
      b.y-25,
      '[LMB] SEARCH BODY'
    );
+
 }
 
 function drawInteract(
@@ -3049,16 +4147,21 @@ function drawInteract(
  y,
  text
 ){
+
  ctx.font=
    'bold 12px "Courier New"';
 
- ctx.textAlign='center';
+ ctx.textAlign=
+   'center';
 
  const w=
-   ctx.measureText(text).width+
+   ctx.measureText(
+     text
+   ).width+
    14;
 
- ctx.fillStyle='#07080d';
+ ctx.fillStyle=
+   '#07080d';
 
  ctx.fillRect(
    x-w/2,
@@ -3067,7 +4170,8 @@ function drawInteract(
    20
  );
 
- ctx.strokeStyle='#fff';
+ ctx.strokeStyle=
+   '#fff';
 
  ctx.strokeRect(
    x-w/2+.5,
@@ -3076,16 +4180,19 @@ function drawInteract(
    19
  );
 
- ctx.fillStyle='#fff';
+ ctx.fillStyle=
+   '#fff';
 
  ctx.fillText(
    text,
    x,
    y-2
  );
+
 }
 
 function drawAtmosphere(){
+
  const t=
    roomTheme();
 
@@ -3120,10 +4227,16 @@ function drawAtmosphere(){
    worldH
  );
 
- for(let i=0;i<26;i++){
+ for(
+   let i=0;
+   i<26;
+   i++
+ ){
+
    const seed=
      roomSeed(
-       state.room+i*13
+       state.room+
+       i*13
      );
 
    const x=
@@ -3146,12 +4259,15 @@ function drawAtmosphere(){
      2,
      2
    );
+
  }
 
  ctx.restore();
+
 }
 
 function drawUI(){
+
  const p=
    state.player;
 
@@ -3159,7 +4275,9 @@ function drawUI(){
    derived();
 
  const r=
-   roomById[state.room];
+   roomById[
+     state.room
+   ];
 
  ctx.fillStyle=
    'rgba(4,4,8,.92)';
@@ -3178,7 +4296,8 @@ function drawUI(){
    56
  );
 
- ctx.fillStyle='#111';
+ ctx.fillStyle=
+   '#111';
 
  ctx.fillRect(
    28,
@@ -3187,20 +4306,25 @@ function drawUI(){
    16
  );
 
- ctx.fillStyle='#e6e6e6';
+ ctx.fillStyle=
+   '#e6e6e6';
 
  ctx.fillRect(
    28,
    31,
    274*
    (
-     p.hp/d.maxHp
+     p.hp/
+     d.maxHp
    ),
    16
  );
 
- ctx.fillStyle='#fff';
- ctx.font='bold 12px system-ui';
+ ctx.fillStyle=
+   '#fff';
+
+ ctx.font=
+   'bold 12px system-ui';
 
  ctx.fillText(
    `HP ${Math.max(0,Math.floor(p.hp))} / ${d.maxHp}`,
@@ -3208,7 +4332,8 @@ function drawUI(){
    43
  );
 
- ctx.fillStyle='#111';
+ ctx.fillStyle=
+   '#111';
 
  ctx.fillRect(
    28,
@@ -3217,7 +4342,8 @@ function drawUI(){
    9
  );
 
- ctx.fillStyle='#a9a9b4';
+ ctx.fillStyle=
+   '#a9a9b4';
 
  ctx.fillRect(
    28,
@@ -3231,7 +4357,8 @@ function drawUI(){
    9
  );
 
- ctx.fillStyle='#fff';
+ ctx.fillStyle=
+   '#fff';
 
  ctx.fillText(
    `Lv ${p.level}  •  XP ${p.xp}/${p.nextXp}`,
@@ -3239,9 +4366,14 @@ function drawUI(){
    80
  );
 
- ctx.font='bold 18px system-ui';
- ctx.textAlign='right';
- ctx.fillStyle='#f4d083';
+ ctx.font=
+   'bold 18px system-ui';
+
+ ctx.textAlign=
+   'right';
+
+ ctx.fillStyle=
+   '#f4d083';
 
  ctx.fillText(
    `G ${p.gold}`,
@@ -3249,10 +4381,14 @@ function drawUI(){
    51
  );
 
- ctx.textAlign='left';
+ ctx.textAlign=
+   'left';
 
- ctx.fillStyle='#ffffff';
- ctx.font='bold 14px system-ui';
+ ctx.fillStyle=
+   '#ffffff';
+
+ ctx.font=
+   'bold 14px system-ui';
 
  ctx.fillText(
    r.name,
@@ -3260,8 +4396,11 @@ function drawUI(){
    H-18
  );
 
- ctx.font='12px system-ui';
- ctx.fillStyle='#b8b8c0';
+ ctx.font=
+   '12px system-ui';
+
+ ctx.fillStyle=
+   '#b8b8c0';
 
  ctx.fillText(
    `Weapon: ${p.equipped.MainHand?p.equipped.MainHand.name:'Fists'}`,
@@ -3269,7 +4408,8 @@ function drawUI(){
    H-38
  );
 
- ctx.textAlign='right';
+ ctx.textAlign=
+   'right';
 
  ctx.fillText(
    'C Character   I Inventory   M Map   Esc Pause',
@@ -3277,10 +4417,18 @@ function drawUI(){
    H-18
  );
 
- if(state.mode==='infinite'){
-   ctx.fillStyle='#f4d083';
-   ctx.font='bold 16px system-ui';
-   ctx.textAlign='center';
+ if(
+   state.mode==='infinite'
+ ){
+
+   ctx.fillStyle=
+     '#f4d083';
+
+   ctx.font=
+     'bold 16px system-ui';
+
+   ctx.textAlign=
+     'center';
 
    ctx.fillText(
      `INFINITE • WAVE ${state.wave} • KILLS ${state.kills}`,
@@ -3288,8 +4436,11 @@ function drawUI(){
      28
    );
 
-   ctx.font='12px system-ui';
-   ctx.fillStyle='#b8b8c0';
+   ctx.font=
+     '12px system-ui';
+
+   ctx.fillStyle=
+     '#b8b8c0';
 
    ctx.fillText(
      `Best Wave: ${Math.max(state.infiniteBest,state.wave-1)}`,
@@ -3297,7 +4448,9 @@ function drawUI(){
      47
    );
 
-   ctx.textAlign='left';
+   ctx.textAlign=
+     'left';
+
  }
 
  ctx.fillStyle=
@@ -3310,9 +4463,11 @@ function drawUI(){
    42
  );
 
- ctx.textAlign='center';
+ ctx.textAlign=
+   'center';
 
- ctx.fillStyle='#ffffff';
+ ctx.fillStyle=
+   '#ffffff';
 
  ctx.fillText(
    'RMB Ability',
@@ -3333,10 +4488,13 @@ function drawUI(){
    H-35
  );
 
- ctx.textAlign='left';
+ ctx.textAlign=
+   'left';
+
 }
 
 function render(){
+
  ctx.save();
 
  ctx.clearRect(
@@ -3355,6 +4513,7 @@ function render(){
      'shakeToggle'
    ).checked
  ){
+
    sx=
      rnd(
        -screenShake,
@@ -3366,11 +4525,14 @@ function render(){
        -screenShake,
        screenShake
      );
+
  }
 
  ctx.translate(
-   -state.camera.x+sx,
-   -state.camera.y+sy
+   -state.camera.x+
+   sx,
+   -state.camera.y+
+   sy
  );
 
  drawBackground();
@@ -3396,6 +4558,7 @@ function render(){
  for(
    const pt of state.particles
  ){
+
    ctx.fillStyle=
      pt.color;
 
@@ -3415,16 +4578,19 @@ function render(){
    ctx.fill();
 
    ctx.globalAlpha=1;
+
  }
 
  for(
    const t of state.damageTexts
  ){
+
    if(
      document.getElementById(
        'damageToggle'
      )?.checked
    ){
+
      ctx.globalAlpha=
        clamp(
          t.life,
@@ -3438,7 +4604,8 @@ function render(){
      ctx.font=
        'bold 14px system-ui';
 
-     ctx.textAlign='center';
+     ctx.textAlign=
+       'center';
 
      ctx.fillText(
        t.text,
@@ -3447,7 +4614,9 @@ function render(){
      );
 
      ctx.globalAlpha=1;
+
    }
+
  }
 
  ctx.restore();
@@ -3458,9 +4627,11 @@ function render(){
    typeof renderMap==='function'
  )
    renderMap();
+
 }
 
 function updateCamera(){
+
  const p=
    state.player;
 
@@ -3477,13 +4648,16 @@ function updateCamera(){
      0,
      worldH-H
    );
+
 }
 
 function move(dt){
+
  const p=
    state.player;
 
- if(!p)return;
+ if(!p)
+   return;
 
  const d=
    derived();
@@ -3516,6 +4690,7 @@ function move(dt){
    dx!==0||
    dy!==0
  ){
+
    const len=
      Math.hypot(
        dx,
@@ -3536,9 +4711,12 @@ function move(dt){
 
    p.y+=
      p.vy*dt;
+
  }else{
+
    p.vx=0;
    p.vy=0;
+
  }
 
  p.x=
@@ -3554,9 +4732,11 @@ function move(dt){
      8,
      worldH-8
    );
+
 }
 
 function tryRoomTransition(){
+
  const p=
    state.player;
 
@@ -3570,7 +4750,10 @@ function tryRoomTransition(){
  )
    return false;
 
- if(p.x<=10){
+ if(
+   p.x<=10
+ ){
+
    const d=
      r.doors.find(
        a=>a[0]==='left'
@@ -3581,6 +4764,7 @@ function tryRoomTransition(){
      p.y>worldH/2-75&&
      p.y<worldH/2+75
    ){
+
      loadRoom(
        d[1],
        'left'
@@ -3588,9 +4772,13 @@ function tryRoomTransition(){
 
      return true;
    }
+
  }
 
- if(p.x>=worldW-10){
+ if(
+   p.x>=worldW-10
+ ){
+
    const d=
      r.doors.find(
        a=>a[0]==='right'
@@ -3601,6 +4789,7 @@ function tryRoomTransition(){
      p.y>worldH/2-75&&
      p.y<worldH/2+75
    ){
+
      loadRoom(
        d[1],
        'right'
@@ -3608,9 +4797,13 @@ function tryRoomTransition(){
 
      return true;
    }
+
  }
 
- if(p.y<=10){
+ if(
+   p.y<=10
+ ){
+
    const d=
      r.doors.find(
        a=>a[0]==='up'
@@ -3621,6 +4814,7 @@ function tryRoomTransition(){
      p.x>worldW/2-75&&
      p.x<worldW/2+75
    ){
+
      loadRoom(
        d[1],
        'up'
@@ -3628,9 +4822,13 @@ function tryRoomTransition(){
 
      return true;
    }
+
  }
 
- if(p.y>=worldH-10){
+ if(
+   p.y>=worldH-10
+ ){
+
    const d=
      r.doors.find(
        a=>a[0]==='down'
@@ -3641,6 +4839,7 @@ function tryRoomTransition(){
      p.x>worldW/2-75&&
      p.x<worldW/2+75
    ){
+
      loadRoom(
        d[1],
        'down'
@@ -3648,19 +4847,25 @@ function tryRoomTransition(){
 
      return true;
    }
+
  }
 
  return false;
 }
 
 function nearestEnemy(){
+
  let best=null;
- let bd=1e9;
+
+ let bd=
+   1e9;
 
  for(
    const e of state.enemies
  ){
-   if(e.hp<=0)continue;
+
+   if(e.hp<=0)
+     continue;
 
    const dd=
      dist(
@@ -3668,45 +4873,64 @@ function nearestEnemy(){
        state.player
      );
 
-   if(dd<bd){
+   if(
+     dd<bd
+   ){
+
      bd=dd;
      best=e;
+
    }
+
  }
 
  return best;
 }
 
 function nearestBody(){
+
  let best=null;
- let bd=1e9;
+
+ let bd=
+   1e9;
 
  for(
    const b of state.bodies
  ){
+
    const dd=
      dist(
        b,
        state.player
      );
 
-   if(dd<bd){
+   if(
+     dd<bd
+   ){
+
      bd=dd;
      best=b;
+
    }
+
  }
 
  return best;
 }
 
 function nearestChest(){
+
  let best=null;
- let bd=1e9;
+
+ let bd=
+   1e9;
 
  for(
    const c of state.chests
  ){
-   if(c.open)continue;
+
+   if(c.open)
+     continue;
 
    const dd=
      dist(
@@ -3714,10 +4938,15 @@ function nearestChest(){
        state.player
      );
 
-   if(dd<bd){
+   if(
+     dd<bd
+   ){
+
      bd=dd;
      best=c;
+
    }
+
  }
 
  return best;
@@ -3729,6 +4958,7 @@ function addText(
  text,
  color='#fff'
 ){
+
  state.damageTexts.push({
    x,
    y,
@@ -3736,6 +4966,7 @@ function addText(
    color,
    life:1
  });
+
 }
 
 function particles(
@@ -3744,7 +4975,13 @@ function particles(
  color='#fff',
  n=8
 ){
- for(let i=0;i<n;i++){
+
+ for(
+   let i=0;
+   i<n;
+   i++
+ ){
+
    state.particles.push({
      x,
      y,
@@ -3754,10 +4991,13 @@ function particles(
      size:rnd(2,5),
      color
    });
+
  }
+
 }
 
 function attack(){
+
  const p=
    state.player;
 
@@ -3777,9 +5017,14 @@ function attack(){
 
  if(
    body&&
-   dist(body,p)<72
+   dist(
+     body,
+     p
+   )<72
  ){
+
    openLoot(body);
+
    return;
  }
 
@@ -3793,9 +5038,15 @@ function attack(){
  const ang=
    Math.atan2(
      mouse.y-
-       (p.y-state.camera.y),
+       (
+         p.y-
+         state.camera.y
+       ),
      mouse.x-
-       (p.x-state.camera.x)
+       (
+         p.x-
+         state.camera.x
+       )
    );
 
  const range=
@@ -3809,7 +5060,9 @@ function attack(){
  for(
    const e of state.enemies
  ){
-   if(e.hp<=0)continue;
+
+   if(e.hp<=0)
+     continue;
 
    const dd=
      dist(e,p);
@@ -3822,19 +5075,25 @@ function attack(){
 
    const diff=
      Math.atan2(
-       Math.sin(ea-ang),
-       Math.cos(ea-ang)
+       Math.sin(
+         ea-ang
+       ),
+       Math.cos(
+         ea-ang
+       )
      );
 
    if(
      dd<range+e.r&&
      Math.abs(diff)<1.25
    ){
+
      let dmg=
        d.attack||3;
 
      const crit=
-       Math.random()<d.crit;
+       Math.random()<
+       d.crit;
 
      dmg*=
        crit
@@ -3842,7 +5101,10 @@ function attack(){
        :1;
 
      dmg=Math.round(
-       dmg*rnd(.88,1.12)
+       dmg*rnd(
+         .88,
+         1.12
+       )
      );
 
      e.hp-=dmg;
@@ -3882,23 +5144,34 @@ function attack(){
        .025
      );
 
-     if(e.hp<=0)
+     if(
+       e.hp<=0
+     )
        killEnemy(e);
+
    }
+
  }
 
- if(did)
+ if(did){
+
    particles(
      p.x+
-       Math.cos(ang)*25,
+       Math.cos(ang)*
+       25,
      p.y+
-       Math.sin(ang)*25,
+       Math.sin(ang)*
+       25,
      '#d7e4ff',
      5
    );
+
+ }
+
 }
 
 function ability(){
+
  const p=
    state.player;
 
@@ -3920,9 +5193,15 @@ function ability(){
  const ang=
    Math.atan2(
      mouse.y-
-       (p.y-state.camera.y),
+       (
+         p.y-
+         state.camera.y
+       ),
      mouse.x-
-       (p.x-state.camera.x)
+       (
+         p.x-
+         state.camera.x
+       )
    );
 
  const type=
@@ -3930,7 +5209,10 @@ function ability(){
    w?.weaponType||
    'sword';
 
- if(type==='Shadow Step'){
+ if(
+   type==='Shadow Step'
+ ){
+
    p.x=
      clamp(
        p.x+
@@ -3952,16 +5234,23 @@ function ability(){
    toast(
      'Shadow Step'
    );
+
  }else{
+
    for(
      const e of state.enemies
    ){
-     if(e.hp<=0)continue;
+
+     if(e.hp<=0)
+       continue;
 
      const dd=
        dist(e,p);
 
-     if(dd<110){
+     if(
+       dd<110
+     ){
+
        let dmg=
          Math.round(
            d.attack*
@@ -3997,12 +5286,18 @@ function ability(){
        )
          e.burn=3;
 
-       if(type==='Heavy Impact')
+       if(
+         type==='Heavy Impact'
+       )
          e.stun=.8;
 
-       if(e.hp<=0)
+       if(
+         e.hp<=0
+       )
          killEnemy(e);
+
      }
+
    }
 
    particles(
@@ -4021,10 +5316,13 @@ function ability(){
      'sawtooth',
      .035
    );
+
  }
+
 }
 
 function interact(){
+
  const c=
    nearestChest();
 
@@ -4035,7 +5333,9 @@ function interact(){
      state.player
    )<70
  ){
+
    openChest(c);
+
    return;
  }
 
@@ -4050,9 +5350,11 @@ function interact(){
    )<72
  )
    openLoot(body);
+
 }
 
 function pickupNearest(){
+
  const body=
    nearestBody();
 
@@ -4064,29 +5366,46 @@ function pickupNearest(){
    )<72
  )
    openLoot(body);
+
 }
 
 function openChest(c){
- if(!c||c.open)return;
+
+ if(
+   !c||
+   c.open
+ )
+   return;
 
  c.open=true;
 
  const rewards=
    c.loot||[];
 
- if(c.firstStoryChest)
+ if(
+   c.firstStoryChest
+ )
    state.firstChestClaimed=true;
 
  for(
    const it of rewards
  ){
-   if(it.kind==='gold')
+
+   if(
+     it.kind==='gold'
+   ){
+
      state.player.gold+=
        it.amount;
-   else
+
+   }else{
+
      state.player.inventory.push(
        it
      );
+
+   }
+
  }
 
  renderChestRewards(
@@ -4106,13 +5425,18 @@ function openChest(c){
    'triangle',
    .04
  );
+
 }
 
 function killEnemy(e){
+
  const p=
    state.player;
 
- if(e.hp>0)return;
+ if(
+   e.hp>0
+ )
+   return;
 
  state.kills++;
 
@@ -4120,18 +5444,23 @@ function killEnemy(e){
    e.elite
    ?500+state.wave*30
    :Math.round(
-      14+e.level*5
+      14+
+      e.level*5
     );
 
  gainXp(xp);
 
  if(e.elite){
+
    state.defeatedBosses.add(
      e.bossName
    );
 
    p.gold+=
-     rint(100,500)+
+     rint(
+       100,
+       500
+     )+
      (
        state.mode==='infinite'
        ?state.wave*20
@@ -4153,23 +5482,33 @@ function killEnemy(e){
      state.mode==='story'&&
      e.bossName==='King of Rodon'
    ){
+
      localStorage.setItem(
        'rodonStoryComplete',
        '1'
      );
 
-     state.gameStarted=false;
+     state.gameStarted=
+       false;
 
      saveGame();
 
      setTimeout(
-       ()=>showScreen('victory'),
+       ()=>showScreen(
+         'victory'
+       ),
        250
      );
+
    }
+
  }else{
+
    p.gold+=
-     rint(2,12)+
+     rint(
+       2,
+       12
+     )+
      (
        state.mode==='infinite'
        ?state.wave
@@ -4182,6 +5521,7 @@ function killEnemy(e){
      'triangle',
      .025
    );
+
  }
 
  const loot=
@@ -4193,13 +5533,19 @@ function killEnemy(e){
      it=>it.kind==='gold'
    )
  ){
+
    for(
      const it of loot
    ){
-     if(it.kind==='gold')
+
+     if(
+       it.kind==='gold'
+     )
        it.amount+=
          state.wave*4;
+
    }
+
  }
 
  state.bodies.push({
@@ -4210,22 +5556,21 @@ function killEnemy(e){
    boss:e.elite
  });
 
- /*
-  * Save the changed room immediately so defeated enemies
-  * and their bodies are still there when the player returns.
-  */
  saveRoomState(
    state.room
  );
 
  saveTransient();
+
 }
 
 function gainXp(amount){
+
  const p=
    state.player;
 
- p.xp+=amount;
+ p.xp+=
+   amount;
 
  addText(
    p.x,
@@ -4237,18 +5582,28 @@ function gainXp(amount){
  while(
    p.xp>=p.nextXp
  ){
-   p.xp-=p.nextXp;
+
+   p.xp-=
+     p.nextXp;
+
    p.level++;
 
    p.nextXp=
      Math.round(
-       p.nextXp*1.34
+       p.nextXp*
+       1.34
      );
 
    p.maxHp+=12;
-   p.hp=p.maxHp;
-   p.baseAttack+=1.5;
-   p.baseDefense+=1;
+
+   p.hp=
+     p.maxHp;
+
+   p.baseAttack+=
+     1.5;
+
+   p.baseDefense+=
+     1;
 
    toast(
      `LEVEL UP!  You are now level ${p.level}`
@@ -4267,17 +5622,24 @@ function gainXp(amount){
      '#f4d083',
      25
    );
+
  }
+
 }
 
 function updateEnemies(dt){
+
  const p=
    state.player;
 
  for(
    const e of state.enemies
  ){
-   if(e.hp<=0)continue;
+
+   if(
+     e.hp<=0
+   )
+     continue;
 
    e.hit=
      Math.max(
@@ -4285,7 +5647,8 @@ function updateEnemies(dt){
        e.hit-dt
      );
 
-   e.attackCd-=dt;
+   e.attackCd-=
+     dt;
 
    e.stun=
      Math.max(
@@ -4293,10 +5656,16 @@ function updateEnemies(dt){
        (e.stun||0)-dt
      );
 
-   if(e.burn>0){
+   if(
+     e.burn>0
+   ){
+
      e.burn-=dt;
 
-     if(Math.random()<.25){
+     if(
+       Math.random()<.25
+     ){
+
        e.hp-=2;
 
        addText(
@@ -4305,18 +5674,30 @@ function updateEnemies(dt){
          '2',
          '#ff965f'
        );
+
      }
+
    }
 
-   if(e.hp<=0){
+   if(
+     e.hp<=0
+   ){
+
      killEnemy(e);
+
      continue;
    }
 
    const dd=
-     dist(e,p);
+     dist(
+       e,
+       p
+     );
 
-   if(e.stun>0)continue;
+   if(
+     e.stun>0
+   )
+     continue;
 
    const chase=
      dd<
@@ -4327,6 +5708,7 @@ function updateEnemies(dt){
      );
 
    if(chase){
+
      let dx=
        (
          p.x-e.x
@@ -4353,6 +5735,7 @@ function updateEnemies(dt){
          9
        )
      ){
+
        e.x+=
          dx*
          e.speed*
@@ -4362,14 +5745,16 @@ function updateEnemies(dt){
          dy*
          e.speed*
          dt;
+
      }else if(
        e.attackCd<=0&&
        p.invuln<=0
      ){
+
        e.attackCd=
          e.elite
-         ?.8
-         :1.2;
+         ? .8
+         : 1.2;
 
        let dmg=
          Math.max(
@@ -4377,12 +5762,15 @@ function updateEnemies(dt){
            Math.round(
              e.damage-
              rnd(0,3)-
-             derived().defense*.35
+             derived().defense*
+             .35
            )
          );
 
        p.hp-=dmg;
+
        p.flash=.12;
+
        p.invuln=.35;
 
        addText(
@@ -4400,6 +5788,7 @@ function updateEnemies(dt){
        );
 
        screenShake=5;
+
        screenShakeTimer=1;
 
        sound(
@@ -4414,34 +5803,50 @@ function updateEnemies(dt){
          e.phase===1&&
          e.hp/e.maxHp<.6
        ){
+
          e.phase=2;
-         e.speed*=1.18;
+
+         e.speed*=
+           1.18;
 
          e.damage=
            Math.round(
-             e.damage*1.25
+             e.damage*
+             1.25
            );
 
          toast(
            `${e.bossName} enters phase 2!`
          );
+
        }
+
      }
+
    }else{
+
      e.wander+=
-       rnd(-.5,.5)*dt;
+       rnd(
+         -.5,
+         .5
+       )*dt;
 
      e.x+=
-       Math.cos(e.wander)*
+       Math.cos(
+         e.wander
+       )*
        e.speed*
        .18*
        dt;
 
      e.y+=
-       Math.sin(e.wander)*
+       Math.sin(
+         e.wander
+       )*
        e.speed*
        .18*
        dt;
+
    }
 
    e.x=
@@ -4457,13 +5862,17 @@ function updateEnemies(dt){
        24,
        worldH-24
      );
+
  }
+
 }
 
 function updateEffects(dt){
+
  for(
    const pt of state.particles
  ){
+
    pt.life-=dt;
 
    pt.x+=
@@ -4474,6 +5883,7 @@ function updateEffects(dt){
 
    pt.vx*=.96;
    pt.vy*=.96;
+
  }
 
  state.particles=
@@ -4484,8 +5894,12 @@ function updateEffects(dt){
  for(
    const t of state.damageTexts
  ){
+
    t.life-=dt;
-   t.y-=28*dt;
+
+   t.y-=
+     28*dt;
+
  }
 
  state.damageTexts=
@@ -4497,6 +5911,7 @@ function updateEffects(dt){
    state.player;
 
  if(p){
+
    p.attackCd=
      Math.max(
        0,
@@ -4520,6 +5935,7 @@ function updateEffects(dt){
        0,
        p.flash-dt
      );
+
  }
 
  state.roomTransitionCooldown=
@@ -4538,24 +5954,30 @@ function updateEffects(dt){
    screenShakeTimer<=0
  )
    screenShake=0;
+
 }
 
 function roomProgress(){
+
  return (
    state.enemies.length>0&&
    state.enemies.every(
      e=>e.hp<=0
    )
  );
+
 }
 
 function update(dt){
+
  if(
    !state.gameStarted||
    activeModal()||
    document.getElementById(
      'death'
-   ).classList.contains('show')
+   ).classList.contains(
+     'show'
+   )
  )
    return;
 
@@ -4582,6 +6004,7 @@ function update(dt){
    roomProgress()&&
    !state.roomCleared
  ){
+
    state.roomCleared=true;
 
    saveRoomState(
@@ -4615,10 +6038,13 @@ function update(dt){
      },
      450
    );
+
  }
+
 }
 
 function die(){
+
  saveRoomState(
    state.room
  );
@@ -4637,10 +6063,6 @@ function die(){
  state.player.y=
    worldH-80;
 
- /*
-  * Keep the room's current state instead of refreshing it.
-  * The player respawns inside the same room.
-  */
  restoreRoomState(
    state.room
  );
@@ -4650,12 +6072,16 @@ function die(){
  ).textContent=
    `You fell in ${r.name}. Return to the room entrance and try again.`;
 
- showScreen('death');
+ showScreen(
+   'death'
+ );
 
  clearMovement();
+
 }
 
 function activeModal(){
+
  return [
    'pause',
    'character',
@@ -4674,11 +6100,15 @@ function activeModal(){
    id=>
      document.getElementById(
        id
-     ).classList.contains('show')
+     ).classList.contains(
+       'show'
+     )
  );
+
 }
 
 function showScreen(id){
+
  clearMovement();
 
  document.querySelectorAll(
@@ -4691,6 +6121,7 @@ function showScreen(id){
  );
 
  if(id){
+
    const el=
      document.getElementById(
        id
@@ -4700,46 +6131,75 @@ function showScreen(id){
      el.classList.add(
        'show'
      );
+
  }else{
+
    focusGame();
+
  }
+
 }
 
 function toggleScreen(id){
+
  const el=
-   document.getElementById(id);
+   document.getElementById(
+     id
+   );
 
  if(
-   el.classList.contains('show')
- )
+   el.classList.contains(
+     'show'
+   )
+ ){
+
    showScreen(null);
- else
+
+ }else{
+
    showScreen(id);
 
- if(id==='character')
+ }
+
+ if(
+   id==='character'
+ )
    renderCharacter();
 
- if(id==='inventory')
+ if(
+   id==='inventory'
+ )
    renderInventory();
 
- if(id==='map')
+ if(
+   id==='map'
+ )
    renderMap(true);
 
- if(id==='updates')
+ if(
+   id==='updates'
+ )
    renderUpdates();
 
- if(id==='rarityGuide')
+ if(
+   id==='rarityGuide'
+ )
    renderRarityGuide();
+
 }
 
 function toast(msg){
+
  const t=
    document.getElementById(
      'toast'
    );
 
- t.textContent=msg;
- t.style.opacity='1';
+ t.textContent=
+   msg;
+
+ t.style.opacity=
+   '1';
 
  clearTimeout(
    toast.tm
@@ -4750,15 +6210,18 @@ function toast(msg){
      ()=>t.style.opacity='0',
      1800
    );
+
 }
 
 function renderUpdates(){
+
  const list=
    document.getElementById(
      'updateList'
    );
 
- if(!list)return;
+ if(!list)
+   return;
 
  document.getElementById(
    'updateVersionBadge'
@@ -4789,16 +6252,20 @@ function renderUpdates(){
    );
 
  if(badge)
-   badge.style.display='none';
+   badge.style.display=
+     'none';
+
 }
 
 function refreshUpdateBadge(){
+
  const badge=
    document.getElementById(
      'updatesNewBadge'
    );
 
- if(!badge)return;
+ if(!badge)
+   return;
 
  badge.style.display=
    localStorage.getItem(
@@ -4806,10 +6273,13 @@ function refreshUpdateBadge(){
    )===GAME_VERSION
    ?'none'
    :'block';
+
 }
 
 function openLoot(body){
- state.lootBody=body;
+
+ state.lootBody=
+   body;
 
  document.getElementById(
    'lootTitle'
@@ -4820,22 +6290,28 @@ function openLoot(body){
 
  renderLoot();
 
- showScreen('loot');
+ showScreen(
+   'loot'
+ );
+
 }
 
 function renderLoot(){
+
  const el=
    document.getElementById(
      'lootItems'
    );
 
  const loot=
-   state.lootBody?.loot||[];
+   state.lootBody?.loot||
+   [];
 
  el.innerHTML='';
 
  loot.forEach(
    (it,i)=>{
+
      const d=
        document.createElement(
          'div'
@@ -4861,19 +6337,23 @@ function renderLoot(){
        };
 
      el.appendChild(d);
+
    }
  );
 
  if(!loot.length)
    el.innerHTML=
      '<div class="small">Nothing left.</div>';
+
 }
 
 function takeLoot(i){
+
  const body=
    state.lootBody;
 
- if(!body)return;
+ if(!body)
+   return;
 
  const it=
    body.loot.splice(
@@ -4881,15 +6361,23 @@ function takeLoot(i){
      1
    )[0];
 
- if(!it)return;
+ if(!it)
+   return;
 
- if(it.kind==='gold')
+ if(
+   it.kind==='gold'
+ ){
+
    state.player.gold+=
      it.amount;
- else
+
+ }else{
+
    state.player.inventory.push(
      it
    );
+
+ }
 
  sound(
    680,
@@ -4906,7 +6394,10 @@ function takeLoot(i){
 
  saveTransient();
 
- if(!body.loot.length){
+ if(
+   !body.loot.length
+ ){
+
    state.bodies=
      state.bodies.filter(
        b=>b!==body
@@ -4923,13 +6414,16 @@ function takeLoot(i){
    toast(
      'Loot collected'
    );
+
  }
+
 }
 
 function renderChestRewards(
  items,
  firstStoryChest=false
 ){
+
  const el=
    document.getElementById(
      'chestRewardItems'
@@ -4940,7 +6434,8 @@ function renderChestRewards(
      'chestRewardIntro'
    );
 
- if(!el)return;
+ if(!el)
+   return;
 
  const rewards=
    items||[];
@@ -4954,6 +6449,7 @@ function renderChestRewards(
 
  rewards.forEach(
    it=>{
+
      const rarity=
        (
          it.rarity||
@@ -4974,6 +6470,7 @@ function renderChestRewards(
         <div class="reward-desc">${itemSummary(it)}${it.kind==='gold'?` • ${it.amount} gold`:''}</div>`;
 
      el.appendChild(d);
+
    }
  );
 
@@ -4984,15 +6481,18 @@ function renderChestRewards(
  showScreen(
    'chestReward'
  );
+
 }
 
 function renderRarityGuide(){
+
  const list=
    document.getElementById(
      'rarityGuideList'
    );
 
- if(!list)return;
+ if(!list)
+   return;
 
  const tab=
    state.rarityGuideTab||
@@ -5014,10 +6514,14 @@ function renderRarityGuide(){
 
  const groups={};
 
- if(tab==='weapon'){
+ if(
+   tab==='weapon'
+ ){
+
    for(
      const w of weapons
    ){
+
      (
        groups[w[5]]||
        (
@@ -5028,8 +6532,11 @@ function renderRarityGuide(){
        meta:
          `${w[1].toUpperCase()} • ${w[2]} base dmg`
      });
+
    }
+
  }else{
+
    const sets=[
      ['Leather','Common'],
      ['Iron','Uncommon'],
@@ -5042,6 +6549,7 @@ function renderRarityGuide(){
    for(
      const [set,rarity] of sets
    ){
+
      for(
        const slot of [
          'Head',
@@ -5051,6 +6559,7 @@ function renderRarityGuide(){
          'Gloves'
        ]
      ){
+
        (
          groups[rarity]||
          (
@@ -5062,15 +6571,20 @@ function renderRarityGuide(){
          meta:
            `${slot} • armor set`
        });
+
      }
+
    }
+
  }
 
  list.innerHTML=
    rarities.map(
      r=>{
+
        const items=
-         groups[r]||[];
+         groups[r]||
+         [];
 
        if(!items.length)
          return '';
@@ -5095,6 +6609,7 @@ function renderRarityGuide(){
            ).join('')}
          </div>
        </div>`;
+
      }
    ).join('');
 
@@ -5104,18 +6619,23 @@ function renderRarityGuide(){
    );
 
  if(note){
+
    note.textContent=
      tab==='weapon'
      ?'Weapons are grouped by their normal/base rarity. Random chest and enemy loot uses weighted rarity rolls, making higher rarities harder to obtain.'
      :'Armor is grouped by its normal/set rarity. Random armor uses weighted rarity rolls, making higher rarity armor harder to find.';
+
  }
+
 }
 
 function renderCharacter(){
+
  const p=
    state.player;
 
- if(!p)return;
+ if(!p)
+   return;
 
  const d=
    derived();
@@ -5131,6 +6651,7 @@ function renderCharacter(){
    );
 
  if(stats){
+
    stats.innerHTML=[
      ['Level',p.level],
      ['HP',`${Math.floor(p.hp)} / ${d.maxHp}`],
@@ -5146,9 +6667,11 @@ function renderCharacter(){
          <b>${s[1]}</b>
        </div>`
    ).join('');
+
  }
 
  if(equip){
+
    equip.innerHTML=
      Object.entries(
        p.equipped
@@ -5159,13 +6682,17 @@ function renderCharacter(){
            <div class="small">${it?it.name:'Empty'}</div>
          </div>`
      ).join('');
+
  }
+
 }
 
 function renderInventory(
  filter=
-   state.inventoryFilter||'all'
+   state.inventoryFilter||
+   'all'
 ){
+
  state.inventoryFilter=
    filter;
 
@@ -5201,6 +6728,7 @@ function renderInventory(
 
  items.forEach(
    it=>{
+
      const d=
        document.createElement(
          'div'
@@ -5226,57 +6754,101 @@ function renderInventory(
        };
 
      el.appendChild(d);
+
    }
  );
 
  if(!items.length)
    el.innerHTML=
      '<div class="small">No items in this category.</div>';
+
 }
 
 function equipInventoryItem(item){
- if(!item||!state.player)
+
+ if(
+   !item||
+   !state.player
+ )
    return;
 
- if(item.kind==='weapon'){
-   const old=
-     state.player.equipped
-       .MainHand;
+ /*
+  * WEAPON
+  */
+ if(
+   item.kind==='weapon'
+ ){
 
-   state.player.equipped.MainHand=
-     state.player.equipped.MainHand?.id===item.id
-     ?null
-     :item;
+   const old=
+     state.player.equipped.MainHand;
 
    if(
-     old&&
-     old.id!==item.id
+     old?.id===item.id
    ){
-     const already=
-       state.player.inventory.some(
-         i=>i.id===old.id
-       );
 
-     if(!already)
+     /*
+      * Unequip the weapon.
+      * Put it back into the inventory.
+      */
+     state.player.equipped.MainHand=
+       null;
+
+     if(
+       !state.player.inventory.some(
+         i=>i.id===item.id
+       )
+     ){
+       state.player.inventory.push(
+         item
+       );
+     }
+
+     toast(
+       `Unequipped ${item.name}`
+     );
+
+   }else{
+
+     /*
+      * Equip the new weapon.
+      * Return the old weapon to inventory.
+      */
+     if(
+       old&&
+       !state.player.inventory.some(
+         i=>i.id===old.id
+       )
+     ){
+
        state.player.inventory.push(
          old
        );
-   }
 
-   state.player.inventory=
-     state.player.inventory.filter(
-       i=>
-         i.id!==item.id||
-         state.player.equipped.MainHand?.id!==item.id
+     }
+
+     state.player.equipped.MainHand=
+       item;
+
+     state.player.inventory=
+       state.player.inventory.filter(
+         i=>i.id!==item.id
+       );
+
+     toast(
+       `Equipped ${item.name}`
      );
 
-   toast(
-     state.player.equipped.MainHand
-     ?`Equipped ${item.name}`
-     :'Unequipped'
-   );
+   }
+
  }
- else if(item.kind==='armor'){
+
+ /*
+  * ARMOR
+  */
+ else if(
+   item.kind==='armor'
+ ){
+
    const slot=
      item.slot;
 
@@ -5285,38 +6857,193 @@ function equipInventoryItem(item){
        slot
      ];
 
-   if(old?.id===item.id){
+   if(
+     old?.id===item.id
+   ){
+
+     /*
+      * Unequip armor if the item is
+      * somehow clicked while equipped.
+      */
      state.player.equipped[
        slot
      ]=null;
+
+     if(
+       !state.player.inventory.some(
+         i=>i.id===item.id
+       )
+     ){
+
+       state.player.inventory.push(
+         item
+       );
+
+     }
+
+     toast(
+       `Unequipped ${item.name}`
+     );
+
    }else{
+
+     /*
+      * Replace old armor.
+      * The old armor returns to inventory.
+      */
+     if(
+       old&&
+       !state.player.inventory.some(
+         i=>i.id===old.id
+       )
+     ){
+
+       state.player.inventory.push(
+         old
+       );
+
+     }
+
+     /*
+      * Equip the new armor.
+      */
      state.player.equipped[
        slot
      ]=item;
+
+     /*
+      * Remove the newly equipped armor
+      * completely from inventory.
+      */
+     state.player.inventory=
+       state.player.inventory.filter(
+         i=>i.id!==item.id
+       );
+
+     toast(
+       `Equipped ${item.name}`
+     );
+
    }
 
-   toast(
-     state.player.equipped[slot]
-     ?`Equipped ${item.name}`
-     :'Unequipped'
-   );
+ }
+
+ /*
+  * CONSUMABLES
+  */
+ else if(
+   item.kind==='consumable'
+ ){
+
+   /*
+    * Health Potion
+    */
+   if(
+     item.consumable==='health'
+   ){
+
+     const d=
+       derived();
+
+     if(
+       state.player.hp>=d.maxHp
+     ){
+
+       /*
+        * DO NOT remove the potion.
+        */
+       toast(
+         'Health is already full'
+       );
+
+       return;
+     }
+
+     const oldHp=
+       state.player.hp;
+
+     state.player.hp=
+       clamp(
+         state.player.hp+
+         item.amount,
+         0,
+         d.maxHp
+       );
+
+     state.player.inventory=
+       state.player.inventory.filter(
+         i=>i.id!==item.id
+       );
+
+     const healed=
+       Math.floor(
+         state.player.hp-
+         oldHp
+       );
+
+     toast(
+       `Drank Health Potion • +${healed} HP`
+     );
+
+     particles(
+       state.player.x,
+       state.player.y,
+       '#b7ffb1',
+       12
+     );
+
+     sound(
+       620,
+       .10,
+       'sine',
+       .035
+     );
+
+   }
+
+   /*
+    * Mana Potion
+    *
+    * RODON currently does not have a mana
+    * resource, so keep these in the inventory
+    * instead of pretending they were consumed.
+    */
+   else if(
+     item.consumable==='mana'
+   ){
+
+     toast(
+       'Mana system is not active yet'
+     );
+
+     return;
+   }
+
  }
 
  saveGame();
+
  renderInventory();
  renderCharacter();
+
 }
 
-function renderMap(force=false){
+function renderMap(
+ force=false
+){
+
  const mapCanvas=
    document.getElementById(
      'mapCanvas'
    );
 
- if(!mapCanvas)return;
+ if(!mapCanvas)
+   return;
 
  const mc=
-   mapCanvas.getContext('2d');
+   mapCanvas.getContext(
+     '2d'
+   );
 
  const mw=
    mapCanvas.width;
@@ -5331,7 +7058,8 @@ function renderMap(force=false){
    mh
  );
 
- mc.fillStyle='#0a0f17';
+ mc.fillStyle=
+   '#0a0f17';
 
  mc.fillRect(
    0,
@@ -5385,6 +7113,7 @@ function renderMap(force=false){
  for(
    const r of roomDefs
  ){
+
    if(
      !state.visited.has(
        r.id
@@ -5420,7 +7149,8 @@ function renderMap(force=false){
      size
    );
 
-   mc.strokeStyle='#e7e7e7';
+   mc.strokeStyle=
+     '#e7e7e7';
 
    mc.strokeRect(
      x+.5,
@@ -5429,10 +7159,14 @@ function renderMap(force=false){
      size-1
    );
 
-   mc.fillStyle='#fff';
+   mc.fillStyle=
+     '#fff';
+
    mc.font=
      '10px "Courier New"';
-   mc.textAlign='center';
+
+   mc.textAlign=
+     'center';
 
    mc.fillText(
      r.name,
@@ -5441,7 +7175,9 @@ function renderMap(force=false){
    );
 
    if(r.boss){
-     mc.fillStyle='#ff7777';
+
+     mc.fillStyle=
+       '#ff7777';
 
      mc.fillRect(
        x+size-9,
@@ -5449,11 +7185,16 @@ function renderMap(force=false){
        5,
        5
      );
+
    }
+
  }
+
 }
 
-window.startStoryFromButton=()=>{
+window.startStoryFromButton=
+()=>{
+
  initAudio();
 
  clearSave();
@@ -5461,12 +7202,18 @@ window.startStoryFromButton=()=>{
  resetForNew(
    'story'
  );
+
 };
 
-window.startInfiniteFromButton=()=>{
+window.startInfiniteFromButton=
+()=>{
+
  initAudio();
 
- if(!storyComplete()){
+ if(
+   !storyComplete()
+ ){
+
    toast(
      'Defeat the King of Rodon in Story Mode first.'
    );
@@ -5479,21 +7226,28 @@ window.startInfiniteFromButton=()=>{
  resetForNew(
    'infinite'
  );
+
 };
 
-window.takeAllLootFromButton=()=>{
+window.takeAllLootFromButton=
+()=>{
+
  const b=
    state.lootBody;
 
- if(!b)return;
+ if(!b)
+   return;
 
  while(
    b.loot.length
  )
    takeLoot(0);
+
 };
 
-window.rodonSetRarityTab=(tab)=>{
+window.rodonSetRarityTab=
+(tab)=>{
+
  state.rarityGuideTab=
    tab;
 
@@ -5502,408 +7256,308 @@ window.rodonSetRarityTab=(tab)=>{
  );
 
  renderRarityGuide();
+
 };
 
-function bindButton(
- id,
- handler
-){
- const el=
-   document.getElementById(id);
-
- if(!el)return;
-
- if(
-   el.dataset.bound==='1'
- )
-   return;
-
- el.dataset.bound='1';
-
- el.addEventListener(
-   'click',
-   handler
- );
-}
-
-function bindUI(){
-
- bindButton(
-   'rarityWeaponsTab',
-   ()=>{
-     state.rarityGuideTab=
-       'weapon';
-
-     renderRarityGuide();
-   }
- );
-
- bindButton(
-   'rarityArmorTab',
-   ()=>{
-     state.rarityGuideTab=
-       'armor';
-
-     renderRarityGuide();
-   }
- );
-
- bindButton(
-   'rarityGuideClose',
-   ()=>showScreen('start')
- );
-
- bindButton(
-   'takeAll',
-   ()=>{
-     const b=
-       state.lootBody;
-
-     if(!b)return;
-
-     while(
-       b.loot.length
-     )
-       takeLoot(0);
-   }
- );
-
- bindButton(
-   'lootClose',
-   ()=>showScreen(null)
- );
-
- bindButton(
-   'chestRewardClose',
-   ()=>showScreen(null)
- );
-
- bindButton(
-   'chestRewardDone',
-   ()=>showScreen(null)
- );
-
- bindButton(
-   'updatesBtn',
-   ()=>{
-     initAudio();
-     toggleScreen(
-       'updates'
-     );
-   }
- );
-
- bindButton(
-   'newBtn',
-   ()=>{
-     initAudio();
-     showModeSelect();
-   }
- );
-
- bindButton(
-   'contBtn',
-   ()=>{
-     initAudio();
-     loadGame();
-   }
- );
-
- bindButton(
-   'settingsBtn',
-   ()=>showScreen('settings')
- );
-
- bindButton(
-   'creditsBtn',
-   ()=>showScreen('credits')
- );
-
- bindButton(
-   'rarityBtn',
-   ()=>{
-     state.rarityGuideTab=
-       'weapon';
-
-     showScreen(
-       'rarityGuide'
-     );
-
-     renderRarityGuide();
-   }
- );
-
- bindButton(
-   'storyBtn',
-   ()=>window.startStoryFromButton()
- );
-
- bindButton(
-   'infiniteBtn',
-   ()=>window.startInfiniteFromButton()
- );
-
- bindButton(
-   'resumeBtn',
-   ()=>{
-     showScreen(null);
-     focusGame();
-   }
- );
-
- bindButton(
-   'saveBtn',
-   ()=>{
-     saveGame();
-     toast('Game saved');
-   }
- );
-
- bindButton(
-   'pauseMapBtn',
-   ()=>{
-     showScreen('map');
-     renderMap(true);
-   }
- );
-
- bindButton(
-   'mainBtn',
-   ()=>{
-     state.gameStarted=false;
-     showScreen('start');
-   }
- );
-
- bindButton(
-   'deathMenuBtn',
-   ()=>{
-     state.gameStarted=false;
-     showScreen('start');
-   }
- );
-
- bindButton(
-   'respawnBtn',
-   ()=>{
-     showScreen(null);
-     focusGame();
-   }
- );
-
- bindButton(
-   'victoryInfiniteBtn',
-   ()=>{
-     if(storyComplete()){
-       clearSave();
-
-       resetForNew(
-         'infinite'
-       );
-     }
-   }
- );
-
- bindButton(
-   'victoryMenuBtn',
-   ()=>{
-     state.gameStarted=false;
-     showScreen('start');
-   }
- );
-
- document.querySelectorAll(
-   '[data-close]'
- ).forEach(
-   b=>
-     b.addEventListener(
-       'click',
-       ()=>{
-         if(
-           b.dataset.close==='updates'||
-           b.dataset.close==='rarityGuide'
-         ){
-           state.gameStarted=false;
-           showScreen('start');
-         }else{
-           showScreen(null);
-         }
-       }
-     )
- );
-
- document.querySelectorAll(
-   '[data-tab]'
- ).forEach(
-   b=>
-     b.addEventListener(
-       'click',
-       ()=>{
-         renderInventory(
-           b.dataset.tab
-         );
-       }
-     )
- );
-}
-
+/*
+ * Button handling.
+ * Only one delegated button system is used here
+ * so buttons don't fire twice.
+ */
 document.addEventListener(
  'click',
- e=>{
+ function(e){
+
    const b=
      e.target.closest&&
-     e.target.closest('button');
+     e.target.closest(
+       'button'
+     );
 
-   if(
-     !b||
-     b.dataset.bound==='1'||
-     b.dataset.fallbackHandled==='1'
-   )
+   if(!b)
      return;
 
-   const id=b.id;
+   e.preventDefault();
+   e.stopPropagation();
+   e.stopImmediatePropagation();
 
-   const fallback={
-     newBtn:()=>{
+   const id=
+     b.id;
+
+   const action=
+     b.getAttribute(
+       'data-rodon-action'
+     );
+
+   const close=
+     b.getAttribute(
+       'data-close'
+     );
+
+   const tab=
+     b.getAttribute(
+       'data-tab'
+     );
+
+   if(tab){
+
+     renderInventory(
+       tab
+     );
+
+     return;
+   }
+
+   if(close){
+
+     if(
+       close==='updates'||
+       close==='rarityGuide'||
+       close==='modeSelect'
+     ){
+
+       state.gameStarted=
+         false;
+
+       showScreen(
+         'start'
+       );
+
+     }else{
+
+       showScreen(
+         null
+       );
+
+     }
+
+     return;
+   }
+
+   switch(action){
+
+     case 'new':
+
        initAudio();
        showModeSelect();
-     },
 
-     contBtn:()=>{
+       break;
+
+     case 'continue':
+
        initAudio();
        loadGame();
-     },
 
-     updatesBtn:()=>{
-       initAudio();
-       toggleScreen('updates');
-     },
+       break;
 
-     rarityBtn:()=>{
-       state.rarityGuideTab='weapon';
-       showScreen('rarityGuide');
-       renderRarityGuide();
-     },
+     case 'updates':
 
-     settingsBtn:()=>{
-       showScreen('settings');
-     },
-
-     creditsBtn:()=>{
-       showScreen('credits');
-     },
-
-     storyBtn:()=>{
-       initAudio();
-       clearSave();
-       resetForNew('story');
-     },
-
-     infiniteBtn:()=>{
        initAudio();
 
-       if(!storyComplete()){
-         toast(
-           'Defeat the King of Rodon in Story Mode first.'
+       if(
+         document.getElementById(
+           'updates'
+         ).classList.contains(
+           'show'
+         )
+       ){
+
+         showScreen(null);
+
+       }else{
+
+         showScreen(
+           'updates'
          );
 
-         return;
+         renderUpdates();
+
        }
 
-       clearSave();
+       break;
 
-       resetForNew(
-         'infinite'
+     case 'rarity':
+
+       state.rarityGuideTab=
+         'weapon';
+
+       showScreen(
+         'rarityGuide'
        );
-     },
 
-     resumeBtn:()=>{
+       renderRarityGuide();
+
+       break;
+
+     case 'settings':
+
+       showScreen(
+         'settings'
+       );
+
+       break;
+
+     case 'credits':
+
+       showScreen(
+         'credits'
+       );
+
+       break;
+
+     case 'story':
+
+       initAudio();
+
+       window.startStoryFromButton();
+
+       break;
+
+     case 'infinite':
+
+       initAudio();
+
+       window.startInfiniteFromButton();
+
+       break;
+
+     case 'resume':
+
        showScreen(null);
        focusGame();
-     },
 
-     saveBtn:()=>{
+       break;
+
+     case 'save':
+
        saveGame();
-     },
+       toast(
+         'Game saved'
+       );
 
-     pauseMapBtn:()=>{
-       showScreen('map');
-     },
+       break;
 
-     mainBtn:()=>{
-       state.gameStarted=false;
-       showScreen('start');
-     },
+     case 'pauseMap':
 
-     deathMenuBtn:()=>{
-       state.gameStarted=false;
-       showScreen('start');
-     },
+       showScreen(
+         'map'
+       );
 
-     respawnBtn:()=>{
+       renderMap(true);
+
+       break;
+
+     case 'mainMenu':
+
+       state.gameStarted=
+         false;
+
+       showScreen(
+         'start'
+       );
+
+       break;
+
+     case 'deathMenu':
+
+       state.gameStarted=
+         false;
+
+       showScreen(
+         'start'
+       );
+
+       break;
+
+     case 'respawn':
+
        showScreen(null);
        focusGame();
-     },
 
-     victoryInfiniteBtn:()=>{
-       if(storyComplete()){
+       break;
+
+     case 'victoryInfinite':
+
+       initAudio();
+
+       if(
+         storyComplete()
+       ){
+
          clearSave();
-         resetForNew('infinite');
+
+         resetForNew(
+           'infinite'
+         );
+
        }
-     },
 
-     victoryMenuBtn:()=>{
-       showScreen('start');
-     },
+       break;
 
-     lootClose:()=>{
+     case 'victoryMenu':
+
+       state.gameStarted=
+         false;
+
+       showScreen(
+         'start'
+       );
+
+       break;
+
+     case 'lootClose':
+
        showScreen(null);
-     },
+       focusGame();
 
-     chestRewardClose:()=>{
+       break;
+
+     case 'takeAll':
+
+       window.takeAllLootFromButton();
+
+       break;
+
+     case 'chestClose':
+     case 'chestDone':
+
        showScreen(null);
-     },
+       focusGame();
 
-     chestRewardDone:()=>{
-       showScreen(null);
-     },
+       break;
 
-     rarityGuideClose:()=>{
-       showScreen('start');
-     },
+     case 'rarityWeapon':
 
-     rarityWeaponsTab:()=>{
-       state.rarityGuideTab='weapon';
-       renderRarityGuide();
-     },
+       window.rodonSetRarityTab(
+         'weapon'
+       );
 
-     rarityArmorTab:()=>{
-       state.rarityGuideTab='armor';
-       renderRarityGuide();
-     },
+       break;
 
-     takeAll:()=>{
-       const b=state.lootBody;
+     case 'rarityArmor':
 
-       if(!b)return;
+       window.rodonSetRarityTab(
+         'armor'
+       );
 
-       while(b.loot.length)
-         takeLoot(0);
-     }
-   };
+       break;
 
-   const fn=
-     fallback[id];
+     case 'rarityClose':
 
-   if(fn){
-     b.dataset.fallbackHandled='1';
-     fn();
+       showScreen(
+         'start'
+       );
+
+       break;
+
    }
+
  },
- {capture:false}
+ true
 );
 
 function showModeSelect(){
+
  const locked=
    !storyComplete();
 
@@ -5913,12 +7567,14 @@ function showModeSelect(){
    );
 
  if(btn){
+
    btn.textContent=
      locked
      ?'Infinite Mode 🔒'
      :'Infinite Mode';
 
-   btn.disabled=locked;
+   btn.disabled=
+     locked;
  }
 
  const status=
@@ -5927,53 +7583,69 @@ function showModeSelect(){
    );
 
  if(status){
+
    status.innerHTML=
      locked
+
      ?'Infinite Mode is locked until you defeat the <b>King of Rodon</b> in Story Mode.'
+
      :'Infinite Mode is unlocked. Story Mode remains available for replay.';
+
  }
 
  showScreen(
    'modeSelect'
  );
+
 }
 
 function loop(now){
+
  const dt=
    Math.min(
      .033,
      (now-last)/1000
    );
 
- last=now;
+ last=
+   now;
 
  update(dt);
+
  render();
 
  requestAnimationFrame(
    loop
  );
+
 }
 
 function initRodon(){
- bindUI();
 
- window.RODON_UI_READY=true;
+ window.RODON_UI_READY=
+   true;
 
- state.mode='story';
+ state.mode=
+   'story';
+
  state.wave=0;
+
  state.infiniteBest=
    infiniteBest();
+
  state.player=
    defaultPlayer();
 
  state.roomStates={};
+
  state.enemies=[];
  state.chests=[];
  state.bodies=[];
  state.particles=[];
  state.damageTexts=[];
- state.roomCleared=false;
+
+ state.roomCleared=
+   false;
 
  loadRoom(
    'village',
@@ -5981,6 +7653,7 @@ function initRodon(){
  );
 
  updateCamera();
+
  refreshUpdateBadge();
 
  focusGame();
@@ -5988,31 +7661,44 @@ function initRodon(){
  requestAnimationFrame(
    loop
  );
+
 }
 
 if(
- document.readyState==='loading'
+ document.readyState===
+ 'loading'
 ){
+
  document.addEventListener(
    'DOMContentLoaded',
    initRodon,
    {once:true}
  );
+
 }else{
+
  initRodon();
+
 }
 
 setTimeout(
  ()=>{
-   if(!window.RODON_UI_READY){
+
+   if(
+     !window.RODON_UI_READY
+   ){
+
      try{
        initRodon();
      }catch(e){}
+
    }
+
  },
  250
 );
 
 </script>
+
 </body>
 </html>
