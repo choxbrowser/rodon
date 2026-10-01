@@ -205,7 +205,8 @@ canvas{
   padding:7px;
   min-height:74px;
   cursor:pointer;
-  transition:border-color .12s,transform .12s,box-shadow .12s
+  transition:border-color .12s,transform .12s,box-shadow .12s;
+  user-select:none
 }
 
 .item:hover{
@@ -266,7 +267,7 @@ canvas{
   transition:opacity .2s;
   pointer-events:none;
   font-weight:700;
-  z-index:5
+  z-index:100001
 }
 
 #help{
@@ -565,7 +566,6 @@ canvas{
   border:1px solid currentColor
 }
 
-/* Existing comparison styles */
 .item-info-wrap{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -625,7 +625,6 @@ canvas{
   font-weight:900
 }
 
-/* Floating comparison */
 #floatingCompare{
   position:fixed;
   left:0;
@@ -637,7 +636,7 @@ canvas{
   border-radius:8px;
   box-shadow:0 18px 55px rgba(0,0,0,.7);
   padding:10px;
-  z-index:99999;
+  z-index:99998;
   pointer-events:none;
   display:none
 }
@@ -686,20 +685,16 @@ canvas{
   margin-top:0
 }
 
-/* NEW IN 1.1.0: INVENTORY RIGHT-CLICK MENU */
 #inventoryContextMenu{
   position:fixed;
-  left:0;
-  top:0;
-  min-width:190px;
-  max-width:240px;
   display:none;
-  padding:5px;
-  background:#07080d;
+  min-width:190px;
+  background:#090a10;
   border:2px solid #f0f0f0;
   border-radius:4px;
-  box-shadow:0 18px 60px rgba(0,0,0,.78);
-  z-index:100000;
+  box-shadow:0 18px 55px rgba(0,0,0,.75);
+  padding:5px;
+  z-index:100000
 }
 
 #inventoryContextMenu.show{
@@ -711,55 +706,49 @@ canvas{
   border-bottom:1px solid #2d394d;
   margin-bottom:4px;
   font-size:10px;
-  color:#aeb8c7;
   font-weight:900;
+  color:#909aaa;
   text-transform:uppercase;
   letter-spacing:.08em;
-  line-height:1.35;
+  white-space:nowrap;
+  max-width:240px;
+  overflow:hidden;
+  text-overflow:ellipsis
 }
 
-.inventory-context-item-name{
-  color:#fff;
-  font-size:11px;
-  margin-top:3px;
-  line-height:1.3;
-  text-transform:none;
-  letter-spacing:0;
-}
-
-.inventory-context-action{
+.inventory-context-button{
   width:100%;
-  display:block;
-  border:1px solid transparent;
-  background:transparent;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  border:0;
+  background:#10151e;
   border-radius:2px;
   padding:9px 10px;
-  text-align:left;
   font-weight:800;
-  font-size:11px;
+  font-size:12px;
+  text-align:left;
+  cursor:pointer;
+  user-select:none
 }
 
-.inventory-context-action:hover{
-  background:#182131;
-  border-color:#3c4c64;
+.inventory-context-button:hover{
+  background:#202a39
 }
 
-.inventory-context-action.sell{
-  color:#f4d083;
+.inventory-context-button .menu-value{
+  color:#8f9bad;
+  font-size:10px;
+  font-weight:700
 }
 
-.inventory-context-action.drop{
-  color:#ff8b8b;
+.inventory-context-button.sell:hover{
+  color:#f4d083
 }
 
-.inventory-context-action.use{
-  color:#b7ffb1;
-}
-
-.inventory-context-separator{
-  height:1px;
-  background:#2d394d;
-  margin:4px 0;
+.inventory-context-button.drop:hover{
+  color:#ff7777
 }
 
 @media(max-width:720px){
@@ -767,10 +756,7 @@ canvas{
   .items{grid-template-columns:repeat(4,1fr)}
   .slots{grid-template-columns:repeat(2,1fr)}
   .item-info-wrap{grid-template-columns:1fr}
-
-  #floatingCompare{
-    width:330px
-  }
+  #floatingCompare{width:330px}
 }
 </style>
 </head>
@@ -793,17 +779,9 @@ canvas{
 WASD move • LMB attack/loot • RMB ability • E interact • F pickup • Esc pause • M map • I inventory • C character
 </div>
 
-<!-- Floating comparison -->
-<div
-  id="floatingCompare"
-  aria-hidden="true">
-</div>
+<div id="floatingCompare" aria-hidden="true"></div>
 
-<!-- Inventory right-click menu -->
-<div
-  id="inventoryContextMenu"
-  aria-hidden="true">
-</div>
+<div id="inventoryContextMenu" aria-hidden="true"></div>
 
 <div id="start" class="screen show">
 <div class="card">
@@ -816,42 +794,28 @@ Dark Medieval Adventure RPG • Story Mode + Infinite Mode
 
 <div class="menu-grid">
 
-<button
-  id="newBtn"
-  data-rodon-action="new">
+<button id="newBtn" data-rodon-action="new">
 New Game
 </button>
 
-<button
-  id="contBtn"
-  data-rodon-action="continue">
+<button id="contBtn" data-rodon-action="continue">
 Continue
 </button>
 
-<button
-  id="updatesBtn"
-  data-rodon-action="updates">
+<button id="updatesBtn" data-rodon-action="updates">
 Updates
-<span
-  id="updatesNewBadge"
-  class="update-dot"></span>
+<span id="updatesNewBadge" class="update-dot"></span>
 </button>
 
-<button
-  id="rarityBtn"
-  data-rodon-action="rarity">
+<button id="rarityBtn" data-rodon-action="rarity">
 Rarity Guide
 </button>
 
-<button
-  id="settingsBtn"
-  data-rodon-action="settings">
+<button id="settingsBtn" data-rodon-action="settings">
 Settings
 </button>
 
-<button
-  id="creditsBtn"
-  data-rodon-action="credits">
+<button id="creditsBtn" data-rodon-action="credits">
 Credits
 </button>
 
@@ -867,15 +831,11 @@ Explore connected rooms, defeat creatures and bosses, collect loot from fallen e
 <div id="modeSelect" class="screen">
 <div class="card" style="max-width:720px">
 
-<button
-  class="close"
-  data-close="modeSelect">
+<button class="close" data-close="modeSelect">
 Back
 </button>
 
-<div
-  class="title"
-  style="font-size:38px">
+<div class="title" style="font-size:38px">
 GAME MODES
 </div>
 
@@ -885,15 +845,11 @@ Finish the Story Mode to unlock the endless challenge.
 
 <div class="menu-grid">
 
-<button
-  id="storyBtn"
-  data-rodon-action="story">
+<button id="storyBtn" data-rodon-action="story">
 Story Mode
 </button>
 
-<button
-  id="infiniteBtn"
-  data-rodon-action="infinite">
+<button id="infiniteBtn" data-rodon-action="infinite">
 Infinite Mode
 </button>
 
@@ -912,36 +868,26 @@ Infinite Mode is locked until you defeat the King of Rodon in Story Mode.
 <div class="row">
 <h2>Paused</h2>
 
-<button
-  class="close"
-  data-close="pause">
+<button class="close" data-close="pause">
 Close
 </button>
 </div>
 
 <div class="menu-grid">
 
-<button
-  id="resumeBtn"
-  data-rodon-action="resume">
+<button id="resumeBtn" data-rodon-action="resume">
 Resume
 </button>
 
-<button
-  id="saveBtn"
-  data-rodon-action="save">
+<button id="saveBtn" data-rodon-action="save">
 Save Game
 </button>
 
-<button
-  id="pauseMapBtn"
-  data-rodon-action="pauseMap">
+<button id="pauseMapBtn" data-rodon-action="pauseMap">
 Map
 </button>
 
-<button
-  id="mainBtn"
-  data-rodon-action="mainMenu">
+<button id="mainBtn" data-rodon-action="mainMenu">
 Main Menu
 </button>
 
@@ -957,9 +903,7 @@ Autosave also triggers at room transitions and boss victories.
 <div id="character" class="screen">
 <div class="card">
 
-<button
-  class="close"
-  data-close="character">
+<button class="close" data-close="character">
 Close
 </button>
 
@@ -989,9 +933,7 @@ Click an item in the inventory to equip it. Equipped armor is removed from your 
 <div id="inventory" class="screen">
 <div class="card">
 
-<button
-  class="close"
-  data-close="inventory">
+<button class="close" data-close="inventory">
 Close
 </button>
 
@@ -999,42 +941,31 @@ Close
 
 <div class="tabs">
 
-<button
-  class="active"
-  data-tab="all">
+<button class="active" data-tab="all">
 All
 </button>
 
-<button
-  data-tab="weapon">
+<button data-tab="weapon">
 Weapons
 </button>
 
-<button
-  data-tab="armor">
+<button data-tab="armor">
 Armor
 </button>
 
-<button
-  data-tab="consumable">
+<button data-tab="consumable">
 Consumables
 </button>
 
-<button
-  data-tab="material">
+<button data-tab="material">
 Materials
 </button>
 
 </div>
 
-<div
-  id="invItems"
-  class="items">
-</div>
+<div id="invItems" class="items"></div>
 
-<div
-  id="itemInfo"
-  class="hint">
+<div id="itemInfo" class="hint">
 Hover over a weapon or armor to compare it with what you have equipped.
 </div>
 
@@ -1059,12 +990,9 @@ Close
   style="grid-template-columns:repeat(4,1fr)">
 </div>
 
-<div
-  style="display:flex;justify-content:flex-end;margin-top:14px">
+<div style="display:flex;justify-content:flex-end;margin-top:14px">
 
-<button
-  id="takeAll"
-  data-rodon-action="takeAll">
+<button id="takeAll" data-rodon-action="takeAll">
 Take All
 </button>
 
@@ -1083,24 +1011,17 @@ Take All
 Close
 </button>
 
-<h2
-  style="text-align:center;margin-bottom:6px">
+<h2 style="text-align:center;margin-bottom:6px">
 CHEST OPENED
 </h2>
 
-<p
-  id="chestRewardIntro"
-  class="chest-reward-intro">
+<p id="chestRewardIntro" class="chest-reward-intro">
 You found:
 </p>
 
-<div
-  id="chestRewardItems"
-  class="chest-reward-items">
-</div>
+<div id="chestRewardItems" class="chest-reward-items"></div>
 
-<div
-  style="display:flex;justify-content:center;margin-top:16px">
+<div style="display:flex;justify-content:center;margin-top:16px">
 
 <button
   id="chestRewardDone"
@@ -1116,9 +1037,7 @@ Continue
 <div id="map" class="screen">
 <div class="card" style="max-width:820px">
 
-<button
-  class="close"
-  data-close="map">
+<button class="close" data-close="map">
 Close
 </button>
 
@@ -1141,9 +1060,7 @@ Only rooms you have visited are revealed. Boss rooms are marked once discovered.
 <div id="updates" class="screen">
 <div class="card" style="max-width:760px">
 
-<button
-  class="close"
-  data-close="updates">
+<button class="close" data-close="updates">
 Close
 </button>
 
@@ -1159,9 +1076,7 @@ The game reads this board from the current build changelog.
 </div>
 </div>
 
-<span
-  id="updateVersionBadge"
-  class="update-badge">
+<span id="updateVersionBadge" class="update-badge">
 v1.1.0
 </span>
 
@@ -1238,9 +1153,7 @@ Weapons are grouped by their normal/base rarity. Random loot can roll different 
 <div id="settings" class="screen">
 <div class="card">
 
-<button
-  class="close"
-  data-close="settings">
+<button class="close" data-close="settings">
 Close
 </button>
 
@@ -1259,9 +1172,7 @@ Close
   value="0.4">
 </div>
 
-<div
-  class="row"
-  style="margin-top:14px">
+<div class="row" style="margin-top:14px">
 
 <span>Screen Shake</span>
 
@@ -1272,9 +1183,7 @@ Close
 
 </div>
 
-<div
-  class="row"
-  style="margin-top:14px">
+<div class="row" style="margin-top:14px">
 
 <span>Damage Numbers</span>
 
@@ -1295,13 +1204,9 @@ Rodon is built with plain HTML5 Canvas and Web Audio, so it can run without an e
 </div>
 
 <div id="credits" class="screen">
-<div
-  class="card"
-  style="max-width:650px;text-align:center">
+<div class="card" style="max-width:650px;text-align:center">
 
-<button
-  class="close"
-  data-close="credits">
+<button class="close" data-close="credits">
 Close
 </button>
 
@@ -1319,9 +1224,7 @@ All art is generated from simple canvas shapes at runtime.
 </div>
 
 <div id="victory" class="screen">
-<div
-  class="card"
-  style="max-width:620px;text-align:center">
+<div class="card" style="max-width:620px;text-align:center">
 
 <h1 style="color:#f4d083">
 RODON IS SAVED
@@ -1337,15 +1240,11 @@ You defeated the King of Rodon and completed the Story Mode.
 
 <div class="menu-grid">
 
-<button
-  id="victoryInfiniteBtn"
-  data-rodon-action="victoryInfinite">
+<button id="victoryInfiniteBtn" data-rodon-action="victoryInfinite">
 Enter Infinite Mode
 </button>
 
-<button
-  id="victoryMenuBtn"
-  data-rodon-action="victoryMenu">
+<button id="victoryMenuBtn" data-rodon-action="victoryMenu">
 Main Menu
 </button>
 
@@ -1355,9 +1254,7 @@ Main Menu
 </div>
 
 <div id="death" class="screen">
-<div
-  class="card"
-  style="max-width:520px;text-align:center">
+<div class="card" style="max-width:520px;text-align:center">
 
 <h1 style="color:#f07a7a">
 YOU DIED
@@ -1367,15 +1264,11 @@ YOU DIED
 
 <div class="menu-grid">
 
-<button
-  id="respawnBtn"
-  data-rodon-action="respawn">
+<button id="respawnBtn" data-rodon-action="respawn">
 Respawn
 </button>
 
-<button
-  id="deathMenuBtn"
-  data-rodon-action="deathMenu">
+<button id="deathMenuBtn" data-rodon-action="deathMenu">
 Main Menu
 </button>
 
@@ -1389,30 +1282,20 @@ Main Menu
 <script>
 'use strict';
 
-const canvas=
-  document.getElementById('game');
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
 
-const ctx=
-  canvas.getContext('2d');
-
-const W=
-  canvas.width;
-
-const H=
-  canvas.height;
+const W=canvas.width;
+const H=canvas.height;
 
 const TILE=48;
 const ROOM_W=24;
 const ROOM_H=13;
 
-const worldW=
-  ROOM_W*TILE;
+const worldW=ROOM_W*TILE;
+const worldH=ROOM_H*TILE;
 
-const worldH=
-  ROOM_H*TILE;
-
-const keys=
-  new Set();
+const keys=new Set();
 
 let mouse={
   x:W/2,
@@ -1421,24 +1304,24 @@ let mouse={
   right:false
 };
 
-const MOVE_CODES=
-  new Set([
-    'KeyW',
-    'KeyA',
-    'KeyS',
-    'KeyD',
-    'ArrowUp',
-    'ArrowLeft',
-    'ArrowDown',
-    'ArrowRight'
-  ]);
+const MOVE_CODES=new Set([
+  'KeyW',
+  'KeyA',
+  'KeyS',
+  'KeyD',
+  'ArrowUp',
+  'ArrowLeft',
+  'ArrowDown',
+  'ArrowRight'
+]);
 
-let last=
-  performance.now();
-
+let last=performance.now();
 let screenShake=0;
 let screenShakeTimer=0;
 let audioCtx=null;
+
+let rodonMouseClientX=window.innerWidth/2;
+let rodonMouseClientY=window.innerHeight/2;
 
 function focusGame(){
 
@@ -1459,7 +1342,6 @@ function focusGame(){
 function clearMovement(){
 
   keys.clear();
-
   mouse.down=false;
   mouse.right=false;
 
@@ -1470,16 +1352,12 @@ window.addEventListener(
   function(e){
 
     if(
-      MOVE_CODES.has(
-        e.code
-      )
+      MOVE_CODES.has(e.code)
     ){
 
       e.preventDefault();
 
-      keys.add(
-        e.code
-      );
+      keys.add(e.code);
 
       focusGame();
 
@@ -1493,13 +1371,23 @@ window.addEventListener(
       e.preventDefault();
 
       if(
+        document
+          .getElementById('inventoryContextMenu')
+          ?.classList.contains('show')
+      ){
+
+        closeInventoryContextMenu();
+
+        return;
+
+      }
+
+      if(
         state.gameStarted&&
         !activeModal()
       ){
 
-        showScreen(
-          'pause'
-        );
+        showScreen('pause');
 
       }else if(
         document
@@ -1509,6 +1397,7 @@ window.addEventListener(
       ){
 
         showScreen(null);
+
         focusGame();
 
       }
@@ -1516,27 +1405,20 @@ window.addEventListener(
       return;
     }
 
-    const k=
-      e.key.toLowerCase();
+    const k=e.key.toLowerCase();
 
     if(
       k==='i'&&
       state.gameStarted&&
       !document
         .getElementById('death')
-        .classList.contains('show')
+        .classList
+        .contains('show')
     ){
 
       e.preventDefault();
 
-      toggleScreen(
-        'inventory'
-      );
-
-      if(
-        !activeModal()
-      )
-        focusGame();
+      toggleScreen('inventory');
 
       return;
     }
@@ -1546,19 +1428,13 @@ window.addEventListener(
       state.gameStarted&&
       !document
         .getElementById('death')
-        .classList.contains('show')
+        .classList
+        .contains('show')
     ){
 
       e.preventDefault();
 
-      toggleScreen(
-        'character'
-      );
-
-      if(
-        !activeModal()
-      )
-        focusGame();
+      toggleScreen('character');
 
       return;
     }
@@ -1568,19 +1444,13 @@ window.addEventListener(
       state.gameStarted&&
       !document
         .getElementById('death')
-        .classList.contains('show')
+        .classList
+        .contains('show')
     ){
 
       e.preventDefault();
 
-      toggleScreen(
-        'map'
-      );
-
-      if(
-        !activeModal()
-      )
-        focusGame();
+      toggleScreen('map');
 
       return;
     }
@@ -1619,16 +1489,12 @@ window.addEventListener(
   function(e){
 
     if(
-      MOVE_CODES.has(
-        e.code
-      )
+      MOVE_CODES.has(e.code)
     ){
 
       e.preventDefault();
 
-      keys.delete(
-        e.code
-      );
+      keys.delete(e.code);
 
     }
 
@@ -1643,11 +1509,26 @@ window.addEventListener(
 
 document.addEventListener(
   'visibilitychange',
-  ()=>{
-    if(
-      document.hidden
-    )
+  function(){
+
+    if(document.hidden)
       clearMovement();
+
+  }
+);
+
+document.addEventListener(
+  'mousemove',
+  function(e){
+
+    rodonMouseClientX=e.clientX;
+    rodonMouseClientY=e.clientY;
+
+    moveFloatingCompare(
+      e.clientX,
+      e.clientY
+    );
+
   }
 );
 
@@ -1656,46 +1537,24 @@ canvas.addEventListener(
   function(e){
 
     focusGame();
-
     initAudio();
 
-    const rect=
-      canvas.getBoundingClientRect();
+    const rect=canvas.getBoundingClientRect();
 
-    const scaleX=
-      W/rect.width;
+    const scaleX=W/rect.width;
+    const scaleY=H/rect.height;
 
-    const scaleY=
-      H/rect.height;
+    mouse.x=(e.clientX-rect.left)*scaleX;
+    mouse.y=(e.clientY-rect.top)*scaleY;
 
-    mouse.x=
-      (
-        e.clientX-
-        rect.left
-      )*
-      scaleX;
-
-    mouse.y=
-      (
-        e.clientY-
-        rect.top
-      )*
-      scaleY;
-
-    if(
-      e.button===0
-    ){
+    if(e.button===0){
 
       mouse.down=true;
-
       attack();
 
-    }else if(
-      e.button===2
-    ){
+    }else if(e.button===2){
 
       mouse.right=true;
-
       ability();
 
     }
@@ -1707,14 +1566,10 @@ canvas.addEventListener(
   'pointerup',
   function(e){
 
-    if(
-      e.button===0
-    )
+    if(e.button===0)
       mouse.down=false;
 
-    if(
-      e.button===2
-    )
+    if(e.button===2)
       mouse.right=false;
 
   }
@@ -1724,26 +1579,15 @@ canvas.addEventListener(
   'pointermove',
   function(e){
 
-    const rect=
-      canvas.getBoundingClientRect();
+    const rect=canvas.getBoundingClientRect();
 
     mouse.x=
-      (
-        e.clientX-
-        rect.left
-      )*
-      (
-        W/rect.width
-      );
+      (e.clientX-rect.left)*
+      (W/rect.width);
 
     mouse.y=
-      (
-        e.clientY-
-        rect.top
-      )*
-      (
-        H/rect.height
-      );
+      (e.clientY-rect.top)*
+      (H/rect.height);
 
   }
 );
@@ -1763,34 +1607,31 @@ function sound(
   if(!audioCtx)
     return;
 
-  const o=
-    audioCtx.createOscillator();
+  try{
 
-  const g=
-    audioCtx.createGain();
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
 
-  o.type=type;
-  o.frequency.value=
-    freq;
+    o.type=type;
+    o.frequency.value=freq;
 
-  g.gain.value=
-    gain;
+    g.gain.value=gain;
 
-  o.connect(g);
-  g.connect(
-    audioCtx.destination
-  );
+    o.connect(g);
+    g.connect(audioCtx.destination);
 
-  o.start();
+    o.start();
 
-  g.gain.exponentialRampToValueAtTime(
-    .0001,
-    audioCtx.currentTime+dur
-  );
+    g.gain.exponentialRampToValueAtTime(
+      .0001,
+      audioCtx.currentTime+dur
+    );
 
-  o.stop(
-    audioCtx.currentTime+dur
-  );
+    o.stop(
+      audioCtx.currentTime+dur
+    );
+
+  }catch(e){}
 
 }
 
@@ -1808,15 +1649,13 @@ function initAudio(){
     if(!AudioCtor)
       return;
 
-    audioCtx=
-      new AudioCtor();
+    audioCtx=new AudioCtor();
 
     if(
       audioCtx.state==='suspended'
     ){
 
-      audioCtx.resume()
-        .catch(()=>{});
+      audioCtx.resume().catch(()=>{});
 
     }
 
@@ -1829,8 +1668,7 @@ function initAudio(){
 }
 
 function rnd(a,b){
-  return Math.random()*
-    (b-a)+a;
+  return Math.random()*(b-a)+a;
 }
 
 function rint(a,b){
@@ -1858,21 +1696,19 @@ function uid(){
   return Math.random()
     .toString(36)
     .slice(2)+
-    Date.now()
-    .toString(36);
+    Date.now().toString(36);
 
 }
 
-const GAME_VERSION=
-  '1.1.0';
+const GAME_VERSION='1.1.0';
 
 const RODON_UPDATES=[
 
   {
     version:'1.1.0',
     date:'September 30, 2026',
-    title:'Inventory Right-Click Menu',
-    body:'Right-clicking an inventory item now opens a menu with item actions such as Equip, Use, Sell, and Drop without changing the existing inventory graphics.'
+    title:'Inventory Right-Click Menu + Equip Fix',
+    body:'Inventory items can be equipped reliably with left-click or with the right-click menu. Weapon and armor items use Equip, while consumables use Use. The RMB menu stays at the place where it was opened.'
   },
 
   {
@@ -2087,10 +1923,7 @@ const armorNames={
   Dragon:['Dragon']
 };
 
-function makeArmor(
-  set,
-  slot
-){
+function makeArmor(set,slot){
 
   const base={
     Leather:5,
@@ -2103,13 +1936,9 @@ function makeArmor(
 
   const bonus={
 
-    Leather:{
-      speed:2
-    },
+    Leather:{speed:2},
 
-    Iron:{
-      maxHp:10
-    },
+    Iron:{maxHp:10},
 
     Steel:{
       maxHp:8,
@@ -2134,6 +1963,17 @@ function makeArmor(
 
   }[set];
 
+  const rarity=
+    set==='Dragon'
+    ?'Legendary'
+    :set==='Shadow'
+    ?'Epic'
+    :set==='Knight'
+    ?'Rare'
+    :set==='Steel'
+    ?'Uncommon'
+    :'Common';
+
   return{
 
     id:uid(),
@@ -2147,31 +1987,12 @@ function makeArmor(
       ' '+
       slotLabel(slot),
 
-    rarity:
-      set==='Dragon'
-      ?'Legendary'
-      :set==='Shadow'
-      ?'Epic'
-      :set==='Knight'
-      ?'Rare'
-      :set==='Steel'
-      ?'Uncommon'
-      :'Common',
+    rarity,
 
     defense:
       Math.round(
         base*
-        rarityMult[
-          set==='Dragon'
-          ?'Legendary'
-          :set==='Shadow'
-          ?'Epic'
-          :set==='Knight'
-          ?'Rare'
-          :set==='Steel'
-          ?'Uncommon'
-          :'Common'
-        ]
+        rarityMult[rarity]
       ),
 
     bonus:{
@@ -2194,53 +2015,32 @@ function slotLabel(s){
 
 }
 
-function rarityForLoot(
-  level=1,
-  boss=false
-){
+function rarityForLoot(level=1,boss=false){
 
   const max=
     Math.min(
       rarities.length-1,
-      Math.floor(
-        (level-1)/5
-      )+
+      Math.floor((level-1)/5)+
       (boss?2:0)
     );
 
-  const roll=
-    Math.random();
+  const roll=Math.random();
 
   let idx=0;
 
-  if(
-    max>=1&&
-    roll<.34
-  )
+  if(max>=1&&roll<.34)
     idx=1;
 
-  if(
-    max>=2&&
-    roll<.16
-  )
+  if(max>=2&&roll<.16)
     idx=2;
 
-  if(
-    max>=3&&
-    roll<.07
-  )
+  if(max>=3&&roll<.07)
     idx=3;
 
-  if(
-    max>=4&&
-    roll<.025
-  )
+  if(max>=4&&roll<.025)
     idx=4;
 
-  if(
-    max>=5&&
-    roll<.008
-  )
+  if(max>=5&&roll<.008)
     idx=5;
 
   return rarities[
@@ -2286,9 +2086,7 @@ function makeWeapon(
     w[5];
 
   const mult=
-    rarityMult[
-      rarity
-    ];
+    rarityMult[rarity];
 
   const scale=
     1+
@@ -2308,9 +2106,6 @@ function makeWeapon(
 
   }[rarity]||'';
 
-  const special=
-    w[6]||'';
-
   return{
 
     id:uid(),
@@ -2321,8 +2116,7 @@ function makeWeapon(
       prefix+
       w[0],
 
-    weaponType:
-      w[1],
+    weaponType:w[1],
 
     damage:
       Math.max(
@@ -2363,15 +2157,14 @@ function makeWeapon(
 
     rarity,
 
-    special
+    special:
+      w[6]||''
 
   };
 
 }
 
-function makePotion(
-  type='health'
-){
+function makePotion(type='health'){
 
   return{
 
@@ -2397,10 +2190,7 @@ function makePotion(
 
 }
 
-function makeLootArmor(
-  level=1,
-  boss=false
-){
+function makeLootArmor(level=1,boss=false){
 
   const rarity=
     rarityForLoot(
@@ -2421,19 +2211,12 @@ function makeLootArmor(
   'Leather';
 
   const slot=[
-
     'Head',
     'Chest',
     'Legs',
     'Boots',
     'Gloves'
-
-  ][
-    rint(
-      0,
-      4
-    )
-  ];
+  ][rint(0,4)];
 
   const item=
     makeArmor(
@@ -2441,15 +2224,13 @@ function makeLootArmor(
       slot
     );
 
-  item.rarity=
-    rarity;
+  item.rarity=rarity;
 
   const mult=
     rarityMult[rarity];
 
   const originalMult=
     rarityMult[
-
       desired==='Dragon'
       ?'Legendary'
       :desired==='Shadow'
@@ -2459,7 +2240,6 @@ function makeLootArmor(
       :desired==='Steel'
       ?'Uncommon'
       :'Common'
-
     ];
 
   item.defense=
@@ -2467,10 +2247,7 @@ function makeLootArmor(
       1,
       Math.round(
         item.defense*
-        (
-          mult/
-          originalMult
-        )*
+        (mult/originalMult)*
         (
           1+
           Math.max(
@@ -2481,27 +2258,17 @@ function makeLootArmor(
       )
     );
 
-  item.name=
-    (
-      rarity==='Common'
-      ?' '
-      :rarity==='Uncommon'
-      ?'Fine '
-      :rarity==='Rare'
-      ?'Runed '
-      :rarity==='Epic'
-      ?'Shadowforged '
-      :rarity==='Legendary'
-      ?'Royal '
-      :'Ancient '
-    ).trim();
+  const prefix={
+    Common:'',
+    Uncommon:'Fine ',
+    Rare:'Runed ',
+    Epic:'Shadowforged ',
+    Legendary:'Royal ',
+    Mythic:'Ancient '
+  }[rarity]||'';
 
   item.name=
-    (
-      item.name
-      ?item.name+' '
-      :''
-    )+
+    prefix+
     desired+
     ' '+
     slotLabel(slot);
@@ -2514,14 +2281,12 @@ function makeRandomLoot(e){
 
   const loot=[];
 
-  const level=
-    Math.max(
-      1,
-      e.level||1
-    );
+  const level=Math.max(
+    1,
+    e.level||1
+  );
 
-  const boss=
-    !!e.elite;
+  const boss=!!e.elite;
 
   const maxDrops=
     boss
@@ -2534,12 +2299,9 @@ function makeRandomLoot(e){
     i++
   ){
 
-    const r=
-      Math.random();
+    const r=Math.random();
 
-    if(
-      r<.30
-    ){
+    if(r<.30){
 
       loot.push(
         makeWeapon(
@@ -2553,9 +2315,7 @@ function makeRandomLoot(e){
         )
       );
 
-    }else if(
-      r<.55
-    ){
+    }else if(r<.55){
 
       loot.push(
         makeLootArmor(
@@ -2564,9 +2324,7 @@ function makeRandomLoot(e){
         )
       );
 
-    }else if(
-      r<.78
-    ){
+    }else if(r<.78){
 
       loot.push(
         makePotion(
@@ -2576,9 +2334,7 @@ function makeRandomLoot(e){
         )
       );
 
-    }else if(
-      r<.92
-    ){
+    }else if(r<.92){
 
       loot.push(
         makeMaterial()
@@ -2640,20 +2396,17 @@ function makeRandomLoot(e){
 function makeMaterial(){
 
   const names=[
-
     'Wolf Pelt',
     'Iron Ore',
     'Ancient Shard',
     'Spider Silk',
     'Goblin Ear',
     'Crystal Dust'
-
   ];
 
   return{
 
     id:uid(),
-
     kind:'material',
 
     name:
@@ -2665,7 +2418,6 @@ function makeMaterial(){
       ],
 
     rarity:'Common',
-
     amount:1
 
   };
@@ -2674,19 +2426,13 @@ function makeMaterial(){
 
 function itemSummary(i){
 
-  if(
-    i.kind==='weapon'
-  )
+  if(i.kind==='weapon')
     return `${i.damage} dmg • ${i.speed.toFixed(1)} atk • ${(i.crit*100).toFixed(0)}% crit`;
 
-  if(
-    i.kind==='armor'
-  )
+  if(i.kind==='armor')
     return `${i.defense} def`;
 
-  if(
-    i.kind==='consumable'
-  )
+  if(i.kind==='consumable')
     return `Restores ${i.amount} ${i.consumable==='health'?'HP':'MP'}`;
 
   return 'Crafting material';
@@ -2814,7 +2560,7 @@ const roomDefs=[
 
   {
     id:'arena',
-    name:'King\'s Arena',
+    name:"King's Arena",
     theme:'castle',
     x:4,
     y:3,
@@ -2866,26 +2612,16 @@ const roomById=
 const state={
 
   room:'village',
-
   player:null,
-
   enemies:[],
-
   chests:[],
-
   bodies:[],
-
   particles:[],
-
   damageTexts:[],
 
-  visited:
-    new Set([
-      'village'
-    ]),
+  visited:new Set(['village']),
 
-  defeatedBosses:
-    new Set(),
+  defeatedBosses:new Set(),
 
   roomStates:{},
 
@@ -2918,8 +2654,7 @@ const state={
 
   roomTransitionCooldown:0,
 
-  /* NEW IN 1.1.0 */
-  contextItem:null
+  inventoryContextItem:null
 
 };
 
@@ -2939,9 +2674,7 @@ function cloneData(value){
 
 }
 
-function saveRoomState(
-  id=state.room
-){
+function saveRoomState(id=state.room){
 
   if(
     !id||
@@ -2951,20 +2684,17 @@ function saveRoomState(
 
   state.roomStates[id]={
 
-    enemies:
-      cloneData(
-        state.enemies
-      ),
+    enemies:cloneData(
+      state.enemies
+    ),
 
-    chests:
-      cloneData(
-        state.chests
-      ),
+    chests:cloneData(
+      state.chests
+    ),
 
-    bodies:
-      cloneData(
-        state.bodies
-      ),
+    bodies:cloneData(
+      state.bodies
+    ),
 
     roomCleared:
       !!state.roomCleared
@@ -3063,26 +2793,14 @@ function defaultPlayer(){
 
 function derived(){
 
-  const p=
-    state.player;
+  const p=state.player;
 
-  let defense=
-    p.baseDefense;
-
-  let speed=
-    p.baseSpeed;
-
-  let maxHp=
-    p.maxHp;
-
-  let crit=
-    p.baseCrit;
-
-  let attack=
-    p.baseAttack;
-
-  let critDmg=
-    p.baseCritDamage;
+  let defense=p.baseDefense;
+  let speed=p.baseSpeed;
+  let maxHp=p.maxHp;
+  let crit=p.baseCrit;
+  let attack=p.baseAttack;
+  let critDmg=p.baseCritDamage;
 
   for(
     const v of Object.values(
@@ -3093,16 +2811,12 @@ function derived(){
     if(!v)
       continue;
 
-    if(
-      v.kind==='weapon'
-    ){
+    if(v.kind==='weapon'){
 
       attack+=
         v.damage;
 
-    }else if(
-      v.kind==='armor'
-    ){
+    }else if(v.kind==='armor'){
 
       defense+=
         v.defense;
@@ -3124,14 +2838,12 @@ function derived(){
   }
 
   return{
-
     attack,
     defense,
     speed,
     maxHp,
     crit,
     critDmg
-
   };
 
 }
@@ -3154,15 +2866,12 @@ function infiniteBest(){
 
 }
 
-function resetForNew(
-  mode='story'
-){
+function resetForNew(mode='story'){
 
   state.player=
     defaultPlayer();
 
-  state.mode=
-    mode;
+  state.mode=mode;
 
   state.wave=0;
   state.kills=0;
@@ -3170,8 +2879,7 @@ function resetForNew(
   state.infiniteBest=
     infiniteBest();
 
-  state.firstChestClaimed=
-    false;
+  state.firstChestClaimed=false;
 
   state.room=
     mode==='infinite'
@@ -3194,16 +2902,10 @@ function resetForNew(
   state.particles=[];
   state.damageTexts=[];
 
-  state.roomCleared=
-    false;
+  state.roomCleared=false;
+  state.gameStarted=true;
 
-  state.gameStarted=
-    true;
-
-  state.roomTransitionCooldown=
-    0;
-
-  state.contextItem=null;
+  state.inventoryContextItem=null;
 
   closeInventoryContextMenu();
 
@@ -3228,9 +2930,7 @@ function resetForNew(
 
 function saveGame(){
 
-  if(
-    !state.player
-  )
+  if(!state.player)
     return;
 
   saveRoomState(
@@ -3239,51 +2939,31 @@ function saveGame(){
 
   const data={
 
-    mode:
-      state.mode,
+    mode:state.mode,
+    wave:state.wave,
+    kills:state.kills,
+    room:state.room,
+    player:state.player,
 
-    wave:
-      state.wave,
+    visited:[
+      ...state.visited
+    ],
 
-    kills:
-      state.kills,
-
-    room:
-      state.room,
-
-    player:
-      state.player,
-
-    visited:
-      [
-        ...state.visited
-      ],
-
-    defeatedBosses:
-      [
-        ...state.defeatedBosses
-      ],
+    defeatedBosses:[
+      ...state.defeatedBosses
+    ],
 
     firstChestClaimed:
       state.firstChestClaimed,
 
     roomStates:
-      state.roomStates,
-
-    chestStates:
-      JSON.parse(
-        localStorage.getItem(
-          'rodonChestStates'
-        )||'{}'
-      )
+      state.roomStates
 
   };
 
   localStorage.setItem(
     'rodonSave',
-    JSON.stringify(
-      data
-    )
+    JSON.stringify(data)
   );
 
 }
@@ -3302,40 +2982,35 @@ function loadGame(){
     );
 
     return;
+
   }
 
   try{
 
     const d=
-      JSON.parse(
-        raw
-      );
+      JSON.parse(raw);
 
     state.mode=
       d.mode||
       'story';
+
+    state.wave=
+      d.wave||0;
+
+    state.kills=
+      d.kills||0;
 
     if(
       state.mode==='infinite'&&
       !storyComplete()
     ){
 
-      state.mode=
-        'story';
-
+      state.mode='story';
       state.wave=0;
 
       toast(
         'Infinite Mode is locked. Complete Story Mode first.'
       );
-
-    }else{
-
-      state.wave=
-        d.wave||0;
-
-      state.kills=
-        d.kills||0;
 
     }
 
@@ -3370,13 +3045,10 @@ function loadGame(){
         []
       );
 
-    state.gameStarted=
-      true;
+    state.gameStarted=true;
+    state.roomTransitionCooldown=0;
 
-    state.roomTransitionCooldown=
-      0;
-
-    state.contextItem=null;
+    state.inventoryContextItem=null;
 
     closeInventoryContextMenu();
 
@@ -3409,10 +3081,6 @@ function clearSave(){
 
   localStorage.removeItem(
     'rodonSave'
-  );
-
-  localStorage.removeItem(
-    'rodonChestStates'
   );
 
 }
@@ -3465,32 +3133,28 @@ function enemyDifficulty(
       level
     );
 
-  const hpScale=
-    .72+
-    Math.max(
-      0,
-      safeLevel-1
-    )*.11;
-
-  const damageScale=
-    .70+
-    Math.max(
-      0,
-      safeLevel-1
-    )*.075;
-
-  const speedScale=
-    .92+
-    Math.max(
-      0,
-      safeLevel-1
-    )*.018;
-
   return{
 
-    hp:hpScale,
-    damage:damageScale,
-    speed:speedScale
+    hp:
+      .72+
+      Math.max(
+        0,
+        safeLevel-1
+      )*.11,
+
+    damage:
+      .70+
+      Math.max(
+        0,
+        safeLevel-1
+      )*.075,
+
+    speed:
+      .92+
+      Math.max(
+        0,
+        safeLevel-1
+      )*.018
 
   };
 
@@ -3506,86 +3170,21 @@ function makeEnemy(
 
   const specs={
 
-    Slime:[
-      40,
-      8,
-      78,
-      'slime'
-    ],
-
-    Goblin:[
-      55,
-      10,
-      85,
-      'goblin'
-    ],
-
-    Wolf:[
-      70,
-      13,
-      135,
-      'wolf'
-    ],
-
-    Skeleton:[
-      75,
-      15,
-      90,
-      'skeleton'
-    ],
-
-    Zombie:[
-      90,
-      17,
-      65,
-      'zombie'
-    ],
-
-    Bandit:[
-      100,
-      20,
-      110,
-      'bandit'
-    ],
-
-    Orc:[
-      135,
-      25,
-      70,
-      'orc'
-    ],
-
-    Spider:[
-      48,
-      11,
-      120,
-      'spider'
-    ],
-
-    DarkKnight:[
-      260,
-      25,
-      95,
-      'dk'
-    ],
-
-    Mage:[
-      95,
-      24,
-      75,
-      'mage'
-    ],
-
-    Giant:[
-      220,
-      28,
-      55,
-      'giant'
-    ]
+    Slime:[40,8,78,'slime'],
+    Goblin:[55,10,85,'goblin'],
+    Wolf:[70,13,135,'wolf'],
+    Skeleton:[75,15,90,'skeleton'],
+    Zombie:[90,17,65,'zombie'],
+    Bandit:[100,20,110,'bandit'],
+    Orc:[135,25,70,'orc'],
+    Spider:[48,11,120,'spider'],
+    DarkKnight:[260,25,95,'dk'],
+    Mage:[95,24,75,'mage'],
+    Giant:[220,28,55,'giant']
 
   };
 
-  let s=
+  const s=
     specs[type]||
     specs.Goblin;
 
@@ -3619,8 +3218,7 @@ function makeEnemy(
 
     id:uid(),
 
-    x,
-    y,
+    x,y,
 
     r:
       boss
@@ -3640,14 +3238,12 @@ function makeEnemy(
     type,
     level,
 
-    elite:
-      boss,
+    elite:boss,
 
     attackCd:
       rnd(.3,1.2),
 
     hit:0,
-
     phase:1,
 
     bossName:
@@ -3673,8 +3269,7 @@ function spawnInfiniteWave(){
       state.wave||1
     );
 
-  state.wave=
-    wave;
+  state.wave=wave;
 
   const count=
     Math.min(
@@ -3684,7 +3279,6 @@ function spawnInfiniteWave(){
     );
 
   const pool=[
-
     'Goblin',
     'Wolf',
     'Skeleton',
@@ -3695,7 +3289,6 @@ function spawnInfiniteWave(){
     'DarkKnight',
     'Mage',
     'Giant'
-
   ];
 
   state.enemies=[];
@@ -3792,8 +3385,7 @@ function spawnInfiniteWave(){
   state.particles=[];
   state.damageTexts=[];
   state.chests=[];
-  state.roomCleared=
-    false;
+  state.roomCleared=false;
 
   state.chests.push({
 
@@ -3809,9 +3401,7 @@ function spawnInfiniteWave(){
     open:false,
 
     loot:
-      genChestLoot(
-        'infinite'
-      )
+      genChestLoot('infinite')
 
   });
 
@@ -3841,7 +3431,6 @@ function spawnRoom(id){
   ){
 
     spawnInfiniteWave();
-
     return;
 
   }
@@ -3942,12 +3531,6 @@ function spawnRoom(id){
     )
   ){
 
-    const bx=
-      worldW/2;
-
-    const by=
-      worldH/2;
-
     const type=
 
       r.boss==='Cave Guardian'
@@ -3965,17 +3548,15 @@ function spawnRoom(id){
       makeEnemy(
         type,
         8+r.x+r.y,
-        bx,
-        by,
+        worldW/2,
+        worldH/2,
         true
       )
     );
 
   }
 
-  state.enemies=
-    arr;
-
+  state.enemies=arr;
   state.chests=[];
 
   for(
@@ -4027,8 +3608,7 @@ function spawnRoom(id){
   state.bodies=[];
   state.particles=[];
   state.damageTexts=[];
-  state.roomCleared=
-    false;
+  state.roomCleared=false;
 
 }
 
@@ -4037,9 +3617,7 @@ function loadRoom(
   entryFrom=null
 ){
 
-  if(
-    !roomById[id]
-  )
+  if(!roomById[id])
     return;
 
   if(
@@ -4054,75 +3632,42 @@ function loadRoom(
 
   }
 
-  state.room=
-    id;
+  state.room=id;
 
-  state.visited.add(
-    id
-  );
+  state.visited.add(id);
 
-  state.roomTransitionCooldown=
-    .35;
-
-  closeInventoryContextMenu();
+  state.roomTransitionCooldown=.35;
 
   const restored=
-    restoreRoomState(
-      id
-    );
+    restoreRoomState(id);
 
-  if(!restored){
+  if(!restored)
+    spawnRoom(id);
 
-    spawnRoom(
-      id
-    );
-
-  }
-
-  if(
-    state.player
-  ){
+  if(state.player){
 
     if(
       typeof entryFrom==='string'
     ){
 
-      if(
-        entryFrom==='left'
-      ){
+      if(entryFrom==='left'){
 
-        state.player.x=
-          worldW-55;
+        state.player.x=worldW-55;
+        state.player.y=worldH/2;
 
-        state.player.y=
-          worldH/2;
-
-      }else if(
-        entryFrom==='right'
-      ){
+      }else if(entryFrom==='right'){
 
         state.player.x=55;
+        state.player.y=worldH/2;
 
-        state.player.y=
-          worldH/2;
+      }else if(entryFrom==='up'){
 
-      }else if(
-        entryFrom==='up'
-      ){
+        state.player.x=worldW/2;
+        state.player.y=worldH-55;
 
-        state.player.x=
-          worldW/2;
+      }else if(entryFrom==='down'){
 
-        state.player.y=
-          worldH-55;
-
-      }else if(
-        entryFrom==='down'
-      ){
-
-        state.player.x=
-          worldW/2;
-
+        state.player.x=worldW/2;
         state.player.y=55;
 
       }
@@ -4165,32 +3710,21 @@ function loadRoom(
 
 function randomStarterWeaponRarity(){
 
-  const roll=
-    Math.random();
+  const roll=Math.random();
 
-  if(
-    roll<.001
-  )
+  if(roll<.001)
     return 'Mythic';
 
-  if(
-    roll<.01
-  )
+  if(roll<.01)
     return 'Legendary';
 
-  if(
-    roll<.07
-  )
+  if(roll<.07)
     return 'Epic';
 
-  if(
-    roll<.27
-  )
+  if(roll<.27)
     return 'Rare';
 
-  if(
-    roll<.62
-  )
+  if(roll<.62)
     return 'Uncommon';
 
   return 'Common';
@@ -4202,38 +3736,33 @@ function genChestLoot(
   firstStoryChest=false
 ){
 
-  if(
-    firstStoryChest
-  ){
-
-    const rarity=
-      randomStarterWeaponRarity();
+  if(firstStoryChest){
 
     return[
       makeWeapon(
         null,
         0,
-        rarity,
+        randomStarterWeaponRarity(),
         1
       )
     ];
 
   }
 
-  const loot=[];
+  const level=
+    chestLootLevel(id);
 
-  const weaponRarity=
-    rarityForLoot(
-      chestLootLevel(id),
-      false
-    );
+  const loot=[];
 
   loot.push(
     makeWeapon(
       null,
       0,
-      weaponRarity,
-      chestLootLevel(id)
+      rarityForLoot(
+        level,
+        false
+      ),
+      level
     )
   );
 
@@ -4243,6 +3772,7 @@ function genChestLoot(
     kind:'gold',
     name:'Gold',
     rarity:'Common',
+
     amount:
       rint(
         20,
@@ -4257,7 +3787,7 @@ function genChestLoot(
 
     loot.push(
       makeLootArmor(
-        chestLootLevel(id),
+        level,
         false
       )
     );
@@ -4290,16 +3820,13 @@ function chestLootLevel(id){
   if(!r)
     return 1;
 
-  if(
-    id==='infinite'
-  ){
+  if(id==='infinite'){
 
     return Math.max(
       2,
       Math.floor(
         2+
-        (state.wave||1)*
-        .85
+        (state.wave||1)*.85
       )
     );
 
@@ -4332,24 +3859,13 @@ function saveTransient(){
     );
 
     const d=
-      JSON.parse(
-        s
-      );
+      JSON.parse(s);
 
-    d.mode=
-      state.mode;
-
-    d.wave=
-      state.wave;
-
-    d.kills=
-      state.kills;
-
-    d.room=
-      state.room;
-
-    d.player=
-      state.player;
+    d.mode=state.mode;
+    d.wave=state.wave;
+    d.kills=state.kills;
+    d.room=state.room;
+    d.player=state.player;
 
     d.visited=[
       ...state.visited
@@ -4367,12 +3883,10 @@ function saveTransient(){
 
     localStorage.setItem(
       'rodonSave',
-      JSON.stringify(
-        d
-      )
+      JSON.stringify(d)
     );
 
-  }catch{}
+  }catch(e){}
 
 }
 
@@ -4435,8 +3949,7 @@ function drawBackground(){
     palettes[t]||
     palettes.forest;
 
-  ctx.fillStyle=
-    base;
+  ctx.fillStyle=base;
 
   ctx.fillRect(
     0,
@@ -4506,8 +4019,7 @@ function drawBackground(){
       t==='village'
     ){
 
-      ctx.fillStyle=
-        '#151f1a';
+      ctx.fillStyle='#151f1a';
 
       ctx.fillRect(
         x,
@@ -4541,8 +4053,7 @@ function drawBackground(){
       t==='cave'
     ){
 
-      ctx.fillStyle=
-        '#252a38';
+      ctx.fillStyle='#252a38';
 
       ctx.fillRect(
         x,
@@ -4560,8 +4071,7 @@ function drawBackground(){
 
     }else{
 
-      ctx.fillStyle=
-        '#2c2c34';
+      ctx.fillStyle='#2c2c34';
 
       ctx.fillRect(
         x,
@@ -4594,14 +4104,10 @@ function drawBackground(){
     i++
   ){
 
-    const x=
-      72+
-      i*170;
-
+    const x=72+i*170;
     const y=46;
 
-    ctx.fillStyle=
-      '#56565e';
+    ctx.fillStyle='#56565e';
 
     ctx.fillRect(
       x,
@@ -4610,8 +4116,7 @@ function drawBackground(){
       22
     );
 
-    ctx.fillStyle=
-      '#fff1a8';
+    ctx.fillStyle='#fff1a8';
 
     ctx.fillRect(
       x-3,
@@ -4637,9 +4142,7 @@ function drawBackground(){
       state.room
     ];
 
-  ctx.strokeStyle=
-    '#ececf0';
-
+  ctx.strokeStyle='#ececf0';
   ctx.lineWidth=4;
 
   ctx.strokeRect(
@@ -4655,12 +4158,9 @@ function drawBackground(){
     const [dir] of r.doors
   ){
 
-    ctx.fillStyle=
-      '#ececf0';
+    ctx.fillStyle='#ececf0';
 
-    if(
-      dir==='left'
-    )
+    if(dir==='left')
       ctx.fillRect(
         0,
         worldH/2-30,
@@ -4668,9 +4168,7 @@ function drawBackground(){
         60
       );
 
-    if(
-      dir==='right'
-    )
+    if(dir==='right')
       ctx.fillRect(
         worldW-10,
         worldH/2-30,
@@ -4678,9 +4176,7 @@ function drawBackground(){
         60
       );
 
-    if(
-      dir==='up'
-    )
+    if(dir==='up')
       ctx.fillRect(
         worldW/2-30,
         0,
@@ -4688,9 +4184,7 @@ function drawBackground(){
         10
       );
 
-    if(
-      dir==='down'
-    )
+    if(dir==='down')
       ctx.fillRect(
         worldW/2-30,
         worldH-10,
@@ -4712,9 +4206,7 @@ function drawPixelShadow(
     'rgba(0,0,0,.5)';
 
   ctx.fillRect(
-    Math.round(
-      x-w/2
-    ),
+    Math.round(x-w/2),
     Math.round(y),
     Math.round(w),
     4
@@ -4731,42 +4223,32 @@ function drawPlayer(){
     Math.atan2(
       mouse.y-
       (
-        p.y-
-        state.camera.y
+        p.y-state.camera.y
       ),
       mouse.x-
       (
-        p.x-
-        state.camera.x
+        p.x-state.camera.x
       )
     );
 
   const eq=
-    p.equipped||
-    {};
+    p.equipped||{};
 
   const chest=
     eq.Chest?.name||
     '';
 
   const set=
-    chest.split(
-      ' '
-    )[0];
+    chest.split(' ')[0];
 
   const metal=[
     'Iron',
     'Steel',
     'Knight'
-  ].includes(
-    set
-  );
+  ].includes(set);
 
-  const dark=
-    set==='Shadow';
-
-  const dragon=
-    set==='Dragon';
+  const dark=set==='Shadow';
+  const dragon=set==='Dragon';
 
   ctx.save();
 
@@ -4775,8 +4257,7 @@ function drawPlayer(){
     Math.round(p.y)
   );
 
-  ctx.imageSmoothingEnabled=
-    false;
+  ctx.imageSmoothingEnabled=false;
 
   drawPixelShadow(
     0,
@@ -4784,21 +4265,13 @@ function drawPlayer(){
     34
   );
 
-  ctx.rotate(
-    ang
-  );
+  ctx.rotate(ang);
 
-  const skin=
-    '#c98f6d';
+  const skin='#c98f6d';
+  const skin2='#9f624e';
+  const hair='#24242b';
 
-  const skin2=
-    '#9f624e';
-
-  const hair=
-    '#24242b';
-
-  ctx.fillStyle=
-    skin;
+  ctx.fillStyle=skin;
 
   ctx.fillRect(
     -7,
@@ -4807,8 +4280,7 @@ function drawPlayer(){
     13
   );
 
-  ctx.fillStyle=
-    hair;
+  ctx.fillStyle=hair;
 
   ctx.fillRect(
     -8,
@@ -4824,8 +4296,7 @@ function drawPlayer(){
     6
   );
 
-  ctx.fillStyle=
-    skin2;
+  ctx.fillStyle=skin2;
 
   ctx.fillRect(
     -16,
@@ -4841,8 +4312,7 @@ function drawPlayer(){
     18
   );
 
-  ctx.fillStyle=
-    skin;
+  ctx.fillStyle=skin;
 
   ctx.fillRect(
     -18,
@@ -4892,9 +4362,7 @@ function drawPlayer(){
     16
   );
 
-  if(
-    chest
-  ){
+  if(chest){
 
     ctx.fillStyle=
       dragon
@@ -4966,9 +4434,7 @@ function drawPlayer(){
     5
   );
 
-  if(
-    eq.Head
-  ){
+  if(eq.Head){
 
     ctx.fillStyle=
       dragon
@@ -4993,8 +4459,7 @@ function drawPlayer(){
       7
     );
 
-    ctx.fillStyle=
-      '#dce3ea';
+    ctx.fillStyle='#dce3ea';
 
     ctx.fillRect(
       5,
@@ -5005,9 +4470,7 @@ function drawPlayer(){
 
   }
 
-  if(
-    eq.Gloves
-  ){
+  if(eq.Gloves){
 
     ctx.fillStyle=
       dark
@@ -5032,9 +4495,7 @@ function drawPlayer(){
 
   }
 
-  if(
-    eq.Boots
-  ){
+  if(eq.Boots){
 
     ctx.fillStyle=
       dark
@@ -5062,8 +4523,7 @@ function drawPlayer(){
   const w=
     eq.MainHand;
 
-  ctx.fillStyle=
-    '#8f6544';
+  ctx.fillStyle='#8f6544';
 
   ctx.fillRect(
     13,
@@ -5076,8 +4536,7 @@ function drawPlayer(){
     w?.weaponType==='mace'
   ){
 
-    ctx.fillStyle=
-      '#b9b8b1';
+    ctx.fillStyle='#b9b8b1';
 
     ctx.fillRect(
       17,
@@ -5097,8 +4556,7 @@ function drawPlayer(){
     w?.weaponType==='axe'
   ){
 
-    ctx.fillStyle=
-      '#c7c8cb';
+    ctx.fillStyle='#c7c8cb';
 
     ctx.fillRect(
       18,
@@ -5118,8 +4576,7 @@ function drawPlayer(){
     w?.weaponType==='dagger'
   ){
 
-    ctx.fillStyle=
-      '#e3e5ea';
+    ctx.fillStyle='#e3e5ea';
 
     ctx.fillRect(
       18,
@@ -5130,8 +4587,7 @@ function drawPlayer(){
 
   }else{
 
-    ctx.fillStyle=
-      '#d9dce3';
+    ctx.fillStyle='#d9dce3';
 
     ctx.fillRect(
       18,
@@ -5140,8 +4596,7 @@ function drawPlayer(){
       4
     );
 
-    ctx.fillStyle=
-      '#7a5236';
+    ctx.fillStyle='#7a5236';
 
     ctx.fillRect(
       14,
@@ -5152,9 +4607,7 @@ function drawPlayer(){
 
   }
 
-  if(
-    eq.OffHand
-  ){
+  if(eq.OffHand){
 
     ctx.fillStyle=
       metal
@@ -5170,8 +4623,7 @@ function drawPlayer(){
       18
     );
 
-    ctx.fillStyle=
-      '#b7bcc6';
+    ctx.fillStyle='#b7bcc6';
 
     ctx.fillRect(
       -21,
@@ -5182,8 +4634,7 @@ function drawPlayer(){
 
   }
 
-  ctx.fillStyle=
-    '#fff';
+  ctx.fillStyle='#fff';
 
   ctx.fillRect(
     8,
@@ -5194,13 +4645,9 @@ function drawPlayer(){
 
   ctx.restore();
 
-  if(
-    p.flash>0
-  ){
+  if(p.flash>0){
 
-    ctx.strokeStyle=
-      '#fff';
-
+    ctx.strokeStyle='#fff';
     ctx.lineWidth=2;
 
     ctx.strokeRect(
@@ -5225,11 +4672,10 @@ function drawEnemy(e){
 
   ctx.globalAlpha=
     e.hp<=0
-    ?.62
+    ?0.62
     :1;
 
-  ctx.imageSmoothingEnabled=
-    false;
+  ctx.imageSmoothingEnabled=false;
 
   drawPixelShadow(
     0,
@@ -5256,17 +4702,12 @@ function drawEnemy(e){
     colors[e.kind]||
     '#9aa0a6';
 
-  ctx.fillStyle=
-    c;
+  ctx.fillStyle=c;
 
   const r=
-    Math.round(
-      e.r
-    );
+    Math.round(e.r);
 
-  if(
-    e.kind==='slime'
-  ){
+  if(e.kind==='slime'){
 
     ctx.fillRect(
       -r,
@@ -5339,8 +4780,7 @@ function drawEnemy(e){
 
   }
 
-  ctx.fillStyle=
-    '#15151a';
+  ctx.fillStyle='#15151a';
 
   ctx.fillRect(
     -7,
@@ -5356,9 +4796,7 @@ function drawEnemy(e){
     4
   );
 
-  if(
-    e.kind==='skeleton'
-  ){
+  if(e.kind==='skeleton'){
 
     ctx.fillRect(
       -8,
@@ -5367,8 +4805,7 @@ function drawEnemy(e){
       3
     );
 
-    ctx.fillStyle=
-      '#f3eee0';
+    ctx.fillStyle='#f3eee0';
 
     ctx.fillRect(
       -5,
@@ -5391,8 +4828,7 @@ function drawEnemy(e){
     e.elite
   ){
 
-    ctx.fillStyle=
-      '#1a1b21';
+    ctx.fillStyle='#1a1b21';
 
     ctx.fillRect(
       -r+5,
@@ -5415,12 +4851,9 @@ function drawEnemy(e){
 
   }
 
-  if(
-    e.kind==='mage'
-  ){
+  if(e.kind==='mage'){
 
-    ctx.fillStyle=
-      '#2a2042';
+    ctx.fillStyle='#2a2042';
 
     ctx.fillRect(
       -r-2,
@@ -5431,13 +4864,9 @@ function drawEnemy(e){
 
   }
 
-  if(
-    e.elite
-  ){
+  if(e.elite){
 
-    ctx.strokeStyle=
-      '#f2d36a';
-
+    ctx.strokeStyle='#f2d36a';
     ctx.lineWidth=3;
 
     ctx.strokeRect(
@@ -5461,8 +4890,7 @@ function drawEnemy(e){
       ?96
       :44;
 
-    ctx.fillStyle=
-      '#0b0b10';
+    ctx.fillStyle='#0b0b10';
 
     ctx.fillRect(
       e.x-w/2,
@@ -5481,26 +4909,21 @@ function drawEnemy(e){
       e.y-e.r-14,
       w*
       clamp(
-        e.hp/
-        e.maxHp,
+        e.hp/e.maxHp,
         0,
         1
       ),
       6
     );
 
-    if(
-      e.elite
-    ){
+    if(e.elite){
 
-      ctx.fillStyle=
-        '#fff';
+      ctx.fillStyle='#fff';
 
       ctx.font=
         'bold 12px "Courier New"';
 
-      ctx.textAlign=
-        'center';
+      ctx.textAlign='center';
 
       ctx.fillText(
         e.bossName,
@@ -5523,8 +4946,7 @@ function drawChest(c){
     Math.round(c.y)
   );
 
-  ctx.imageSmoothingEnabled=
-    false;
+  ctx.imageSmoothingEnabled=false;
 
   ctx.fillStyle=
     c.open
@@ -5538,8 +4960,7 @@ function drawChest(c){
     20
   );
 
-  ctx.fillStyle=
-    '#d8d1c2';
+  ctx.fillStyle='#d8d1c2';
 
   ctx.fillRect(
     -17,
@@ -5560,8 +4981,7 @@ function drawChest(c){
     6
   );
 
-  ctx.fillStyle=
-    '#1a1518';
+  ctx.fillStyle='#1a1518';
 
   ctx.fillRect(
     -17,
@@ -5574,10 +4994,7 @@ function drawChest(c){
 
   if(
     !c.open&&
-    dist(
-      c,
-      state.player
-    )<60
+    dist(c,state.player)<60
   ){
 
     drawInteract(
@@ -5599,9 +5016,7 @@ function drawBody(b){
     Math.round(b.y)
   );
 
-  ctx.rotate(
-    .35
-  );
+  ctx.rotate(.35);
 
   ctx.fillStyle=
     b.boss
@@ -5615,8 +5030,7 @@ function drawBody(b){
     14
   );
 
-  ctx.fillStyle=
-    '#a7a1a5';
+  ctx.fillStyle='#a7a1a5';
 
   ctx.fillRect(
     -12,
@@ -5628,10 +5042,7 @@ function drawBody(b){
   ctx.restore();
 
   if(
-    dist(
-      b,
-      state.player
-    )<70
+    dist(b,state.player)<70
   ){
 
     drawInteract(
@@ -5653,17 +5064,13 @@ function drawInteract(
   ctx.font=
     'bold 12px "Courier New"';
 
-  ctx.textAlign=
-    'center';
+  ctx.textAlign='center';
 
   const w=
-    ctx.measureText(
-      text
-    ).width+
+    ctx.measureText(text).width+
     14;
 
-  ctx.fillStyle=
-    '#07080d';
+  ctx.fillStyle='#07080d';
 
   ctx.fillRect(
     x-w/2,
@@ -5672,8 +5079,7 @@ function drawInteract(
     20
   );
 
-  ctx.strokeStyle=
-    '#fff';
+  ctx.strokeStyle='#fff';
 
   ctx.strokeRect(
     x-w/2+.5,
@@ -5682,8 +5088,7 @@ function drawInteract(
     19
   );
 
-  ctx.fillStyle=
-    '#fff';
+  ctx.fillStyle='#fff';
 
   ctx.fillText(
     text,
@@ -5737,20 +5142,15 @@ function drawAtmosphere(){
 
     const seed=
       roomSeed(
-        state.room+
-        i*13
+        state.room+i*13
       );
 
     const x=
-      (
-        seed*37
-      )%
+      (seed*37)%
       worldW;
 
     const y=
-      (
-        seed*71
-      )%
+      (seed*71)%
       worldH;
 
     ctx.fillStyle=
@@ -5783,9 +5183,7 @@ function drawUI(){
     derived();
 
   const r=
-    roomById[
-      state.room
-    ];
+    roomById[state.room];
 
   ctx.fillStyle=
     'rgba(4,4,8,.92)';
@@ -5804,8 +5202,7 @@ function drawUI(){
     56
   );
 
-  ctx.fillStyle=
-    '#111';
+  ctx.fillStyle='#111';
 
   ctx.fillRect(
     28,
@@ -5814,8 +5211,7 @@ function drawUI(){
     16
   );
 
-  ctx.fillStyle=
-    '#e6e6e6';
+  ctx.fillStyle='#e6e6e6';
 
   ctx.fillRect(
     28,
@@ -5828,8 +5224,7 @@ function drawUI(){
     16
   );
 
-  ctx.fillStyle=
-    '#fff';
+  ctx.fillStyle='#fff';
 
   ctx.font=
     'bold 12px system-ui';
@@ -5840,8 +5235,7 @@ function drawUI(){
     43
   );
 
-  ctx.fillStyle=
-    '#111';
+  ctx.fillStyle='#111';
 
   ctx.fillRect(
     28,
@@ -5850,24 +5244,21 @@ function drawUI(){
     9
   );
 
-  ctx.fillStyle=
-    '#a9a9b4';
+  ctx.fillStyle='#a9a9b4';
 
   ctx.fillRect(
     28,
     54,
     274*
     clamp(
-      p.xp/
-      p.nextXp,
+      p.xp/p.nextXp,
       0,
       1
     ),
     9
   );
 
-  ctx.fillStyle=
-    '#fff';
+  ctx.fillStyle='#fff';
 
   ctx.fillText(
     `Lv ${p.level}  •  XP ${p.xp}/${p.nextXp}`,
@@ -5878,11 +5269,9 @@ function drawUI(){
   ctx.font=
     'bold 18px system-ui';
 
-  ctx.textAlign=
-    'right';
+  ctx.textAlign='right';
 
-  ctx.fillStyle=
-    '#f4d083';
+  ctx.fillStyle='#f4d083';
 
   ctx.fillText(
     `G ${p.gold}`,
@@ -5890,11 +5279,9 @@ function drawUI(){
     51
   );
 
-  ctx.textAlign=
-    'left';
+  ctx.textAlign='left';
 
-  ctx.fillStyle=
-    '#ffffff';
+  ctx.fillStyle='#ffffff';
 
   ctx.font=
     'bold 14px system-ui';
@@ -5908,17 +5295,19 @@ function drawUI(){
   ctx.font=
     '12px system-ui';
 
-  ctx.fillStyle=
-    '#b8b8c0';
+  ctx.fillStyle='#b8b8c0';
 
   ctx.fillText(
-    `Weapon: ${p.equipped.MainHand?p.equipped.MainHand.name:'Fists'}`,
+    `Weapon: ${
+      p.equipped.MainHand
+      ?p.equipped.MainHand.name
+      :'Fists'
+    }`,
     18,
     H-38
   );
 
-  ctx.textAlign=
-    'right';
+  ctx.textAlign='right';
 
   ctx.fillText(
     'C Character   I Inventory   M Map   Esc Pause',
@@ -5930,14 +5319,12 @@ function drawUI(){
     state.mode==='infinite'
   ){
 
-    ctx.fillStyle=
-      '#f4d083';
+    ctx.fillStyle='#f4d083';
 
     ctx.font=
       'bold 16px system-ui';
 
-    ctx.textAlign=
-      'center';
+    ctx.textAlign='center';
 
     ctx.fillText(
       `INFINITE • WAVE ${state.wave} • KILLS ${state.kills}`,
@@ -5948,17 +5335,18 @@ function drawUI(){
     ctx.font=
       '12px system-ui';
 
-    ctx.fillStyle=
-      '#b8b8c0';
+    ctx.fillStyle='#b8b8c0';
 
     ctx.fillText(
-      `Best Wave: ${Math.max(state.infiniteBest,state.wave-1)}`,
+      `Best Wave: ${Math.max(
+        state.infiniteBest,
+        state.wave-1
+      )}`,
       W/2,
       47
     );
 
-    ctx.textAlign=
-      'left';
+    ctx.textAlign='left';
 
   }
 
@@ -5972,11 +5360,9 @@ function drawUI(){
     42
   );
 
-  ctx.textAlign=
-    'center';
+  ctx.textAlign='center';
 
-  ctx.fillStyle=
-    '#ffffff';
+  ctx.fillStyle='#ffffff';
 
   ctx.fillText(
     'RMB Ability',
@@ -5997,8 +5383,7 @@ function drawUI(){
     H-35
   );
 
-  ctx.textAlign=
-    'left';
+  ctx.textAlign='left';
 
 }
 
@@ -6070,8 +5455,7 @@ function render(){
     const pt of state.particles
   ){
 
-    ctx.fillStyle=
-      pt.color;
+    ctx.fillStyle=pt.color;
 
     ctx.globalAlpha=
       pt.life/.5;
@@ -6110,14 +5494,12 @@ function render(){
           1
         );
 
-      ctx.fillStyle=
-        t.color;
+      ctx.fillStyle=t.color;
 
       ctx.font=
         'bold 14px system-ui';
 
-      ctx.textAlign=
-        'center';
+      ctx.textAlign='center';
 
       ctx.fillText(
         t.text,
@@ -6135,12 +5517,6 @@ function render(){
 
   drawUI();
 
-  if(
-    typeof renderMap===
-    'function'
-  )
-    renderMap();
-
 }
 
 function updateCamera(){
@@ -6148,18 +5524,19 @@ function updateCamera(){
   const p=
     state.player;
 
+  if(!p)
+    return;
+
   state.camera.x=
     clamp(
-      p.x-
-      W/2,
+      p.x-W/2,
       0,
       worldW-W
     );
 
   state.camera.y=
     clamp(
-      p.y-
-      H/2,
+      p.y-H/2,
       0,
       worldH-H
     );
@@ -6215,17 +5592,11 @@ function move(dt){
     dx/=len;
     dy/=len;
 
-    p.vx=
-      dx*d.speed;
+    p.vx=dx*d.speed;
+    p.vy=dy*d.speed;
 
-    p.vy=
-      dy*d.speed;
-
-    p.x+=
-      p.vx*dt;
-
-    p.y+=
-      p.vy*dt;
+    p.x+=p.vx*dt;
+    p.y+=p.vy*dt;
 
   }else{
 
@@ -6256,18 +5627,14 @@ function tryRoomTransition(){
     state.player;
 
   const r=
-    roomById[
-      state.room
-    ];
+    roomById[state.room];
 
   if(
     state.roomTransitionCooldown>0
   )
     return false;
 
-  if(
-    p.x<=10
-  ){
+  if(p.x<=10){
 
     const d=
       r.doors.find(
@@ -6286,13 +5653,12 @@ function tryRoomTransition(){
       );
 
       return true;
+
     }
 
   }
 
-  if(
-    p.x>=worldW-10
-  ){
+  if(p.x>=worldW-10){
 
     const d=
       r.doors.find(
@@ -6311,13 +5677,12 @@ function tryRoomTransition(){
       );
 
       return true;
+
     }
 
   }
 
-  if(
-    p.y<=10
-  ){
+  if(p.y<=10){
 
     const d=
       r.doors.find(
@@ -6336,13 +5701,12 @@ function tryRoomTransition(){
       );
 
       return true;
+
     }
 
   }
 
-  if(
-    p.y>=worldH-10
-  ){
+  if(p.y>=worldH-10){
 
     const d=
       r.doors.find(
@@ -6361,6 +5725,7 @@ function tryRoomTransition(){
       );
 
       return true;
+
     }
 
   }
@@ -6372,16 +5737,13 @@ function tryRoomTransition(){
 function nearestEnemy(){
 
   let best=null;
-
   let bd=1e9;
 
   for(
     const e of state.enemies
   ){
 
-    if(
-      e.hp<=0
-    )
+    if(e.hp<=0)
       continue;
 
     const dd=
@@ -6390,9 +5752,7 @@ function nearestEnemy(){
         state.player
       );
 
-    if(
-      dd<bd
-    ){
+    if(dd<bd){
 
       bd=dd;
       best=e;
@@ -6408,7 +5768,6 @@ function nearestEnemy(){
 function nearestBody(){
 
   let best=null;
-
   let bd=1e9;
 
   for(
@@ -6421,9 +5780,7 @@ function nearestBody(){
         state.player
       );
 
-    if(
-      dd<bd
-    ){
+    if(dd<bd){
 
       bd=dd;
       best=b;
@@ -6439,16 +5796,13 @@ function nearestBody(){
 function nearestChest(){
 
   let best=null;
-
   let bd=1e9;
 
   for(
     const c of state.chests
   ){
 
-    if(
-      c.open
-    )
+    if(c.open)
       continue;
 
     const dd=
@@ -6457,9 +5811,7 @@ function nearestChest(){
         state.player
       );
 
-    if(
-      dd<bd
-    ){
+    if(dd<bd){
 
       bd=dd;
       best=c;
@@ -6509,16 +5861,12 @@ function particles(
       x,
       y,
 
-      vx:
-        rnd(-90,90),
-
-      vy:
-        rnd(-90,90),
+      vx:rnd(-90,90),
+      vy:rnd(-90,90),
 
       life:.5,
 
-      size:
-        rnd(2,5),
+      size:rnd(2,5),
 
       color
 
@@ -6552,11 +5900,9 @@ function attack(){
     dist(body,p)<72
   ){
 
-    openLoot(
-      body
-    );
-
+    openLoot(body);
     return;
+
   }
 
   p.attackCd=
@@ -6570,13 +5916,11 @@ function attack(){
     Math.atan2(
       mouse.y-
       (
-        p.y-
-        state.camera.y
+        p.y-state.camera.y
       ),
       mouse.x-
       (
-        p.x-
-        state.camera.x
+        p.x-state.camera.x
       )
     );
 
@@ -6592,9 +5936,7 @@ function attack(){
     const e of state.enemies
   ){
 
-    if(
-      e.hp<=0
-    )
+    if(e.hp<=0)
       continue;
 
     const dd=
@@ -6608,31 +5950,21 @@ function attack(){
 
     const diff=
       Math.atan2(
-        Math.sin(
-          ea-ang
-        ),
-        Math.cos(
-          ea-ang
-        )
+        Math.sin(ea-ang),
+        Math.cos(ea-ang)
       );
 
     if(
       dd<
-        range+
-        e.r&&
-      Math.abs(
-        diff
-      )<
-        1.25
+        range+e.r&&
+      Math.abs(diff)<1.25
     ){
 
       let dmg=
-        d.attack||
-        3;
+        d.attack||3;
 
       const crit=
-        Math.random()<
-        d.crit;
+        Math.random()<d.crit;
 
       dmg*=
         crit
@@ -6641,17 +5973,11 @@ function attack(){
 
       dmg=
         Math.round(
-          dmg*
-          rnd(
-            .88,
-            1.12
-          )
+          dmg*rnd(.88,1.12)
         );
 
       e.hp-=dmg;
-
       e.hit=.15;
-
       did=true;
 
       addText(
@@ -6687,29 +6013,21 @@ function attack(){
         .025
       );
 
-      if(
-        e.hp<=0
-      )
+      if(e.hp<=0)
         killEnemy(e);
 
     }
 
   }
 
-  if(
-    did
-  ){
+  if(did){
 
     particles(
       p.x+
-      Math.cos(
-        ang
-      )*
+      Math.cos(ang)*
       25,
       p.y+
-      Math.sin(
-        ang
-      )*
+      Math.sin(ang)*
       25,
       '#d7e4ff',
       5
@@ -6743,13 +6061,11 @@ function ability(){
     Math.atan2(
       mouse.y-
       (
-        p.y-
-        state.camera.y
+        p.y-state.camera.y
       ),
       mouse.x-
       (
-        p.x-
-        state.camera.x
+        p.x-state.camera.x
       )
     );
 
@@ -6758,16 +6074,12 @@ function ability(){
     w?.weaponType||
     'sword';
 
-  if(
-    type==='Shadow Step'
-  ){
+  if(type==='Shadow Step'){
 
     p.x=
       clamp(
         p.x+
-        Math.cos(
-          ang
-        )*
+        Math.cos(ang)*
         130,
         20,
         worldW-20
@@ -6776,9 +6088,7 @@ function ability(){
     p.y=
       clamp(
         p.y+
-        Math.sin(
-          ang
-        )*
+        Math.sin(ang)*
         130,
         20,
         worldH-20
@@ -6786,9 +6096,7 @@ function ability(){
 
     p.invuln=.35;
 
-    toast(
-      'Shadow Step'
-    );
+    toast('Shadow Step');
 
   }else{
 
@@ -6796,20 +6104,13 @@ function ability(){
       const e of state.enemies
     ){
 
-      if(
-        e.hp<=0
-      )
+      if(e.hp<=0)
         continue;
 
       const dd=
-        dist(
-          e,
-          p
-        );
+        dist(e,p);
 
-      if(
-        dd<110
-      ){
+      if(dd<110){
 
         let dmg=
           Math.round(
@@ -6822,7 +6123,6 @@ function ability(){
           );
 
         e.hp-=dmg;
-
         e.hit=.2;
 
         addText(
@@ -6847,14 +6147,10 @@ function ability(){
         )
           e.burn=3;
 
-        if(
-          type==='Heavy Impact'
-        )
+        if(type==='Heavy Impact')
           e.stun=.8;
 
-        if(
-          e.hp<=0
-        )
+        if(e.hp<=0)
           killEnemy(e);
 
       }
@@ -6869,7 +6165,6 @@ function ability(){
     );
 
     screenShake=9;
-
     screenShakeTimer=1;
 
     sound(
@@ -6890,17 +6185,12 @@ function interact(){
 
   if(
     c&&
-    dist(
-      c,
-      state.player
-    )<70
+    dist(c,state.player)<70
   ){
 
-    openChest(
-      c
-    );
-
+    openChest(c);
     return;
+
   }
 
   const body=
@@ -6908,14 +6198,9 @@ function interact(){
 
   if(
     body&&
-    dist(
-      body,
-      state.player
-    )<72
+    dist(body,state.player)<72
   )
-    openLoot(
-      body
-    );
+    openLoot(body);
 
 }
 
@@ -6926,14 +6211,9 @@ function pickupNearest(){
 
   if(
     body&&
-    dist(
-      body,
-      state.player
-    )<72
+    dist(body,state.player)<72
   )
-    openLoot(
-      body
-    );
+    openLoot(body);
 
 }
 
@@ -6950,30 +6230,17 @@ function openChest(c){
   const rewards=
     c.loot||[];
 
-  if(
-    c.firstStoryChest
-  )
-    state.firstChestClaimed=
-      true;
+  if(c.firstStoryChest)
+    state.firstChestClaimed=true;
 
   for(
     const it of rewards
   ){
 
-    if(
-      it.kind==='gold'
-    ){
-
-      state.player.gold+=
-        it.amount;
-
-    }else{
-
-      state.player.inventory.push(
-        it
-      );
-
-    }
+    if(it.kind==='gold')
+      state.player.gold+=it.amount;
+    else
+      state.player.inventory.push(it);
 
   }
 
@@ -7002,9 +6269,7 @@ function killEnemy(e){
   const p=
     state.player;
 
-  if(
-    e.hp>0
-  )
+  if(e.hp>0)
     return;
 
   state.kills++;
@@ -7012,22 +6277,15 @@ function killEnemy(e){
   const xp=
     e.elite
     ?500+
-      state.wave*
-      30
-
+      state.wave*30
     :Math.round(
       14+
-      e.level*
-      5
+      e.level*5
     );
 
-  gainXp(
-    xp
-  );
+  gainXp(xp);
 
-  if(
-    e.elite
-  ){
+  if(e.elite){
 
     state.defeatedBosses.add(
       e.bossName
@@ -7057,8 +6315,7 @@ function killEnemy(e){
 
     if(
       state.mode==='story'&&
-      e.bossName===
-        'King of Rodon'
+      e.bossName==='King of Rodon'
     ){
 
       localStorage.setItem(
@@ -7066,16 +6323,13 @@ function killEnemy(e){
         '1'
       );
 
-      state.gameStarted=
-        false;
+      state.gameStarted=false;
 
       saveGame();
 
       setTimeout(
         ()=>{
-          showScreen(
-            'victory'
-          );
+          showScreen('victory');
         },
         250
       );
@@ -7105,9 +6359,7 @@ function killEnemy(e){
   }
 
   const loot=
-    makeRandomLoot(
-      e
-    );
+    makeRandomLoot(e);
 
   if(
     state.mode==='infinite'&&
@@ -7120,9 +6372,7 @@ function killEnemy(e){
       const it of loot
     ){
 
-      if(
-        it.kind==='gold'
-      )
+      if(it.kind==='gold')
         it.amount+=
           state.wave*4;
 
@@ -7135,7 +6385,6 @@ function killEnemy(e){
     id:uid(),
 
     x:e.x,
-
     y:e.y,
 
     loot,
@@ -7157,8 +6406,7 @@ function gainXp(amount){
   const p=
     state.player;
 
-  p.xp+=
-    amount;
+  p.xp+=amount;
 
   addText(
     p.x,
@@ -7168,31 +6416,23 @@ function gainXp(amount){
   );
 
   while(
-    p.xp>=
-    p.nextXp
+    p.xp>=p.nextXp
   ){
 
-    p.xp-=
-      p.nextXp;
+    p.xp-=p.nextXp;
 
     p.level++;
 
     p.nextXp=
       Math.round(
-        p.nextXp*
-        1.34
+        p.nextXp*1.34
       );
 
     p.maxHp+=12;
+    p.hp=p.maxHp;
 
-    p.hp=
-      p.maxHp;
-
-    p.baseAttack+=
-      1.5;
-
-    p.baseDefense+=
-      1;
+    p.baseAttack+=1.5;
+    p.baseDefense+=1;
 
     toast(
       `LEVEL UP!  You are now level ${p.level}`
@@ -7225,9 +6465,7 @@ function updateEnemies(dt){
     const e of state.enemies
   ){
 
-    if(
-      e.hp<=0
-    )
+    if(e.hp<=0)
       continue;
 
     e.hit=
@@ -7236,8 +6474,7 @@ function updateEnemies(dt){
         e.hit-dt
       );
 
-    e.attackCd-=
-      dt;
+    e.attackCd-=dt;
 
     e.stun=
       Math.max(
@@ -7245,9 +6482,7 @@ function updateEnemies(dt){
         (e.stun||0)-dt
       );
 
-    if(
-      e.burn>0
-    ){
+    if(e.burn>0){
 
       e.burn-=dt;
 
@@ -7268,25 +6503,17 @@ function updateEnemies(dt){
 
     }
 
-    if(
-      e.hp<=0
-    ){
+    if(e.hp<=0){
 
       killEnemy(e);
-
       continue;
 
     }
 
     const dd=
-      dist(
-        e,
-        p
-      );
+      dist(e,p);
 
-    if(
-      e.stun>0
-    )
+    if(e.stun>0)
       continue;
 
     const chase=
@@ -7300,30 +6527,16 @@ function updateEnemies(dt){
     if(chase){
 
       let dx=
-        (
-          p.x-e.x
-        )/
-        Math.max(
-          dd,
-          1
-        );
+        (p.x-e.x)/
+        Math.max(dd,1);
 
       let dy=
-        (
-          p.y-e.y
-        )/
-        Math.max(
-          dd,
-          1
-        );
+        (p.y-e.y)/
+        Math.max(dd,1);
 
       if(
         dd>
-        (
-          e.r+
-          p.r+
-          9
-        )
+        e.r+p.r+9
       ){
 
         e.x+=
@@ -7343,8 +6556,8 @@ function updateEnemies(dt){
 
         e.attackCd=
           e.elite
-          ? .8
-          : 1.2;
+          ?0.8
+          :1.2;
 
         let dmg=
           Math.max(
@@ -7352,15 +6565,12 @@ function updateEnemies(dt){
             Math.round(
               e.damage-
               rnd(0,3)-
-              derived().defense*
-              .35
+              derived().defense*.35
             )
           );
 
         p.hp-=dmg;
-
         p.flash=.12;
-
         p.invuln=.35;
 
         addText(
@@ -7399,8 +6609,7 @@ function updateEnemies(dt){
 
           e.damage=
             Math.round(
-              e.damage*
-              1.25
+              e.damage*1.25
             );
 
           toast(
@@ -7421,17 +6630,13 @@ function updateEnemies(dt){
         dt;
 
       e.x+=
-        Math.cos(
-          e.wander
-        )*
+        Math.cos(e.wander)*
         e.speed*
         .18*
         dt;
 
       e.y+=
-        Math.sin(
-          e.wander
-        )*
+        Math.sin(e.wander)*
         e.speed*
         .18*
         dt;
@@ -7462,16 +6667,10 @@ function updateEffects(dt){
     const pt of state.particles
   ){
 
-    pt.life-=
-      dt;
+    pt.life-=dt;
 
-    pt.x+=
-      pt.vx*
-      dt;
-
-    pt.y+=
-      pt.vy*
-      dt;
+    pt.x+=pt.vx*dt;
+    pt.y+=pt.vy*dt;
 
     pt.vx*=.96;
     pt.vy*=.96;
@@ -7487,12 +6686,8 @@ function updateEffects(dt){
     const t of state.damageTexts
   ){
 
-    t.life-=
-      dt;
-
-    t.y-=
-      28*
-      dt;
+    t.life-=dt;
+    t.y-=28*dt;
 
   }
 
@@ -7569,26 +6764,20 @@ function update(dt){
     activeModal()||
     document
       .getElementById('death')
-      .classList.contains('show')
+      .classList
+      .contains('show')
   )
     return;
 
-  move(
-    dt
-  );
+  move(dt);
 
   if(
     state.roomTransitionCooldown<=0
   )
     tryRoomTransition();
 
-  updateEnemies(
-    dt
-  );
-
-  updateEffects(
-    dt
-  );
+  updateEnemies(dt);
+  updateEffects(dt);
 
   if(
     state.player.hp<=0
@@ -7604,8 +6793,7 @@ function update(dt){
     !state.roomCleared
   ){
 
-    state.roomCleared=
-      true;
+    state.roomCleared=true;
 
     saveRoomState(
       state.room
@@ -7653,9 +6841,7 @@ function die(){
     state.player.maxHp;
 
   const r=
-    roomById[
-      state.room
-    ];
+    roomById[state.room];
 
   state.player.x=
     worldW/2;
@@ -7672,9 +6858,7 @@ function die(){
   ).textContent=
     `You fell in ${r.name}. Return to the room entrance and try again.`;
 
-  showScreen(
-    'death'
-  );
+  showScreen('death');
 
   clearMovement();
 
@@ -7715,27 +6899,19 @@ function showScreen(id){
   closeInventoryContextMenu();
 
   document
-    .querySelectorAll(
-      '.screen'
-    )
+    .querySelectorAll('.screen')
     .forEach(
       x=>
-        x.classList.remove(
-          'show'
-        )
+        x.classList.remove('show')
     );
 
   if(id){
 
     const el=
-      document.getElementById(
-        id
-      );
+      document.getElementById(id);
 
     if(el)
-      el.classList.add(
-        'show'
-      );
+      el.classList.add('show');
 
   }else{
 
@@ -7748,51 +6924,33 @@ function showScreen(id){
 function toggleScreen(id){
 
   const el=
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
   if(
-    el.classList.contains(
-      'show'
-    )
+    el.classList.contains('show')
   ){
 
-    showScreen(
-      null
-    );
+    showScreen(null);
 
   }else{
 
-    showScreen(
-      id
-    );
+    showScreen(id);
 
   }
 
-  if(
-    id==='character'
-  )
+  if(id==='character')
     renderCharacter();
 
-  if(
-    id==='inventory'
-  )
+  if(id==='inventory')
     renderInventory();
 
-  if(
-    id==='map'
-  )
+  if(id==='map')
     renderMap(true);
 
-  if(
-    id==='updates'
-  )
+  if(id==='updates')
     renderUpdates();
 
-  if(
-    id==='rarityGuide'
-  )
+  if(id==='rarityGuide')
     renderRarityGuide();
 
 }
@@ -7800,19 +6958,12 @@ function toggleScreen(id){
 function toast(msg){
 
   const t=
-    document.getElementById(
-      'toast'
-    );
+    document.getElementById('toast');
 
-  t.textContent=
-    msg;
+  t.textContent=msg;
+  t.style.opacity='1';
 
-  t.style.opacity=
-    '1';
-
-  clearTimeout(
-    toast.tm
-  );
+  clearTimeout(toast.tm);
 
   toast.tm=
     setTimeout(
@@ -7823,6 +6974,10 @@ function toast(msg){
     );
 
 }
+
+/* =========================================================
+   UPDATES
+   ========================================================= */
 
 function renderUpdates(){
 
@@ -7837,16 +6992,23 @@ function renderUpdates(){
   document.getElementById(
     'updateVersionBadge'
   ).textContent=
-    'v'+
-    GAME_VERSION;
+    'v'+GAME_VERSION;
 
   list.innerHTML=
     RODON_UPDATES.map(
       (u,i)=>
         `<div class="update-entry ${i===0?'latest':''}">
+
           <div class="update-top">
-            <span class="update-version">v${u.version} • ${u.title}</span>
-            <span class="update-date">${u.date}</span>
+
+            <span class="update-version">
+              v${u.version} • ${u.title}
+            </span>
+
+            <span class="update-date">
+              ${u.date}
+            </span>
+
           </div>
 
           <div class="update-body">
@@ -7873,8 +7035,7 @@ function renderUpdates(){
     );
 
   if(badge)
-    badge.style.display=
-      'none';
+    badge.style.display='none';
 
 }
 
@@ -7899,7 +7060,596 @@ function refreshUpdateBadge(){
 }
 
 /* =========================================================
-   FLOATING COMPARISON
+   LOOT
+   ========================================================= */
+
+function openLoot(body){
+
+  state.lootBody=body;
+
+  document.getElementById(
+    'lootTitle'
+  ).textContent=
+    body.boss
+    ?'Boss Loot'
+    :'Loot';
+
+  renderLoot();
+
+  showScreen('loot');
+
+}
+
+function renderLoot(){
+
+  const el=
+    document.getElementById(
+      'lootItems'
+    );
+
+  const loot=
+    state.lootBody?.loot||[];
+
+  el.innerHTML='';
+
+  loot.forEach(
+    (it,i)=>{
+
+      const d=
+        document.createElement(
+          'div'
+        );
+
+      const rarity=
+        (
+          it.rarity||
+          'Common'
+        ).toLowerCase();
+
+      d.className=
+        `item rarity-card-${rarity}`;
+
+      d.innerHTML=
+        `<div class="nm rarity-${rarity}">
+          ${it.name}
+        </div>
+
+        <span class="rarity-pill rarity-${rarity}">
+          ${it.rarity||'Common'}
+        </span>
+
+        <div class="meta">
+          ${itemSummary(it)}
+          ${
+            it.kind==='gold'
+            ?` • ${it.amount}`
+            :''
+          }
+        </div>`;
+
+      d.addEventListener(
+        'click',
+        function(e){
+
+          e.preventDefault();
+
+          takeLoot(i);
+
+        }
+      );
+
+      el.appendChild(d);
+
+    }
+  );
+
+  if(!loot.length)
+    el.innerHTML=
+      '<div class="small">Nothing left.</div>';
+
+}
+
+function takeLoot(i){
+
+  const body=
+    state.player?.lootBody||
+    null;
+
+  if(!body)
+    return;
+
+  const it=
+    body.loot.splice(
+      i,
+      1
+    )[0];
+
+  if(!it)
+    return;
+
+  if(
+    it.kind==='gold'
+  ){
+
+    state.player.gold+=
+      Number(it.amount)||0;
+
+  }else{
+
+    state.player.inventory.push(
+      it
+    );
+
+  }
+
+  sound(
+    680,
+    .05,
+    'triangle',
+    .03
+  );
+
+  renderLoot();
+
+  saveRoomState(
+    state.room
+  );
+
+  saveTransient();
+
+  if(!body.loot.length){
+
+    state.bodies=
+      state.bodies.filter(
+        b=>b!==body
+      );
+
+    state.lootBody=null;
+
+    saveRoomState(
+      state.room
+    );
+
+    saveTransient();
+
+    showScreen(null);
+
+    toast(
+      'Loot collected'
+    );
+
+  }
+
+}
+
+function takeAllLoot(){
+
+  const body=
+    state.lootBody;
+
+  if(!body)
+    return;
+
+  while(
+    body.loot.length
+  ){
+
+    const it=
+      body.loot.shift();
+
+    if(!it)
+      break;
+
+    if(
+      it.kind==='gold'
+    ){
+
+      state.player.gold+=
+        Number(it.amount)||0;
+
+    }else{
+
+      state.player.inventory.push(
+        it
+      );
+
+    }
+
+  }
+
+  state.bodies=
+    state.bodies.filter(
+      b=>b!==body
+    );
+
+  state.lootBody=null;
+
+  saveRoomState(
+    state.room
+  );
+
+  saveTransient();
+
+  showScreen(null);
+
+  toast(
+    'All loot collected'
+  );
+
+}
+
+/* =========================================================
+   CHEST REWARDS
+   ========================================================= */
+
+function renderChestRewards(
+  items,
+  firstStoryChest=false
+){
+
+  const el=
+    document.getElementById(
+      'chestRewardItems'
+    );
+
+  const intro=
+    document.getElementById(
+      'chestRewardIntro'
+    );
+
+  if(!el)
+    return;
+
+  const rewards=
+    items||[];
+
+  if(intro){
+
+    intro.textContent=
+      firstStoryChest
+      ?'Your first chest contains one guaranteed weapon:'
+      :'You found:';
+
+  }
+
+  el.innerHTML='';
+
+  rewards.forEach(
+    it=>{
+
+      const rarity=
+        (
+          it.rarity||
+          'Common'
+        ).toLowerCase();
+
+      const d=
+        document.createElement(
+          'div'
+        );
+
+      d.className=
+        `chest-reward-card rarity-${rarity}`;
+
+      d.innerHTML=
+        `<div class="reward-name rarity-${rarity}">
+          ${it.name}
+        </div>
+
+        <div class="reward-rarity rarity-${rarity}">
+          ${it.rarity||'Common'}
+        </div>
+
+        <div class="reward-desc">
+          ${itemSummary(it)}
+          ${
+            it.kind==='gold'
+            ?` • ${it.amount} gold`
+            :''
+          }
+        </div>`;
+
+      el.appendChild(d);
+
+    }
+  );
+
+  if(!rewards.length){
+
+    el.innerHTML=
+      '<div class="small">This chest was empty.</div>';
+
+  }
+
+  showScreen(
+    'chestReward'
+  );
+
+}
+
+/* =========================================================
+   RARITY GUIDE
+   ========================================================= */
+
+function renderRarityGuide(){
+
+  const list=
+    document.getElementById(
+      'rarityGuideList'
+    );
+
+  if(!list)
+    return;
+
+  const tab=
+    state.rarityGuideTab||
+    'weapon';
+
+  document.getElementById(
+    'rarityWeaponsTab'
+  )?.classList.toggle(
+    'active',
+    tab==='weapon'
+  );
+
+  document.getElementById(
+    'rarityArmorTab'
+  )?.classList.toggle(
+    'active',
+    tab==='armor'
+  );
+
+  const groups={};
+
+  if(
+    tab==='weapon'
+  ){
+
+    for(
+      const w of weapons
+    ){
+
+      (
+        groups[w[5]]||
+        (groups[w[5]]=[])
+
+      ).push({
+
+        name:w[0],
+
+        meta:
+          `${w[1].toUpperCase()} • ${w[2]} base dmg`
+
+      });
+
+    }
+
+  }else{
+
+    const sets=[
+
+      ['Leather','Common'],
+      ['Iron','Uncommon'],
+      ['Steel','Uncommon'],
+      ['Knight','Rare'],
+      ['Shadow','Epic'],
+      ['Dragon','Legendary']
+
+    ];
+
+    for(
+      const [set,rarity] of sets
+    ){
+
+      for(
+        const slot of [
+          'Head',
+          'Chest',
+          'Legs',
+          'Boots',
+          'Gloves'
+        ]
+      ){
+
+        (
+          groups[rarity]||
+          (groups[rarity]=[])
+
+        ).push({
+
+          name:
+            `${set} ${slotLabel(slot)}`,
+
+          meta:
+            `${slot} • armor set`
+
+        });
+
+      }
+
+    }
+
+  }
+
+  list.innerHTML=
+    rarities.map(
+      r=>{
+
+        const items=
+          groups[r]||[];
+
+        if(!items.length)
+          return '';
+
+        const cls=
+          r.toLowerCase();
+
+        return`
+
+          <div class="rarity-group">
+
+            <div class="rarity-group-title">
+
+              <span class="rarity-${cls}">
+                <span class="rarity-dot"></span>
+                ${r}
+              </span>
+
+              <span class="small">
+                ${items.length}
+                item${items.length===1?'':'s'}
+              </span>
+
+            </div>
+
+            <div class="rarity-group-items">
+
+              ${items.map(
+                it=>
+                  `<div class="rarity-entry">
+
+                    <div class="name rarity-${cls}">
+                      ${it.name}
+                    </div>
+
+                    <div class="meta">
+                      ${it.meta}
+                    </div>
+
+                  </div>`
+              ).join('')}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join('');
+
+  const note=
+    document.getElementById(
+      'rarityGuideNote'
+    );
+
+  if(note){
+
+    note.textContent=
+      tab==='weapon'
+
+      ?'Weapons are grouped by their normal/base rarity. Random chest and enemy loot uses weighted rarity rolls, making higher rarities harder to obtain.'
+
+      :'Armor is grouped by its normal/set rarity. Random armor uses weighted rarity rolls, making higher rarity armor harder to find.';
+
+  }
+
+}
+
+/* =========================================================
+   CHARACTER
+   ========================================================= */
+
+function renderCharacter(){
+
+  const p=
+    state.player;
+
+  if(!p)
+    return;
+
+  const d=
+    derived();
+
+  const stats=
+    document.getElementById(
+      'statList'
+    );
+
+  const equip=
+    document.getElementById(
+      'equipSlots'
+    );
+
+  if(stats){
+
+    stats.innerHTML=[
+
+      ['Level',p.level],
+
+      [
+        'HP',
+        `${Math.floor(p.hp)} / ${d.maxHp}`
+      ],
+
+      [
+        'Attack',
+        Math.floor(d.attack)
+      ],
+
+      [
+        'Defense',
+        Math.floor(d.defense)
+      ],
+
+      [
+        'Speed',
+        Math.floor(d.speed)
+      ],
+
+      [
+        'Crit',
+        `${Math.floor(d.crit*100)}%`
+      ],
+
+      [
+        'Gold',
+        p.gold
+      ]
+
+    ].map(
+      s=>
+        `<div class="stat">
+
+          <span>
+            ${s[0]}
+          </span>
+
+          <b>
+            ${s[1]}
+          </b>
+
+        </div>`
+    ).join('');
+
+  }
+
+  if(equip){
+
+    equip.innerHTML=
+      Object.entries(
+        p.equipped
+      ).map(
+        ([slot,it])=>
+          `<div class="slot">
+
+            <div class="name">
+              ${slot}
+            </div>
+
+            <div class="small">
+              ${it?it.name:'Empty'}
+            </div>
+
+          </div>`
+      ).join('');
+
+  }
+
+}
+
+/* =========================================================
+   FLOATING ITEM COMPARISON
    ========================================================= */
 
 function compareItemValues(
@@ -7907,10 +7657,8 @@ function compareItemValues(
   equipped
 ){
 
-  if(
-    !hovered
-  )
-    return;
+  if(!hovered)
+    return null;
 
   if(
     hovered.kind==='weapon'
@@ -8018,33 +7766,19 @@ function renderCompareCard(
 
       ${
         values
-
         ?`
 
           <div class="compare-stats">
 
-            <div>
-              ${values.line1}
-            </div>
-
-            <div>
-              ${values.line2}
-            </div>
-
-            <div>
-              ${values.line3}
-            </div>
-
-            <div>
-              ${values.special}
-            </div>
+            <div>${values.line1}</div>
+            <div>${values.line2}</div>
+            <div>${values.line3}</div>
+            <div>${values.special}</div>
 
           </div>
 
         `
-
         :''
-
       }
 
     </div>
@@ -8069,84 +7803,72 @@ function moveFloatingCompare(
   )
     return;
 
-  const padding=14;
+  const gap=18;
 
-  const boxWidth=
+  const width=
     box.offsetWidth;
 
-  const boxHeight=
+  const height=
     box.offsetHeight;
 
   let left=
-    clientX+
-    18;
+    clientX+gap;
 
   let top=
-    clientY+
-    18;
+    clientY+gap;
 
   if(
-    left+
-    boxWidth+
-    padding>
+    left+width+10>
     window.innerWidth
   ){
 
     left=
-      clientX-
-      boxWidth-
-      18;
+      clientX-width-gap;
 
   }
 
   if(
-    top+
-    boxHeight+
-    padding>
+    top+height+10>
     window.innerHeight
   ){
 
     top=
-      clientY-
-      boxHeight-
-      18;
+      clientY-height-gap;
 
   }
 
   left=
-    Math.max(
-      padding,
-      Math.min(
-        left,
-        window.innerWidth-
-        boxWidth-
-        padding
+    clamp(
+      left,
+      10,
+      Math.max(
+        10,
+        window.innerWidth-width-10
       )
     );
 
   top=
-    Math.max(
-      padding,
-      Math.min(
-        top,
-        window.innerHeight-
-        boxHeight-
-        padding
+    clamp(
+      top,
+      10,
+      Math.max(
+        10,
+        window.innerHeight-height-10
       )
     );
 
   box.style.left=
-    `${left}px`;
+    left+'px';
 
   box.style.top=
-    `${top}px`;
+    top+'px';
 
 }
 
 function showItemComparison(
   item,
-  clientX=null,
-  clientY=null
+  clientX=rodonMouseClientX,
+  clientY=rodonMouseClientY
 ){
 
   const box=
@@ -8156,7 +7878,8 @@ function showItemComparison(
 
   if(
     !box||
-    !item
+    !item||
+    !state.player
   )
     return;
 
@@ -8166,7 +7889,6 @@ function showItemComparison(
   ){
 
     resetItemInfo();
-
     return;
 
   }
@@ -8178,15 +7900,13 @@ function showItemComparison(
   ){
 
     equipped=
-      state.player?.equipped?.MainHand||
+      state.player.equipped.MainHand||
       null;
 
   }else{
 
     equipped=
-      state.player?.equipped?.[
-        item.slot
-      ]||
+      state.player.equipped[item.slot]||
       null;
 
   }
@@ -8203,16 +7923,13 @@ function showItemComparison(
     ){
 
       const damageDiff=
-        item.damage-
-        equipped.damage;
+        item.damage-equipped.damage;
 
       const speedDiff=
-        item.speed-
-        equipped.speed;
+        item.speed-equipped.speed;
 
       const critDiff=
-        item.crit-
-        equipped.crit;
+        item.crit-equipped.crit;
 
       comparisonText=`
 
@@ -8266,8 +7983,7 @@ function showItemComparison(
     }else{
 
       const defenseDiff=
-        item.defense-
-        equipped.defense;
+        item.defense-equipped.defense;
 
       const hpDiff=
         (item.bonus?.maxHp||0)-
@@ -8371,9 +8087,7 @@ function showItemComparison(
 
   `;
 
-  box.classList.add(
-    'show'
-  );
+  box.classList.add('show');
 
   box.setAttribute(
     'aria-hidden',
@@ -8381,12 +8095,8 @@ function showItemComparison(
   );
 
   moveFloatingCompare(
-    clientX===null
-      ?window.innerWidth/2
-      :clientX,
-    clientY===null
-      ?window.innerHeight/2
-      :clientY
+    clientX,
+    clientY
   );
 
 }
@@ -8411,101 +8121,89 @@ function resetItemInfo(){
 
   }
 
-  const info=
-    document.getElementById(
-      'itemInfo'
-    );
-
-  if(!info)
-    return;
-
-  info.innerHTML=
-    'Hover over a weapon or armor to compare it with what you have equipped.';
-
 }
 
 /* =========================================================
-   INVENTORY RIGHT-CLICK MENU
+   INVENTORY RIGHT CLICK
    ========================================================= */
 
-function itemSellValue(item){
+function closeInventoryContextMenu(){
+
+  const menu=
+    document.getElementById(
+      'inventoryContextMenu'
+    );
+
+  if(!menu)
+    return;
+
+  menu.classList.remove('show');
+
+  menu.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  menu.innerHTML='';
+
+  state.inventoryContextItem=null;
+
+}
+
+function sellValue(item){
 
   if(!item)
     return 0;
 
-  const rarityBonus={
+  const rarityValue={
 
-    Common:0,
-    Uncommon:4,
-    Rare:10,
-    Epic:22,
-    Legendary:45,
-    Mythic:90
+    Common:5,
+    Uncommon:12,
+    Rare:30,
+    Epic:75,
+    Legendary:180,
+    Mythic:450
 
   };
 
-  const rarity=
-    item.rarity||
-    'Common';
-
-  let value=5;
+  let value=
+    rarityValue[
+      item.rarity||'Common'
+    ]||5;
 
   if(
     item.kind==='weapon'
   ){
 
-    value=
+    value+=
       Math.round(
-        8+
-        item.damage*
-        1.8+
-        item.speed*
-        4+
-        item.crit*
-        100+
-        (rarityBonus[rarity]||0)
+        item.damage*1.5
       );
 
   }else if(
     item.kind==='armor'
   ){
 
-    value=
+    value+=
       Math.round(
-        7+
-        item.defense*
-        2.2+
-        (item.bonus?.maxHp||0)*.35+
-        (item.bonus?.speed||0)*2+
-        (item.bonus?.crit||0)*100+
-        (rarityBonus[rarity]||0)
+        item.defense*1.2
       );
 
   }else if(
     item.kind==='consumable'
   ){
 
-    value=
-      item.consumable==='health'
-      ?18
-      :14;
+    value+=
+      Math.round(
+        item.amount*.12
+      );
 
   }else if(
     item.kind==='material'
   ){
 
-    value=
-      6;
-
-  }else if(
-    item.kind==='gold'
-  ){
-
-    value=
-      Math.max(
-        1,
-        item.amount||1
-      );
+    value+=
+      Number(item.amount)||1;
 
   }
 
@@ -8516,27 +8214,307 @@ function itemSellValue(item){
 
 }
 
-function closeInventoryContextMenu(){
+function inventoryHasItem(item){
+
+  if(
+    !item||
+    !state.player
+  )
+    return false;
+
+  return state.player.inventory.some(
+    i=>i&&i.id===item.id
+  );
+
+}
+
+function sellInventoryItem(item){
+
+  if(
+    !item||
+    !state.player
+  )
+    return;
+
+  const index=
+    state.player.inventory.findIndex(
+      i=>i.id===item.id
+    );
+
+  if(index<0)
+    return;
+
+  const value=
+    sellValue(item);
+
+  const sold=
+    state.player.inventory.splice(
+      index,
+      1
+    )[0];
+
+  if(!sold)
+    return;
+
+  state.player.gold+=value;
+
+  closeInventoryContextMenu();
+
+  saveGame();
+
+  renderCharacter();
+  renderInventory();
+
+  toast(
+    `Sold ${sold.name} for ${value} G`
+  );
+
+}
+
+function dropInventoryItem(item){
+
+  if(
+    !item||
+    !state.player
+  )
+    return;
+
+  const index=
+    state.player.inventory.findIndex(
+      i=>i.id===item.id
+    );
+
+  if(index<0)
+    return;
+
+  const dropped=
+    state.player.inventory.splice(
+      index,
+      1
+    )[0];
+
+  if(!dropped)
+    return;
+
+  closeInventoryContextMenu();
+
+  saveGame();
+
+  renderInventory();
+  renderCharacter();
+
+  toast(
+    `Dropped ${dropped.name}`
+  );
+
+}
+
+function openInventoryContextMenu(
+  item,
+  clientX,
+  clientY
+){
+
+  if(
+    !item||
+    !state.player||
+    !inventoryHasItem(item)
+  )
+    return;
 
   const menu=
     document.getElementById(
       'inventoryContextMenu'
     );
 
-  if(menu){
+  if(!menu)
+    return;
 
-    menu.classList.remove(
-      'show'
-    );
+  closeInventoryContextMenu();
 
-    menu.setAttribute(
-      'aria-hidden',
-      'true'
-    );
+  state.inventoryContextItem=item;
+
+  let actionHTML='';
+
+  if(
+    item.kind==='weapon'||
+    item.kind==='armor'
+  ){
+
+    actionHTML+=`
+
+      <div
+        class="inventory-context-button"
+        data-context-action="equip">
+
+        <span>
+          Equip
+        </span>
+
+      </div>
+
+    `;
+
+  }else if(
+    item.kind==='consumable'
+  ){
+
+    actionHTML+=`
+
+      <div
+        class="inventory-context-button"
+        data-context-action="use">
+
+        <span>
+          Use
+        </span>
+
+      </div>
+
+    `;
 
   }
 
-  state.contextItem=null;
+  actionHTML+=`
+
+    <div
+      class="inventory-context-button sell"
+      data-context-action="sell">
+
+      <span>
+        Sell
+      </span>
+
+      <span class="menu-value">
+        ${sellValue(item)} G
+      </span>
+
+    </div>
+
+    <div
+      class="inventory-context-button drop"
+      data-context-action="drop">
+
+      <span>
+        Drop
+      </span>
+
+    </div>
+
+  `;
+
+  menu.innerHTML=`
+
+    <div class="inventory-context-title">
+      ${item.name}
+    </div>
+
+    ${actionHTML}
+
+  `;
+
+  menu.classList.add('show');
+
+  menu.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+
+  /*
+    IMPORTANT:
+    The menu uses DIV elements rather than BUTTON elements.
+    This avoids the game's global capture-phase button handler.
+  */
+  menu
+    .querySelectorAll(
+      '[data-context-action]'
+    )
+    .forEach(
+      option=>{
+
+        option.addEventListener(
+          'mousedown',
+          function(e){
+
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+          },
+          true
+        );
+
+        option.addEventListener(
+          'click',
+          function(e){
+
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            const action=
+              option.getAttribute(
+                'data-context-action'
+              );
+
+            const selected=
+              state.inventoryContextItem;
+
+            if(
+              !selected||
+              !inventoryHasItem(selected)
+            ){
+
+              closeInventoryContextMenu();
+              return;
+
+            }
+
+            closeInventoryContextMenu();
+
+            if(action==='equip'){
+
+              equipInventoryItem(
+                selected
+              );
+
+            }else if(
+              action==='use'
+            ){
+
+              useInventoryItem(
+                selected
+              );
+
+            }else if(
+              action==='sell'
+            ){
+
+              sellInventoryItem(
+                selected
+              );
+
+            }else if(
+              action==='drop'
+            ){
+
+              dropInventoryItem(
+                selected
+              );
+
+            }
+
+          },
+          true
+        );
+
+      }
+    );
+
+  positionInventoryContextMenu(
+    clientX,
+    clientY
+  );
 
 }
 
@@ -8565,38 +8543,28 @@ function positionInventoryContextMenu(
     menu.offsetHeight;
 
   let left=
-    clientX+
-    8;
+    clientX+4;
 
   let top=
-    clientY+
-    8;
+    clientY+4;
 
   if(
-    left+
-    width+
-    padding>
+    left+width+padding>
     window.innerWidth
   ){
 
     left=
-      clientX-
-      width-
-      8;
+      clientX-width-4;
 
   }
 
   if(
-    top+
-    height+
-    padding>
+    top+height+padding>
     window.innerHeight
   ){
 
     top=
-      clientY-
-      height-
-      8;
+      clientY-height-4;
 
   }
 
@@ -8606,9 +8574,7 @@ function positionInventoryContextMenu(
       padding,
       Math.max(
         padding,
-        window.innerWidth-
-        width-
-        padding
+        window.innerWidth-width-padding
       )
     );
 
@@ -8618,249 +8584,1369 @@ function positionInventoryContextMenu(
       padding,
       Math.max(
         padding,
-        window.innerHeight-
-        height-
-        padding
+        window.innerHeight-height-padding
       )
     );
 
   menu.style.left=
-    `${left}px`;
+    left+'px';
 
   menu.style.top=
-    `${top}px`;
+    top+'px';
 
 }
 
-function openInventoryContextMenu(
-  item,
-  clientX,
-  clientY
-){
+/* =========================================================
+   INVENTORY — FIXED EQUIP/USE INTERACTION
+   ========================================================= */
 
-  const menu=
-    document.getElementById(
-      'inventoryContextMenu'
-    );
+function useInventoryItem(item){
 
   if(
-    !menu||
+    !item||
+    !state.player||
+    !inventoryHasItem(item)
+  )
+    return;
+
+  if(
+    item.kind!=='consumable'
+  ){
+
+    equipInventoryItem(item);
+    return;
+
+  }
+
+  if(
+    item.consumable==='health'
+  ){
+
+    const d=
+      derived();
+
+    if(
+      state.player.hp>=d.maxHp
+    ){
+
+      toast(
+        'Health is already full'
+      );
+
+      return;
+
+    }
+
+    const oldHp=
+      state.player.hp;
+
+    state.player.hp=
+      clamp(
+        state.player.hp+
+        Number(item.amount||0),
+        0,
+        d.maxHp
+      );
+
+    const index=
+      state.player.inventory.findIndex(
+        i=>i.id===item.id
+      );
+
+    if(index>=0){
+
+      state.player.inventory.splice(
+        index,
+        1
+      );
+
+    }
+
+    const healed=
+      Math.floor(
+        state.player.hp-oldHp
+      );
+
+    particles(
+      state.player.x,
+      state.player.y,
+      '#b7ffb1',
+      12
+    );
+
+    sound(
+      620,
+      .10,
+      'sine',
+      .035
+    );
+
+    saveGame();
+
+    renderInventory();
+    renderCharacter();
+
+    toast(
+      `Drank Health Potion • +${healed} HP`
+    );
+
+    return;
+
+  }
+
+  if(
+    item.consumable==='mana'
+  ){
+
+    toast(
+      'Mana system is not active yet'
+    );
+
+  }
+
+}
+
+/*
+  This function deliberately works directly on the actual
+  inventory object. It does not depend on the visual card,
+  the floating comparison, or the RMB menu.
+*/
+function equipInventoryItem(item){
+
+  if(
     !item||
     !state.player
   )
     return;
 
-  resetItemInfo();
+  const inventory=
+    state.player.inventory;
 
-  state.contextItem=
-    item;
-
-  const rarity=
-    (
-      item.rarity||
-      'Common'
-    ).toLowerCase();
-
-  const sellValue=
-    itemSellValue(
-      item
+  const index=
+    inventory.findIndex(
+      i=>i&&i.id===item.id
     );
 
-  let actions='';
+  if(index<0){
+
+    /*
+      If an old/stale DOM card is clicked after the inventory
+      changed, find the current item by ID instead of silently
+      failing.
+    */
+    return;
+
+  }
 
   if(
-    item.kind==='weapon'||
-    item.kind==='armor'
-  ){
-
-    actions+=`
-      <button
-        class="inventory-context-action"
-        data-context-action="equip">
-        Equip
-      </button>
-    `;
-
-  }else if(
     item.kind==='consumable'
   ){
 
-    actions+=`
-      <button
-        class="inventory-context-action use"
-        data-context-action="use">
-        Use
-      </button>
-    `;
+    useInventoryItem(item);
+    return;
 
   }
-
-  if(actions){
-
-    actions+=`
-      <div class="inventory-context-separator"></div>
-    `;
-
-  }
-
-  actions+=`
-    <button
-      class="inventory-context-action sell"
-      data-context-action="sell">
-      Sell • ${sellValue} G
-    </button>
-
-    <button
-      class="inventory-context-action drop"
-      data-context-action="drop">
-      Drop
-    </button>
-  `;
-
-  menu.innerHTML=`
-
-    <div class="inventory-context-title">
-
-      Item
-
-      <div
-        class="inventory-context-item-name rarity-${rarity}">
-        ${item.name}
-      </div>
-
-    </div>
-
-    ${actions}
-
-  `;
-
-  menu.classList.add(
-    'show'
-  );
-
-  menu.setAttribute(
-    'aria-hidden',
-    'false'
-  );
-
-  positionInventoryContextMenu(
-    clientX,
-    clientY
-  );
-
-}
-
-function removeItemFromInventory(
-  item
-){
 
   if(
-    !state.player||
-    !item
-  )
-    return false;
+    item.kind==='material'
+  ){
 
-  const index=
-    state.player.inventory.findIndex(
-      i=>i.id===item.id
+    toast(
+      'Materials cannot be equipped'
     );
 
-  if(index<0)
-    return false;
+    return;
 
-  state.player.inventory.splice(
-    index,
-    1
-  );
+  }
 
-  return true;
+  if(
+    item.kind==='weapon'
+  ){
+
+    const old=
+      state.player.equipped.MainHand||
+      null;
+
+    /*
+      Clicking the item already equipped should do nothing,
+      because equipped items are not supposed to stay inside
+      the inventory.
+    */
+    if(
+      old&&
+      old.id===item.id
+    ){
+
+      return;
+
+    }
+
+    /*
+      Remove the selected item from inventory FIRST.
+    */
+    const selected=
+      inventory.splice(
+        index,
+        1
+      )[0];
+
+    if(!selected)
+      return;
+
+    /*
+      Put the previously equipped weapon back into inventory.
+    */
+    if(old){
+
+      inventory.push(
+        old
+      );
+
+    }
+
+    state.player.equipped.MainHand=
+      selected;
+
+    state.inventoryContextItem=null;
+
+    closeInventoryContextMenu();
+
+    saveGame();
+
+    renderCharacter();
+    renderInventory();
+
+    toast(
+      `Equipped ${selected.name}`
+    );
+
+    return;
+
+  }
+
+  if(
+    item.kind==='armor'
+  ){
+
+    const slot=
+      item.slot;
+
+    if(
+      !slot||
+      !(slot in state.player.equipped)
+    ){
+
+      toast(
+        'This armor cannot be equipped'
+      );
+
+      return;
+
+    }
+
+    const old=
+      state.player.equipped[slot]||
+      null;
+
+    if(
+      old&&
+      old.id===item.id
+    ){
+
+      return;
+
+    }
+
+    /*
+      Remove the selected armor from inventory FIRST.
+    */
+    const selected=
+      inventory.splice(
+        index,
+        1
+      )[0];
+
+    if(!selected)
+      return;
+
+    /*
+      Return the old armor to inventory.
+    */
+    if(old){
+
+      inventory.push(
+        old
+      );
+
+    }
+
+    state.player.equipped[slot]=
+      selected;
+
+    /*
+      Keep current HP valid when max HP changes.
+    */
+    const d=
+      derived();
+
+    state.player.hp=
+      clamp(
+        state.player.hp,
+        0,
+        d.maxHp
+      );
+
+    state.inventoryContextItem=null;
+
+    closeInventoryContextMenu();
+
+    saveGame();
+
+    renderCharacter();
+    renderInventory();
+
+    toast(
+      `Equipped ${selected.name}`
+    );
+
+    return;
+
+  }
 
 }
 
-function handleInventoryContextAction(
-  action
+/* =========================================================
+   INVENTORY RENDER
+   ========================================================= */
+
+function renderInventory(
+  filter=state.inventoryFilter||'all'
 ){
 
-  const item=
-    state.contextItem;
+  const el=
+    document.getElementById(
+      'invItems'
+    );
 
   if(
-    !item||
+    !el||
     !state.player
-  ){
-
-    closeInventoryContextMenu();
-
+  )
     return;
+
+  closeInventoryContextMenu();
+
+  resetItemInfo();
+
+  state.inventoryFilter=
+    filter;
+
+  document
+    .querySelectorAll(
+      '#inventory [data-tab]'
+    )
+    .forEach(
+      b=>
+        b.classList.toggle(
+          'active',
+          b.dataset.tab===filter
+        )
+    );
+
+  const items=
+    state.player.inventory.filter(
+      it=>
+        filter==='all'||
+        it.kind===filter
+    );
+
+  el.innerHTML='';
+
+  items.forEach(
+    it=>{
+
+      const d=
+        document.createElement(
+          'div'
+        );
+
+      const rarity=
+        (
+          it.rarity||
+          'Common'
+        ).toLowerCase();
+
+      d.className=
+        `item rarity-card-${rarity}`;
+
+      d.setAttribute(
+        'data-item-id',
+        it.id
+      );
+
+      d.innerHTML=
+        `<div class="nm rarity-${rarity}">
+          ${it.name}
+        </div>
+
+        <span class="rarity-pill rarity-${rarity}">
+          ${it.rarity||'Common'}
+        </span>
+
+        <div class="meta">
+          ${itemSummary(it)}
+        </div>`;
+
+      /*
+        HOVER COMPARISON
+      */
+      d.addEventListener(
+        'mouseenter',
+        function(e){
+
+          if(
+            it.kind==='weapon'||
+            it.kind==='armor'
+          ){
+
+            showItemComparison(
+              it,
+              e.clientX,
+              e.clientY
+            );
+
+          }
+
+        }
+      );
+
+      d.addEventListener(
+        'mousemove',
+        function(e){
+
+          if(
+            it.kind==='weapon'||
+            it.kind==='armor'
+          ){
+
+            moveFloatingCompare(
+              e.clientX,
+              e.clientY
+            );
+
+          }
+
+        }
+      );
+
+      d.addEventListener(
+        'mouseleave',
+        function(){
+
+          resetItemInfo();
+
+        }
+      );
+
+      /*
+        LEFT CLICK EQUIP/USE
+
+        This is attached directly to the inventory DIV,
+        not handled by the global BUTTON handler.
+      */
+      d.addEventListener(
+        'click',
+        function(e){
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          closeInventoryContextMenu();
+
+          /*
+            Re-read the current inventory object by ID.
+            This prevents stale item references from breaking
+            equip after another inventory operation.
+          */
+          const current=
+            state.player.inventory.find(
+              x=>x.id===it.id
+            );
+
+          if(!current)
+            return;
+
+          if(
+            current.kind==='weapon'||
+            current.kind==='armor'
+          ){
+
+            equipInventoryItem(
+              current
+            );
+
+          }else if(
+            current.kind==='consumable'
+          ){
+
+            useInventoryItem(
+              current
+            );
+
+          }
+
+        },
+        false
+      );
+
+      /*
+        RIGHT CLICK
+      */
+      d.addEventListener(
+        'contextmenu',
+        function(e){
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          const current=
+            state.player.inventory.find(
+              x=>x.id===it.id
+            );
+
+          if(!current)
+            return;
+
+          if(
+            current.kind==='weapon'||
+            current.kind==='armor'
+          ){
+
+            showItemComparison(
+              current,
+              e.clientX,
+              e.clientY
+            );
+
+          }else{
+
+            resetItemInfo();
+
+          }
+
+          openInventoryContextMenu(
+            current,
+            e.clientX,
+            e.clientY
+          );
+
+        }
+      );
+
+      el.appendChild(d);
+
+    }
+  );
+
+  if(!items.length){
+
+    el.innerHTML=
+      '<div class="small">No items in this category.</div>';
 
   }
 
-  if(
-    action==='equip'
+}
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+function renderMap(){
+
+  const mapCanvas=
+    document.getElementById(
+      'mapCanvas'
+    );
+
+  if(!mapCanvas)
+    return;
+
+  const mc=
+    mapCanvas.getContext('2d');
+
+  const mw=
+    mapCanvas.width;
+
+  const mh=
+    mapCanvas.height;
+
+  mc.clearRect(
+    0,
+    0,
+    mw,
+    mh
+  );
+
+  mc.fillStyle=
+    '#0a0f17';
+
+  mc.fillRect(
+    0,
+    0,
+    mw,
+    mh
+  );
+
+  const minX=
+    Math.min(
+      ...roomDefs.map(
+        r=>r.x
+      )
+    );
+
+  const maxX=
+    Math.max(
+      ...roomDefs.map(
+        r=>r.x
+      )
+    );
+
+  const minY=
+    Math.min(
+      ...roomDefs.map(
+        r=>r.y
+      )
+    );
+
+  const maxY=
+    Math.max(
+      ...roomDefs.map(
+        r=>r.y
+      )
+    );
+
+  const scale=
+    Math.min(
+      (mw-80)/
+      Math.max(
+        1,
+        maxX-minX+1
+      ),
+      (mh-80)/
+      Math.max(
+        1,
+        maxY-minY+1
+      )
+    );
+
+  for(
+    const r of roomDefs
   ){
 
     if(
-      item.kind!=='weapon'&&
-      item.kind!=='armor'
-    ){
+      !state.visited.has(
+        r.id
+      )
+    )
+      continue;
 
-      closeInventoryContextMenu();
+    const x=
+      40+
+      (
+        r.x-minX
+      )*
+      scale;
 
-      return;
+    const y=
+      40+
+      (
+        r.y-minY
+      )*
+      scale;
+
+    const size=
+      Math.min(
+        70,
+        scale*.72
+      );
+
+    mc.fillStyle=
+      r.id===state.room
+      ?'#f4d083'
+      :'#263247';
+
+    mc.fillRect(
+      x,
+      y,
+      size,
+      size
+    );
+
+    mc.strokeStyle=
+      '#e7e7e7';
+
+    mc.strokeRect(
+      x+.5,
+      y+.5,
+      size-1,
+      size-1
+    );
+
+    mc.fillStyle='#fff';
+
+    mc.font=
+      '10px "Courier New"';
+
+    mc.textAlign='center';
+
+    mc.fillText(
+      r.name,
+      x+size/2,
+      y+size/2+3
+    );
+
+    if(r.boss){
+
+      mc.fillStyle='#ff7777';
+
+      mc.fillRect(
+        x+size-9,
+        y+4,
+        5,
+        5
+      );
 
     }
 
-    closeInventoryContextMenu();
+  }
 
-    equipInventoryItem(
-      item
+}
+
+/* =========================================================
+   SCREEN / MENU HELPERS
+   ========================================================= */
+
+function showModeSelect(){
+
+  const locked=
+    !storyComplete();
+
+  const btn=
+    document.getElementById(
+      'infiniteBtn'
+    );
+
+  if(btn){
+
+    btn.textContent=
+      locked
+      ?'Infinite Mode 🔒'
+      :'Infinite Mode';
+
+    btn.disabled=
+      locked;
+
+  }
+
+  const status=
+    document.getElementById(
+      'modeStatus'
+    );
+
+  if(status){
+
+    status.innerHTML=
+      locked
+
+      ?'Infinite Mode is locked until you defeat the <b>King of Rodon</b> in Story Mode.'
+
+      :'Infinite Mode is unlocked. Story Mode remains available for replay.';
+
+  }
+
+  showScreen(
+    'modeSelect'
+  );
+
+}
+
+function startStory(){
+
+  initAudio();
+
+  clearSave();
+
+  resetForNew(
+    'story'
+  );
+
+}
+
+function startInfinite(){
+
+  initAudio();
+
+  if(
+    !storyComplete()
+  ){
+
+    toast(
+      'Defeat the King of Rodon in Story Mode first.'
     );
 
     return;
 
   }
 
-  if(
-    action==='use'
-  ){
+  clearSave();
 
-    if(
-      item.kind!=='consumable'
-    ){
+  resetForNew(
+    'infinite'
+  );
 
-      closeInventoryContextMenu();
+}
+
+function updateRarityTab(tab){
+
+  state.rarityGuideTab=
+    tab;
+
+  renderRarityGuide();
+
+}
+
+function mainMenu(){
+
+  state.gameStarted=false;
+
+  closeInventoryContextMenu();
+
+  resetItemInfo();
+
+  showScreen(
+    'start'
+  );
+
+}
+
+/* =========================================================
+   ROBUST UI BUTTON HANDLER
+   ========================================================= */
+
+document.addEventListener(
+  'click',
+  function(e){
+
+    /*
+      Inventory items and RMB menu use DIVs,
+      so this global handler does not interfere with them.
+    */
+    const button=
+      e.target.closest?.('button');
+
+    if(!button)
+      return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    const action=
+      button.getAttribute(
+        'data-rodon-action'
+      );
+
+    const close=
+      button.getAttribute(
+        'data-close'
+      );
+
+    const tab=
+      button.getAttribute(
+        'data-tab'
+      );
+
+    if(tab){
+
+      renderInventory(
+        tab
+      );
 
       return;
 
     }
 
-    closeInventoryContextMenu();
+    if(close){
 
-    equipInventoryItem(
-      item
-    );
+      if(
+        close==='updates'||
+        close==='rarityGuide'||
+        close==='modeSelect'
+      ){
 
-    return;
+        state.gameStarted=false;
 
-  }
+        showScreen(
+          'start'
+        );
 
-  if(
-    action==='sell'
-  ){
+      }else{
 
-    const value=
-      itemSellValue(
-        item
+        showScreen(null);
+
+      }
+
+      return;
+
+    }
+
+    switch(action){
+
+      case 'new':
+
+        initAudio();
+        showModeSelect();
+
+        break;
+
+      case 'continue':
+
+        initAudio();
+        loadGame();
+
+        break;
+
+      case 'updates':
+
+        initAudio();
+
+        showScreen(
+          'updates'
+        );
+
+        renderUpdates();
+
+        break;
+
+      case 'rarity':
+
+        state.rarityGuideTab=
+          'weapon';
+
+        showScreen(
+          'rarityGuide'
+        );
+
+        renderRarityGuide();
+
+        break;
+
+      case 'settings':
+
+        showScreen(
+          'settings'
+        );
+
+        break;
+
+      case 'credits':
+
+        showScreen(
+          'credits'
+        );
+
+        break;
+
+      case 'story':
+
+        startStory();
+
+        break;
+
+      case 'infinite':
+
+        startInfinite();
+
+        break;
+
+      case 'resume':
+
+        showScreen(null);
+
+        focusGame();
+
+        break;
+
+      case 'save':
+
+        saveGame();
+
+        toast(
+          'Game saved'
+        );
+
+        break;
+
+      case 'pauseMap':
+
+        showScreen(
+          'map'
+        );
+
+        renderMap();
+
+        break;
+
+      case 'mainMenu':
+
+        mainMenu();
+
+        break;
+
+      case 'deathMenu':
+
+        mainMenu();
+
+        break;
+
+      case 'respawn':
+
+        showScreen(null);
+
+        focusGame();
+
+        break;
+
+      case 'victoryInfinite':
+
+        if(
+          storyComplete()
+        ){
+
+          clearSave();
+
+          resetForNew(
+            'infinite'
+          );
+
+        }
+
+        break;
+
+      case 'victoryMenu':
+
+        mainMenu();
+
+        break;
+
+      case 'lootClose':
+
+        showScreen(null);
+
+        focusGame();
+
+        break;
+
+      case 'takeAll':
+
+        takeAllLoot();
+
+        break;
+
+      case 'chestClose':
+      case 'chestDone':
+
+        showScreen(null);
+
+        focusGame();
+
+        break;
+
+      case 'rarityWeapon':
+
+        updateRarityTab(
+          'weapon'
+        );
+
+        break;
+
+      case 'rarityArmor':
+
+        updateRarityTab(
+          'armor'
+        );
+
+        break;
+
+      case 'rarityClose':
+
+        showScreen(
+          'start'
+        );
+
+        break;
+
+    }
+
+  },
+  true
+);
+
+/* =========================================================
+   CLOSE RMB MENU
+   ========================================================= */
+
+document.addEventListener(
+  'mousedown',
+  function(e){
+
+    const menu=
+      document.getElementById(
+        'inventoryContextMenu'
       );
 
     if(
-      removeItemFromInventory(
-        item
+      !menu||
+      !menu.classList.contains('show')
+    )
+      return;
+
+    if(
+      e.target.closest?.(
+        '#inventoryContextMenu'
       )
+    )
+      return;
+
+    if(
+      e.target.closest?.(
+        '#invItems .item'
+      )
+    )
+      return;
+
+    closeInventoryContextMenu();
+
+  }
+);
+
+document.addEventListener(
+  'scroll',
+  function(){
+
+    closeInventoryContextMenu();
+
+  },
+  true
+);
+
+/*
+  DO NOT move the RMB menu with mouse movement.
+  Only the equipment comparison follows the cursor.
+*/
+document.addEventListener(
+  'mousemove',
+  function(e){
+
+    rodonMouseClientX=
+      e.clientX;
+
+    rodonMouseClientY=
+      e.clientY;
+
+    moveFloatingCompare(
+      e.clientX,
+      e.clientY
+    );
+
+  }
+);
+
+window.addEventListener(
+  'resize',
+  function(){
+
+    /*
+      Re-clamp the RMB menu only if the window becomes too small.
+      It is NOT attached to the mouse.
+    */
+    const menu=
+      document.getElementById(
+        'inventoryContextMenu'
+      );
+
+    if(
+      menu&&
+      menu.classList.contains('show')
     ){
 
-      state.player.gold+=
-        value;
+      const rect=
+        menu.getBoundingClientRect();
 
-      toast(
-        `Sold ${item
+      const left=
+        clamp(
+          rect.left,
+          8,
+          Math.max(
+            8,
+            window.innerWidth-
+            rect.width-
+            8
+          )
+        );
+
+      const top=
+        clamp(
+          rect.top,
+          8,
+          Math.max(
+            8,
+            window.innerHeight-
+            rect.height-
+            8
+          )
+        );
+
+      menu.style.left=
+        left+'px';
+
+      menu.style.top=
+        top+'px';
+
+    }
+
+  }
+);
+
+/* =========================================================
+   GAME LOOP
+   ========================================================= */
+
+function loop(now){
+
+  const dt=
+    Math.min(
+      .033,
+      Math.max(
+        0,
+        now-last
+      )/1000
+    );
+
+  last=now;
+
+  update(dt);
+
+  render();
+
+  requestAnimationFrame(
+    loop
+  );
+
+}
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+function renderUpdatesOnStart(){
+
+  const badge=
+    document.getElementById(
+      'updateVersionBadge'
+    );
+
+  if(badge)
+    badge.textContent=
+      'v'+GAME_VERSION;
+
+  refreshUpdateBadge();
+
+}
+
+function initRodon(){
+
+  window.RODON_UI_READY=
+    true;
+
+  state.mode='story';
+
+  state.wave=0;
+
+  state.infiniteBest=
+    infiniteBest();
+
+  state.player=
+    defaultPlayer();
+
+  state.roomStates={};
+
+  state.enemies=[];
+  state.chests=[];
+  state.bodies=[];
+  state.particles=[];
+  state.damageTexts=[];
+
+  state.roomCleared=false;
+
+  state.inventoryContextItem=null;
+
+  closeInventoryContextMenu();
+  resetItemInfo();
+
+  loadRoom(
+    'village',
+    true
+  );
+
+  updateCamera();
+
+  renderUpdatesOnStart();
+
+  focusGame();
+
+  requestAnimationFrame(
+    loop
+  );
+
+}
+
+if(
+  document.readyState===
+  'loading'
+){
+
+  document.addEventListener(
+    'DOMContentLoaded',
+    initRodon,
+    {once:true}
+  );
+
+}else{
+
+  initRodon();
+
+}
+
+setTimeout(
+  function(){
+
+    if(
+      !window.RODON_UI_READY
+    ){
+
+      try{
+
+        initRodon();
+
+      }catch(e){}
+
+    }
+
+  },
+  250
+);
+
+</script>
+</body>
+</html>
